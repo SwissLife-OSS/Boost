@@ -41,6 +41,7 @@ namespace Boost
             services.AddSingleton<IPipelinesService, PipelinesService>();
             services.AddSingleton<IFileContentTypeHandler, DefaultContentTypeHandler>();
             services.AddSingleton<IFileContentTypeHandler, ImageContentTypeHandler>();
+            services.AddSingleton<IFileContentTypeHandler, PdfContentTypeHandler>();
             services.AddSingleton<IFileContentTypeHandler, DllContentTypeHandler>();
             services.AddNuget();
 
