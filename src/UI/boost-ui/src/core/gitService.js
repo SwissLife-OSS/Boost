@@ -5,6 +5,7 @@ import QUERY_REPOS_LOCAL_SEARCH from "./graphql/Git/SearchLocalRepos.gql"
 import QUERY_REPO_REMOTE_GET from "./graphql/Git/GetRemoteRepository.gql"
 import QUERY_REPO_LOCAL_GET from "./graphql/Git/GetLocalRepo.gql"
 import MUTATION_CLONE from "./graphql/Git/Clone.gql"
+import MUTATION_WORKROOTS_INDEX from "./graphql/Git/IndexWorkRoots.gql"
 
 export const searchRepos = async (input) => {
     return await apollo.query({
@@ -39,5 +40,12 @@ export const cloneRepo = async (input) => {
     return await apollo.mutate({
         mutation: MUTATION_CLONE,
         variables: { input }
+    });
+};
+
+export const indexWorkRoots = async () => {
+    return await apollo.mutate({
+        mutation: MUTATION_WORKROOTS_INDEX,
+        variables: {}
     });
 };

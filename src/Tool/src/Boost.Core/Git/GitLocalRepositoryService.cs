@@ -43,6 +43,10 @@ namespace Boost.Git
             return repos.Select(ToLocalGitRepository);
         }
 
+        public int GetLocalRepositoryCount()
+        {
+            return _dbContext.GitRepos.Count();
+        }
 
         public async Task<GitLocalRepository?> GetRepositoryAsync(
             string path,

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
@@ -13,29 +12,29 @@ using Serilog;
 
 namespace Boost.Git
 {
-    public class LocalRepositoryIndexer
+    public class LocalRepositoryIndexer : ILocalRepositoryIndexer
     {
-        private readonly IEnumerable<IConnectedServiceProvider> _connectedServiceProviders;
         private readonly IBoostDbContext _liteDbContext;
         private readonly IConnectedServiceManager _connectedServiceManager;
 
         public LocalRepositoryIndexer(
             IBoostDbContext dbContext,
-            IEnumerable<IConnectedServiceProvider> connectedServiceProviders,
             IConnectedServiceManager connectedServiceManager)
         {
-            _connectedServiceProviders = connectedServiceProviders.Where(x =>
-                x.Type.Features.Contains(ConnectedServiceFeature.GitRemoteRepository));
             _liteDbContext = dbContext;
             _connectedServiceManager = connectedServiceManager;
         }
 
-        public async Task IndexWorkRootAsync(WorkRoot workRoot, CancellationToken cancellationToken)
+        public async Task<int> IndexWorkRootAsync(
+            WorkRoot workRoot,
+            Action<string>? onProgress = null,
+            CancellationToken cancellationToken = default)
         {
             IEnumerable<IConnectedService> connectedServices = await _connectedServiceManager
                 .GetServicesAsync(cancellationToken);
 
             ClearIndex(workRoot.Name);
+            int indexCount = 0;
 
             foreach (DirectoryInfo? dir in new DirectoryInfo(workRoot.Path)
                 .GetDirectories())
@@ -47,6 +46,7 @@ namespace Boost.Git
                 if (repoIndex is { })
                 {
                     repoIndex.WorkRoot = workRoot.Name;
+                    onProgress?.Invoke(dir.FullName);
 
                     IConnectedService? connectedService = _connectedServiceManager
                         .MatchServiceFromGitRemote(repoIndex.RemoteReference, connectedServices);
@@ -57,15 +57,17 @@ namespace Boost.Git
                     }
 
                     _liteDbContext.GitRepos.Insert(repoIndex);
+                    indexCount++;
                 }
             }
+
+            return indexCount;
         }
 
         private int ClearIndex(string workRoot)
         {
             return _liteDbContext.GitRepos.DeleteMany(x => x.WorkRoot == workRoot);
         }
-
 
         private GitRepositoryIndex? Index(string directory)
         {
@@ -112,7 +114,5 @@ namespace Boost.Git
 
             return null;
         }
-
-
     }
 }

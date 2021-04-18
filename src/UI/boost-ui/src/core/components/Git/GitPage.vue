@@ -17,6 +17,7 @@ export default {
         { name: "Current", route: "Git.Current" },
         { name: "All Local", route: "Git.Local" },
         { name: "Remote", route: "Git.Remote" },
+        { name: "Indexing", route: "Git.Index" },
       ],
     };
   },
