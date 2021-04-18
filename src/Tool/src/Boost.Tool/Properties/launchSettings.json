@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Boost.Tool": {
+      "commandName": "Project",
+      "commandLineArgs": "ui"
+    }
+  }
+}

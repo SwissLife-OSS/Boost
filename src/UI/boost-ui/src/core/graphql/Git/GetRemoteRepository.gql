@@ -1,0 +1,27 @@
+query getRepo($input: GetRemoteGitRepositoryInput!) {
+  remoteGitRepository(input: $input) {
+    id
+    fullName
+    name
+    url
+    webUrl
+    service {
+      id
+      name
+      type
+    }
+    commits(top: 20){
+      author
+      message
+      createdAt
+      id
+      webUrl
+    }
+    readme
+    local{
+      name
+      workingDirectory
+      workRoot
+    }
+  }
+}

@@ -1,0 +1,16 @@
+query file($input: GetFileInput!) {
+  file(input: $input) {
+    content
+    meta{
+      id
+      actions
+      language
+      getUrl
+      converters
+    }
+    contentType
+    name
+    path
+    editor
+  }
+}

@@ -1,0 +1,9 @@
+query userInfo($token: String!) {
+  userInfoClaims(token: $token) {
+    claims {
+      type
+      value
+    }
+    error
+  }
+}

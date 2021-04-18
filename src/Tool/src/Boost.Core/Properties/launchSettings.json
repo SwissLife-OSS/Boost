@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Boost": {
+      "commandName": "Project",
+      "commandLineArgs": "reset"
+    }
+  }
+}

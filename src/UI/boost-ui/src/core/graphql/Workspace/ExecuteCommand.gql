@@ -1,0 +1,3 @@
+mutation exec($input: ExecuteCommandInput!) {
+  executeCommand(input: $input)
+}

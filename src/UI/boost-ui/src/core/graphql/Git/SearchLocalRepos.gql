@@ -1,0 +1,14 @@
+query searchRepos($input: SearchLocalRepositoriesInput!) {
+  searchLocalRepositories(input: $input) {
+    id
+    name
+    workingDirectory
+    workRoot
+    remoteServiceId
+    service{
+      id
+      name
+      type
+    }
+  }
+}

@@ -1,0 +1,18 @@
+mutation createFile($input: CreateFileFromBase64Input!) {
+  createFileFromBase64(input: $input) {
+    file {
+      content
+      meta {
+        id
+        actions
+        language
+        getUrl
+        converters
+      }
+      contentType
+      name
+      path
+      editor
+    }
+  }
+}

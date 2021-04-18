@@ -1,0 +1,78 @@
+
+import { getInitialData } from "../core/appService";
+import { saveConnectedService, saveWorkRoots } from "../core/settingsService";
+import { excuteGraphQL } from "./graphqlClient";
+
+const appStore = {
+    namespaced: true,
+    state: () => ({
+        statusMessage: null,
+        console: [],
+        userSettings: null,
+        app: null,
+    }),
+    mutations: {
+        MESSAGE_ADDED(state, message) {
+            state.statusMessage = message;
+
+            window.setTimeout(() => {
+                state.statusMessage = null;
+            }, 5000)
+        },
+        CONSOLE_MESSAGE(state, message) {
+            state.console.push(message);
+        },
+        INIT_DATA_LOADED(state, data) {
+            state.userSettings = data.userSettings;
+            state.app = data.appliation
+        },
+        WORKROOTS_SAVED(state, workRoots) {
+            state.userSettings.workRoots = workRoots;
+        },
+        CONNECTED_SERVICE_SAVED(state, service) {
+            console.log(state, service);
+        }
+    },
+    actions: {
+        addMessage: function ({ commit }, message) {
+            commit("MESSAGE_ADDED", message)
+        },
+        async loadInitialData({ commit, dispatch }) {
+            const result = await excuteGraphQL(() => getInitialData(), dispatch);
+            if (result.success) {
+                commit("INIT_DATA_LOADED", result.data);
+            }
+        },
+        async saveWorkRoots({ commit, dispatch }, data) {
+            const result = await excuteGraphQL(() => saveWorkRoots(data), dispatch);
+            if (result.success) {
+                commit("WORKROOTS_SAVED", data.workRoots);
+                dispatch(
+                    "app/addMessage",
+                    { text: "Saved", type: "SUCCESS" },
+                    { root: true }
+                );
+            }
+        },
+        async saveConnectedService({ commit, dispatch }, service) {
+            const result = await excuteGraphQL(() => saveConnectedService(service), dispatch);
+            if (result.success) {
+                const { connectedService } = result.data.saveConnectedService
+                commit("CONNECTED_SERVICE_SAVED", connectedService);
+                dispatch(
+                    "app/addMessage",
+                    { text: "Saved", type: "SUCCESS" },
+                    { root: true }
+                );
+
+                return connectedService;
+            }
+            return null;
+        },
+    },
+    getters: {
+
+    }
+};
+
+export default appStore;

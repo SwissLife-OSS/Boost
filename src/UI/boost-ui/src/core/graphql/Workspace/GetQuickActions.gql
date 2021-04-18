@@ -1,0 +1,8 @@
+query quickActions($directory: String) {
+  quickActions(directory: $directory) {
+    type
+    title
+    description
+    value
+  }
+}

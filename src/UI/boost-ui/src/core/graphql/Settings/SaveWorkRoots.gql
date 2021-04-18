@@ -1,0 +1,3 @@
+mutation saveWorkRoots($input: SaveWorkRootsInput!) {
+  saveWorkRoots(input: $input)
+}

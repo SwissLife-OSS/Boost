@@ -1,0 +1,20 @@
+{
+  "Links": [
+    {}
+  ],
+  "SuperBoosts": [
+    {
+      "Name": "Start Dev",
+      "Actions": [
+        {
+          "Type": "CODE_DIRECTORY",
+          "Value": "/src/UI/boost-ui"
+        },
+        {
+          "Type": "VS_SOLUTION",
+          "Value": "/src/Tool/Boost.sln"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+using System;
+using System.IO;
+using Boost.Core.GraphQL;
+using Boost.Core.Settings;
+using Boost.Data;
+using Boost.Git;
+using Boost.GraphQL;
+using Boost.Infrastructure;
+using Boost.Nuget;
+using Boost.Pipelines;
+using Boost.Security;
+using Boost.Settings;
+using Boost.Utils;
+using Boost.Workspace;
+using HotChocolate.Execution.Configuration;
+using LiteDB;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Boost
+{
+    public static class BoostServiceCollectionExtensions
+    {
+        public static IServiceCollection AddBoost(this IServiceCollection services)
+        {
+            services.AddBoostDataProtection();
+            services.AddSingleton<IDefaultShellService, DefaultShellService>();
+            services.AddSingleton<IWorkspaceService, WorkspaceService>();
+            services.AddSingleton<IPackageVersionService, PackageVersionService>();
+            services.AddSingleton<IEncodingService, EncodingService>();
+            services.AddSingleton<ITokenAnalyzer, TokenAnalyzer>();
+            services.AddSingleton<IBoostApplicationContext, BoostApplicationContext>();
+            services.AddSingleton<ISettingsStore, SettingsStore>();
+            services.AddSingleton<IUserSettingsManager, UserSettingsManager>();
+            services.AddSingleton<IConnectedServiceManager, ConnectedServiceManager>();
+            services.AddSingleton<IGitRemoteSearchService, GitRemoteSearchService>();
+            services.AddSingleton<IGitRemoteClientFactory, GitRemoteClientFactory>();
+            services.AddSingleton<IGitRemoteService, GitRemoteService>();
+            services.AddSingleton<LocalRepositoryIndexer>();
+            services.AddSingleton<IGitLocalRepositoryService, GitLocalRepositoryService>();
+            services.AddSingleton<IPipelinesService, PipelinesService>();
+            services.AddSingleton<IFileContentTypeHandler, DefaultContentTypeHandler>();
+            services.AddSingleton<IFileContentTypeHandler, ImageContentTypeHandler>();
+            services.AddSingleton<IFileContentTypeHandler, DllContentTypeHandler>();
+            services.AddNuget();
+
+            services.AddHttpClient("IDENTITY", (p, c) =>
+            {
+                BoostOptions options = p.GetRequiredService<BoostOptions>();
+                c.BaseAddress = new Uri(options.Security.Authority);
+            });
+
+            services.AddSingleton<IIdentityService, IdentityService>();
+            services.AddSingleton<IBoostDbContext>(c =>
+                new BoostDbContext(
+                    new LiteDatabase(Path.Combine(SettingsStore.GetUserDirectory(), "boost.db"))
+               ));
+
+            return services;
+        }
+
+        public static IServiceCollection AddBoostDataProtection(this IServiceCollection services)
+        {
+            IDataProtectionBuilder? dpBuilder = services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("TTTT"))
+                .SetApplicationName("Boost")
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+                
+            return services;
+        }
+
+        public static IServiceCollection AddNuget(this IServiceCollection services)
+        {
+            services.AddSingleton<INugetService, NugetService>();
+            services.AddSingleton<NugetPackageSourceFactory>();
+
+            return services;
+        }
+
+        public static IRequestExecutorBuilder AddBoostTypes(
+            this IRequestExecutorBuilder builder)
+        {
+            builder
+                .AddType<BoostQueries>()
+                .AddType<SettingsQueries>()
+                .AddType<PipelinesQueries>()
+                .AddType<WorkspaceQueries>()
+                .AddType<WorkspaceMutations>()
+                .AddType<ShellMutations>()
+                .AddType<UtilsQueries>()
+                .AddType<GitQueries>()
+                .AddType<SecurityQueries>()
+                .AddType<GitMutations>()
+                .AddType<SettingsMutations>()
+                .AddType<GitRemoteRepositoryType>()
+                .AddType<LocalGitRepositoryType>()
+                .AddType<PipelineType>()
+                .AddDataLoader<ConnectedServiceByIdDataLoader>();
+
+            return builder;
+        }
+    }
+}

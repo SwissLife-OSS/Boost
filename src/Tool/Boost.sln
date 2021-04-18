@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31004.235
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{7447A197-813E-4A39-B6AA-E1C79463CCF2}"
+	ProjectSection(SolutionItems) = preProject
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\Versions.props = ..\Versions.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{C4666F39-9BB5-4AE6-B43B-CAE805827442}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\global.json = ..\..\global.json
+		..\..\Publish-Nuget.ps1 = ..\..\Publish-Nuget.ps1
+		..\..\Publish-UI.ps1 = ..\..\Publish-UI.ps1
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.Abstractions", "src\Boost.Abstractions\Boost.Abstractions.csproj", "{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.Core", "src\Boost.Core\Boost.Core.csproj", "{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.Tool", "src\Boost.Tool\Boost.Tool.csproj", "{365CF44B-CCDD-440B-BE5A-7A98EF81279B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.Snapshooter", "src\Boost.Snapshooter\Boost.Snapshooter.csproj", "{EAB7F2F2-5556-4EE2-861C-246AAC8252FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.AzureDevOps", "src\Boost.AzureDevOps\Boost.AzureDevOps.csproj", "{5EA87CC9-9814-4B72-801D-EE998B8CA9E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.GitHub", "src\Boost.GitHub\Boost.GitHub.csproj", "{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{365CF44B-CCDD-440B-BE5A-7A98EF81279B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{365CF44B-CCDD-440B-BE5A-7A98EF81279B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{365CF44B-CCDD-440B-BE5A-7A98EF81279B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{365CF44B-CCDD-440B-BE5A-7A98EF81279B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE8CFFC2-C2E6-4F07-84BA-B42CC265CFCE} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{DB9A44EE-7737-4C8B-8DF9-7BF34FD45D56} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{365CF44B-CCDD-440B-BE5A-7A98EF81279B} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C272342-7FEE-44B1-BE82-05006C5CA7F9}
+	EndGlobalSection
+EndGlobal

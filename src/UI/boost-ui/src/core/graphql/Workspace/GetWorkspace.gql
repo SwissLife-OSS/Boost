@@ -1,0 +1,10 @@
+query workspace {
+  workspace {
+    currentDirectory
+    files {
+      name
+      path
+      type
+    }
+  }
+}

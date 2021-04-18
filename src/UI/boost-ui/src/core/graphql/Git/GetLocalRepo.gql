@@ -1,0 +1,42 @@
+query getLocalRepo($id: String) {
+  localGitRepository(id: $id) {
+    id
+    name
+    workingDirectory
+    readme
+    branches {
+      name
+    }
+    tags {
+      name
+    }
+    head {
+      aheadBy
+      behindBy
+      name
+      message
+      sha
+    }
+    commits(top: 3) {
+      createdAt
+      message
+      author
+      sha
+    }
+    remoteReference {
+      url
+    }
+
+    remote {
+      id
+      name
+      fullName
+      webUrl
+      service {
+        type
+        id
+        name
+      }
+    }
+  }
+}

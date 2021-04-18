@@ -1,0 +1,7 @@
+query snapshotContent($input: GetSnapshooterSnapshotInput!) {
+  snapshooterSnapshot(input: $input) {
+    name
+    snapshot
+    mismatch
+  }
+}

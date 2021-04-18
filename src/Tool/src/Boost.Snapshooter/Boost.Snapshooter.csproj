@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Boost.Snapshooter</AssemblyName>
+    <RootNamespace>Boost.Snapshooter</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
+    <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

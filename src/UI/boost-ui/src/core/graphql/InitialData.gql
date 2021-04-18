@@ -1,0 +1,16 @@
+query initalData {
+  userSettings {
+    defaultShell
+    workRoots {
+      name
+      path
+      isDefault
+    }
+  }
+
+  appliation {
+    workingDirectory
+    configurationRequired
+    version
+  }
+}

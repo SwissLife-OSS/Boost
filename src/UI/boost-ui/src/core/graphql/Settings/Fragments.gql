@@ -1,0 +1,10 @@
+fragment ConnectedService on ConnectedService {
+  id
+  name
+  type
+  defaultWorkRoot
+  properties {
+    name
+    value
+  }
+}

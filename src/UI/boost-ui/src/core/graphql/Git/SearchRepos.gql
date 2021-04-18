@@ -1,0 +1,18 @@
+
+query searchRepos($input: SearchRepositoriesInput!){
+
+  searchRepositories(input:$input){
+    id
+    name
+    fullName
+    url
+    webUrl
+    service
+    {
+      id
+      name
+      type
+    }
+  }
+
+}

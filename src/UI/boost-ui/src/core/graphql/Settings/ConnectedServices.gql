@@ -1,0 +1,12 @@
+query connectedService {
+  connectedServiceTypes {
+    name
+  }
+
+  connectedServices{
+    id
+    name
+    type
+    defaultWorkRoot
+  }
+}

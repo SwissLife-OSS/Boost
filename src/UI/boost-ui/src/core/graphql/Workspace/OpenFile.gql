@@ -1,0 +1,3 @@
+mutation openFile($fileName: String!) {
+  openFile(fileName: $fileName)
+}

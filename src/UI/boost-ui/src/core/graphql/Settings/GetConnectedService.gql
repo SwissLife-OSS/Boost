@@ -1,0 +1,7 @@
+#import "./Fragments.gql"
+
+query getConnectedService($id: Uuid!) {
+  connectedService(id: $id) {
+    ...ConnectedService
+  }
+}

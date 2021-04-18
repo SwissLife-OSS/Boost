@@ -1,0 +1,12 @@
+query snapshooter($withMismatchOnly: Boolean!) {
+  snapshooterDirectories(withMismatchOnly: $withMismatchOnly) {
+    name
+    fullName
+    snapshots {
+      fileName
+      hasMismatch
+      missmatchFileName
+      name
+    }
+  }
+}

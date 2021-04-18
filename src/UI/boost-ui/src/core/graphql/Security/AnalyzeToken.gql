@@ -1,0 +1,13 @@
+query analyzeToken($token: String!) {
+  analyzeToken(token: $token) {
+    validFrom
+    validTo
+    expiresIn
+    subject
+    claims {
+      type
+      value
+      category
+    }
+  }
+}

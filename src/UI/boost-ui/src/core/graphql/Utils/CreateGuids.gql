@@ -1,0 +1,3 @@
+query createGuids($count: Int, $format: String) {
+  createGuids(count: $count, format: $format)
+}

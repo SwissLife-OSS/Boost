@@ -1,0 +1,3 @@
+query decode($value: String!, $type: EncodingType!) {
+  decode(value: $value, type: $type)
+}

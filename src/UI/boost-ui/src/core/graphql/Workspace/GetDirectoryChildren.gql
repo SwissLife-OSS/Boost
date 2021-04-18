@@ -1,0 +1,7 @@
+query directoryChildren($path: String!) {
+  directoryChildren(path: $path) {
+    name
+    path
+    type
+  }
+}

@@ -1,0 +1,9 @@
+#import "./Fragments.gql"
+
+mutation saveConnectedService($input: SaveConnectedServiceInput!) {
+  saveConnectedService(input: $input) {
+    connectedService {
+      ...ConnectedService
+    }
+  }
+}

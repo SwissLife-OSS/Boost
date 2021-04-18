@@ -1,0 +1,6 @@
+mutation cloneRepository($input: CloneGitRepositoryInput!) {
+  cloneRepository(input: $input) {
+    directory
+    errorCode
+  }
+}

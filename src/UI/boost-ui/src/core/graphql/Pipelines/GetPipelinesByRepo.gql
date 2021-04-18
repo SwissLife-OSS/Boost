@@ -1,0 +1,21 @@
+query pipelinesByRepo($input: GetPipelinesInput!) {
+  pipelines(input: $input) {
+    id
+    name
+    serviceId
+    type
+    webUrl
+    runs(top: 1) {
+      id
+      title
+      startedAt
+      finishedAt
+      status
+      result
+      webLink
+      requestedFor
+      reason
+      name
+    }
+  }
+}

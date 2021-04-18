@@ -1,0 +1,3 @@
+mutation openInCode($input: OpenInVSCodeInput!) {
+  openInVSCode(input: $input)
+}

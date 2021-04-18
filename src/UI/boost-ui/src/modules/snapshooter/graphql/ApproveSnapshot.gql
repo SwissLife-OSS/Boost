@@ -1,0 +1,9 @@
+mutation approveSnapshot($input: ApproveSnapshotInput!) {
+  approveSnapshot(input: $input) {
+    snapshot {
+      name
+      snapshot
+      mismatch
+    }
+  }
+}

@@ -1,0 +1,3 @@
+query encode($value: String!, $type: EncodingType!) {
+  encode(value: $value, type: $type)
+}

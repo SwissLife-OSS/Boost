@@ -1,0 +1,3 @@
+mutation exucuteFileAction($input: ExecuteFileActionInput!) {
+  executeFileAction(input: $input)
+}

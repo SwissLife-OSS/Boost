@@ -1,0 +1,23 @@
+<template>
+  <sub-navigation-bar :tabs="tabs"></sub-navigation-bar>
+</template>
+
+<script>
+import SubNavigationBar from "../Common/SubNavigationBar.vue";
+export default {
+  components: { SubNavigationBar },
+  created() {
+    if (this.$route.name === "Security") {
+      this.$router.push({ name: this.tabs[0].route });
+    }
+  },
+  data() {
+    return {
+      tabs: [
+        { name: "Token Analyzer", route: "Security.TokenAnalyzer" },
+        { name: "OAuth", route: "Security.OAuth" },
+      ],
+    };
+  },
+};
+</script>
