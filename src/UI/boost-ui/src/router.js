@@ -12,6 +12,7 @@ import GitRemoteRepoPage from "./core/components/Git/GitRemoteRepoPage"
 import LocalRepositoriesPage from "./core/components/Git/LocalRepositoriesPage"
 import GitLocalRepoPage from "./core/components/Git/GitLocalRepoPage"
 import GitPage from "./core/components/Git/GitPage"
+import IndexLocalPage from "./core/components/Git/IndexLocalPage"
 import UtilsPage from "./core/components/Utils/UtilsPage"
 import EncodingPage from "./core/components/Utils/EncodingPage"
 import SecurityUtilsPage from "./core/components/Utils/SecurityUtilsPage"
@@ -98,6 +99,11 @@ const routes = [
         path: "/git/current",
         name: "Git.Current",
         component: GitLocalRepoPage,
+      },
+      {
+        path: "/git/index",
+        name: "Git.Index",
+        component: IndexLocalPage,
       }
     ]
   },

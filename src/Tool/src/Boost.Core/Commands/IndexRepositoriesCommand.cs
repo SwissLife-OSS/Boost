@@ -29,7 +29,10 @@ namespace Boost.Commands
 
             foreach (WorkRoot wr in settings.WorkRoots)
             {
-                await _localRepositoryIndexer.IndexWorkRootAsync(wr, CommandAborded);
+                await _localRepositoryIndexer.IndexWorkRootAsync(
+                    wr,
+                    onProgress: null,
+                    CommandAborded);
             }
         }
     }

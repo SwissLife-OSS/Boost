@@ -36,7 +36,7 @@ namespace Boost
             services.AddSingleton<IGitRemoteSearchService, GitRemoteSearchService>();
             services.AddSingleton<IGitRemoteClientFactory, GitRemoteClientFactory>();
             services.AddSingleton<IGitRemoteService, GitRemoteService>();
-            services.AddSingleton<LocalRepositoryIndexer>();
+            services.AddSingleton<ILocalRepositoryIndexer, LocalRepositoryIndexer>();
             services.AddSingleton<IGitLocalRepositoryService, GitLocalRepositoryService>();
             services.AddSingleton<IPipelinesService, PipelinesService>();
             services.AddSingleton<IFileContentTypeHandler, DefaultContentTypeHandler>();
