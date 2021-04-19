@@ -28,6 +28,7 @@ export default {
       this.servers.push(server);
     },
     async onStop(server) {
+      console.log(server.id);
       await stopAuthServer(server.id);
 
       const index = this.servers.indexOf((x) => x.id == server.id);

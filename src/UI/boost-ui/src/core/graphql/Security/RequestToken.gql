@@ -1,0 +1,26 @@
+mutation requestToken($input: TokenRequestInput!) {
+  requestToken(input: $input) {
+
+    result {
+      isSuccess
+      errorMessage
+      accessToken {
+        ...Token
+      }
+    }
+  }
+}
+
+fragment Token on TokenModel {
+  token
+  tokenType
+  claims {
+    category
+    type
+    value
+  }
+  expiresIn
+  validFrom
+  validTo
+  subject
+}

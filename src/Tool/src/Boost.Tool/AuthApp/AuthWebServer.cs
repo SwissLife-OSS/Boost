@@ -86,7 +86,7 @@ namespace Boost.Tool.AuthApp
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             NameClaimType = JwtClaimTypes.Name,
-                            RoleClaimType = JwtClaimTypes.Role,
+                            RoleClaimType = JwtClaimTypes.Role, 
                         };
                     });
 

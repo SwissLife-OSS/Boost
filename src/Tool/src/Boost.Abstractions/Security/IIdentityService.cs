@@ -11,6 +11,7 @@ namespace Boost.Security
         Task<UserInfoResult> GetUserInfoAsync(
             string token,
             CancellationToken cancellationToken);
+        Task<RequestTokenResult> RequestTokenAsync(TokenRequestData request, CancellationToken cancellationToken);
     }
 
     public record UserInfoResult(string? Error)

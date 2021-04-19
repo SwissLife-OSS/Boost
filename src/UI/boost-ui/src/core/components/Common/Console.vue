@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-2" color="grey darken-4" :loading="true" :height="height">
+  <v-card class="mx-2" color="grey darken-3" :loading="true" :height="height">
     <v-card-text class="console">
       <v-container
         fluid
@@ -35,8 +35,6 @@ export default {
   watch: {
     messages: function () {
       const lastElement = this.$el.querySelector(".container *:last-child");
-
-      console.log(lastElement);
       if (lastElement) {
         lastElement.scrollIntoView({ behavior: "smooth" });
       }

@@ -47,7 +47,8 @@ namespace Boost
             services.AddNuget();
 
             services.AddHttpClient("IDENTITY");
-
+            services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
+            services.AddSingleton<IIdentityRequestStore, LocalIdentityRequestStore>();
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContext>(c =>
                 new BoostDbContext(

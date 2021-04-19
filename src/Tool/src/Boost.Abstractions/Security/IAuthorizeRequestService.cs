@@ -21,4 +21,19 @@ namespace Boost.Security
     {
         public int Port { get; init; } = 3010;
     }
+
+    public record TokenRequestData(
+        string Authority,
+        string ClientId,
+        string Secret,
+        string GrantType,
+        IEnumerable<string> Scopes);
+
+
+    public record RequestTokenResult(bool IsSuccess)
+    {
+        public TokenModel? AccessToken { get; set; }
+
+        public string? ErrorMessage { get; set; }
+    };
 }
