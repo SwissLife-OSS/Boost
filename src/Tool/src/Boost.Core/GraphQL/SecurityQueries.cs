@@ -24,5 +24,11 @@ namespace Boost.GraphQL
         {
             return identityService.GetUserInfoAsync(token, cancellationToken);
         }
+
+        public IEnumerable<RunningWebServerInfo> GetRunningAuthServers(
+            [Service] IAuthWebServer authWebServer)
+        {
+            return authWebServer.GetRunningServers();
+        }
     }
 }

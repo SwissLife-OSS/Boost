@@ -1,0 +1,37 @@
+query authSession {
+  authenticationSession {
+    isAuthenticated
+    properties {
+      key
+      value
+    }
+    accessToken {
+      ...Token
+    }
+    idToken {
+      ...Token
+    }
+    userInfo {
+      error
+      claims {
+        type
+        value
+      }
+    }
+    refreshToken
+  }
+}
+
+fragment Token on TokenModel {
+  token
+  tokenType
+  claims {
+    category
+    type
+    value
+  }
+  expiresIn
+  validFrom
+  validTo
+  subject
+}

@@ -28,6 +28,15 @@ namespace Boost.Security
 
         public TokenModel? Analyze(string token)
         {
+            if (!token.Contains("."))
+            {
+                return new TokenModel
+                {
+                    Token = token,
+                    TokenType = "Reference"
+                };
+            }
+
             var handler = new JwtSecurityTokenHandler();
             JwtSecurityToken? jwt = handler.ReadToken(token) as JwtSecurityToken;
 
@@ -35,6 +44,8 @@ namespace Boost.Security
             {
                 var model = new TokenModel
                 {
+                    Token = token,
+                    TokenType = "Jwt",
                     ValidFrom = jwt.ValidFrom.ToLocalTime(),
                     ValidTo = jwt.ValidTo.ToLocalTime(),
                     Claims = GetClaims(jwt.Claims)

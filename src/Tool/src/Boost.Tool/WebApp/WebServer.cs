@@ -5,7 +5,9 @@ using Boost.AzureDevOps;
 using Boost.Data;
 using Boost.GitHub;
 using Boost.GraphQL;
+using Boost.Security;
 using Boost.Tool;
+using Boost.Tool.AuthApp;
 using Boost.Web;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.AspNetCore.Hosting;
@@ -69,6 +71,8 @@ namespace Boost
                     services.AddSnapshooter();
                     services.AddSingleton<IWebShellFactory, WebShellFactory>();
                     services.AddHttpClient();
+
+                    services.AddSingleton<IAuthWebServer, AuthWebServer>();
 
                     services.AddSingleton(
                         _commandContext.Services.GetRequiredService<IBoostDbContext>());
