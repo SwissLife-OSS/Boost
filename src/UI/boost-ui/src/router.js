@@ -19,6 +19,8 @@ import SecurityUtilsPage from "./core/components/Utils/SecurityUtilsPage"
 import Base64ToFilePage from "./core/components/Utils/Base64ToFilePage"
 import SecurityPage from "./core/components/Security/SecurityPage"
 import TokenAnalyzerPage from "./core/components/Security/TokenAnalyzerPage"
+import TokenRequestPage from "./core/components/Security/TokenRequestPage"
+import AuthorizePage from "./core/components/Security/AuthorizePage"
 
 // Avoid Redundant route exception
 const originalPush = VueRouter.prototype.push;
@@ -118,9 +120,14 @@ const routes = [
         component: TokenAnalyzerPage,
       },
       {
-        path: "security/oauth",
-        name: "Security.OAuth",
-        component: TokenAnalyzerPage,
+        path: "security/authorize",
+        name: "Security.Authorize",
+        component: AuthorizePage,
+      },
+      {
+        path: "security/tokenrequest",
+        name: "Security.TokenRequest",
+        component: TokenRequestPage,
       },
     ]
   },

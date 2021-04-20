@@ -1,0 +1,3 @@
+mutation stopAuthServer($id: Uuid!) {
+  stopAuthServer(id: $id)
+}

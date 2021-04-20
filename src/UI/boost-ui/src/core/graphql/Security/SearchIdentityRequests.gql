@@ -1,0 +1,10 @@
+query searchIdentityRequests($input: SearchIdentityRequestInput!) {
+  searchIdentityRequests(input: $input) {
+    id
+    name
+    modifiedAt
+    createdAt
+    tags
+    type
+  }
+}

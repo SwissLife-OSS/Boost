@@ -15,7 +15,8 @@ export default {
     return {
       tabs: [
         { name: "Token Analyzer", route: "Security.TokenAnalyzer" },
-        { name: "OAuth", route: "Security.OAuth" },
+        { name: "Authorize (OIDC)", route: "Security.Authorize" },
+        { name: "Token requestor", route: "Security.TokenRequest" },
       ],
     };
   },

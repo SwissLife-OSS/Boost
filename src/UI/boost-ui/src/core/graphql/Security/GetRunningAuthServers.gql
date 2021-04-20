@@ -1,0 +1,8 @@
+query getRunningAuthServers {
+  runningAuthServers {
+    id
+    startedAt
+    title
+    url
+  }
+}

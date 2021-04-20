@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,28 @@ namespace Boost.GraphQL
             CancellationToken cancellationToken)
         {
             return identityService.GetUserInfoAsync(token, cancellationToken);
+        }
+
+        public IEnumerable<RunningWebServerInfo> GetRunningAuthServers(
+            [Service] IAuthWebServer authWebServer)
+        {
+            return authWebServer.GetRunningServers();
+        }
+
+        public Task<IEnumerable<IdentityRequestItem>> SearchIdentityRequestsAsync(
+            SearchIdentityRequest input,
+            [Service] IIdentityRequestStore store,
+            CancellationToken cancellationToken)
+        {
+            return store.SearchAsync(input, cancellationToken);
+        }
+
+        public Task<IdentityRequestItem> GetIdentityRequestAsync(
+            Guid id,
+            [Service] IIdentityRequestStore store,
+            CancellationToken cancellationToken)
+        {
+            return store.GetByIdAsync(id, cancellationToken);
         }
     }
 }

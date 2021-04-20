@@ -43,14 +43,12 @@ namespace Boost
             services.AddSingleton<IFileContentTypeHandler, ImageContentTypeHandler>();
             services.AddSingleton<IFileContentTypeHandler, PdfContentTypeHandler>();
             services.AddSingleton<IFileContentTypeHandler, DllContentTypeHandler>();
+            services.AddSingleton<IAuthorizeRequestService, AuthorizeRequestService>();
             services.AddNuget();
 
-            services.AddHttpClient("IDENTITY", (p, c) =>
-            {
-                BoostOptions options = p.GetRequiredService<BoostOptions>();
-                c.BaseAddress = new Uri(options.Security.Authority);
-            });
-
+            services.AddHttpClient("IDENTITY");
+            services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
+            services.AddSingleton<IIdentityRequestStore, LocalIdentityRequestStore>();
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContext>(c =>
                 new BoostDbContext(
@@ -91,6 +89,7 @@ namespace Boost
                 .AddType<UtilsQueries>()
                 .AddType<GitQueries>()
                 .AddType<SecurityQueries>()
+                .AddType<SecurityMutations>()
                 .AddType<GitMutations>()
                 .AddType<SettingsMutations>()
                 .AddType<GitRemoteRepositoryType>()

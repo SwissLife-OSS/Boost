@@ -16,8 +16,7 @@ namespace Boost
     public static class AuthenticationExtensions
     {
         public static AuthenticationBuilder AddAuthentication(
-            this IServiceCollection services,
-            BoostOptions boostOptions)
+            this IServiceCollection services)
         {
             return services.AddAuthentication(options =>
             {
@@ -27,13 +26,13 @@ namespace Boost
             .AddCookie(options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                options.Cookie.Name = $"boost-id-{boostOptions.Environment}";
+                options.Cookie.Name = $"boost-id";
             })
             .AddOpenIdConnect("oidc", options =>
             {
-                options.Authority = boostOptions.Security.Authority;
-                options.ClientSecret = boostOptions.Security.ClientSecret;
-                options.ClientId = boostOptions.Security.ClientId;
+                options.Authority = "";
+                options.ClientSecret = "";
+                options.ClientId = "";
                 options.ResponseType = "code";
 
                 options.Scope.Clear();

@@ -1,0 +1,11 @@
+mutation saveIdentityRequest($input: SaveIdentityRequestInput!) {
+  saveIdentityRequest(input: $input) {
+    item {
+      id
+      name
+      type
+      createdAt
+      modifiedAt
+    }
+  }
+}

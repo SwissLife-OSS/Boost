@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Boost.Git;
+using Boost.Security;
 using LiteDB;
 
 namespace Boost.Data
@@ -18,5 +19,8 @@ namespace Boost.Data
 
         public ILiteCollection<GitRepositoryIndex> GitRepos
             => _db.GetCollection<GitRepositoryIndex>("GitRepos");
+
+        public ILiteCollection<IdentityRequestItem> IdentityRequest
+             => _db.GetCollection<IdentityRequestItem>("IdentityRequests");
     }
 }

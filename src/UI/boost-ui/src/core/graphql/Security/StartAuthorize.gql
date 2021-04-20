@@ -1,0 +1,10 @@
+mutation startAuthorize($input: AuthorizeRequestInput!) {
+  startAuthorizationRequest(input: $input) {
+    server {
+      id
+      title
+      url
+      startedAt
+    }
+  }
+}
