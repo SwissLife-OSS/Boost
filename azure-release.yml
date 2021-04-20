@@ -49,6 +49,21 @@ stages:
         projects: '**/*.sln'
         arguments: '-c Release'
 
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/*.sln'
+        configuration: 'Release'
+        packDirectory: './nupkg'
+        includesymbols: true
+        versioningScheme: 'off'
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'nupkg'
+        artifact: 'packages'
+        publishLocation: 'pipeline'
+
   - job: Build_UI
     displayName: Build UI Tool
     steps:
