@@ -59,7 +59,7 @@ stages:
         packDirectory: './nupkg'
         includesymbols: true
         versioningScheme: 'byEnvVar'
-        versionEnvVar: '$(Build.SourceBranchName)'
+        versionEnvVar: 'Build.SourceBranchName'
 
     - task: PublishPipelineArtifact@1
       inputs:
