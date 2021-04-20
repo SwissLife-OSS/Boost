@@ -1,0 +1,19 @@
+query getIdentityRequest($id: Uuid!) {
+  identityRequest(id: $id) {
+    id
+    name
+    modifiedAt
+    createdAt
+    tags
+    type
+    data {
+      authority
+      clientId
+      secret
+      grantType
+      port
+      scopes
+      usePkce
+    }
+  }
+}

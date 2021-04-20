@@ -8,6 +8,6 @@ namespace Boost.Data
     {
         ILiteCollection<GitRepositoryIndex> GitRepos { get; }
 
-        ILiteCollection<IdentityRequest> IdentityRequest { get; }
+        ILiteCollection<IdentityRequestItem> IdentityRequest { get; }
     }
 }

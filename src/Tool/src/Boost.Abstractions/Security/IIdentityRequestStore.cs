@@ -1,34 +1,31 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Boost.Security
 {
     public interface IIdentityRequestStore
     {
-        IdentityRequest Save<T>(SaveIdentityRequest<T> request) where T : class;
-        IEnumerable<IdentityRequest> SearchRequest(SearchIdentityRequest searchRequest);
+        Task<IdentityRequestItem> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<IdentityRequestItem> SaveAsync(
+            SaveIdentityRequestInput request,
+            CancellationToken cancellationToken);
+
+        Task<IEnumerable<IdentityRequestItem>> SearchAsync(
+            SearchIdentityRequest searchRequest,
+            CancellationToken cancellationToken);
     }
 
-    public class SaveIdentityRequest<T>
-        where T : class
+    public record SaveIdentityRequestInput(
+        IdentityRequestType Type,
+        string Name)
     {
-        public Guid? Id { get; set; }
+        public Guid? Id { get; init; }
 
-        public IdentityRequestType Type { get; set; }
+        public IEnumerable<string>? Tags { get; set; } = new List<string>();
 
-        public string Name { get; set; }
-
-        public IEnumerable<string> Tags { get; set; } = new List<string>();
-
-        public T Data { get; set; }
-
-        public static SaveIdentityRequest<T> Create(T data)
-        {
-            return new SaveIdentityRequest<T>
-            {
-                Data = data
-            };
-        }
+        public IdentityRequestItemData Data { get; init; } = new IdentityRequestItemData();
     }
 
 
@@ -39,7 +36,7 @@ namespace Boost.Security
         public string? Tag { get; init; }
     }
 
-    public class IdentityRequest
+    public class IdentityRequestItem
     {
         public Guid Id { get; set; }
 
@@ -51,7 +48,26 @@ namespace Boost.Security
 
         public DateTime CreatedAt { get; set; }
 
-        public byte[] Data { get; set; }
+        public DateTime ModifiedAt { get; set; }
+
+        public IdentityRequestItemData? Data { get; set; }
+    }
+
+    public class IdentityRequestItemData
+    {
+        public string Authority { get; set; }
+
+        public string ClientId { get; set; }
+
+        public string? Secret { get; set; }
+
+        public string? GrantType { get; set; }
+
+        public IEnumerable<string>? Scopes { get; set; }
+
+        public int? Port { get; set; }
+
+        public bool? UsePkce { get; set; }
     }
 
     public enum IdentityRequestType

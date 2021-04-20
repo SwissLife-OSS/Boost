@@ -7,12 +7,22 @@ namespace Boost.Infrastructure
 {
     public class NoOpDataProtector : IUserDataProtector
     {
-        public byte[] Encrypt(byte[] data)
+        public byte[] Protect(byte[] data)
         {
             return data;
         }
 
-        public byte[] Descypt(byte[] data)
+        public string Protect(string value)
+        {
+            return new string(value.Reverse().ToArray());
+        }
+
+        public string UnProtect(string value)
+        {
+            return new string(value.Reverse().ToArray());
+        }
+
+        public byte[] UnProtect(byte[] data)
         {
             return data;
         }

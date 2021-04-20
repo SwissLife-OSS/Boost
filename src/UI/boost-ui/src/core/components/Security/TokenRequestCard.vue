@@ -50,8 +50,10 @@
       <v-row dense> </v-row>
     </v-card-text>
     <v-card-actions>
-      <v-btn text @click="onSave">Save request</v-btn>
-
+      <save-identity-request-menu
+        :data="request"
+        :request="save"
+      ></save-identity-request-menu>
       <v-spacer></v-spacer>
       <v-btn color="primary" @click="onRequest">Request token</v-btn>
     </v-card-actions>
@@ -59,8 +61,10 @@
 </template>
 
 <script>
-import { requestToken, saveRequest } from "../../tokenService";
+import { requestToken } from "../../tokenService";
+import SaveIdentityRequestMenu from "./SaveIdentityRequestMenu.vue";
 export default {
+  components: { SaveIdentityRequestMenu },
   data() {
     return {
       request: {
@@ -70,6 +74,12 @@ export default {
         scopes: [],
         grantType: "client_credentials",
       },
+      save: {
+        id: null,
+        name: "",
+        tags: [],
+        type: "TOKEN",
+      },
       grantTypes: ["client_credentials"],
     };
   },
@@ -78,15 +88,6 @@ export default {
       const result = await requestToken(this.request);
 
       this.$emit("completed", result.data.requestToken.result);
-    },
-    async onSave() {
-      let input = Object.assign({}, this.request);
-      input.name = "Test 1";
-      input.type = "TOKEN";
-
-      const result = await saveRequest(input);
-
-      console.log(result);
     },
   },
 };

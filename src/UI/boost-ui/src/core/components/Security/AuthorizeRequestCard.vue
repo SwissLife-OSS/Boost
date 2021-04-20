@@ -53,6 +53,10 @@
       </v-row>
     </v-card-text>
     <v-card-actions>
+      <save-identity-request-menu
+        :data="request"
+        :request="save"
+      ></save-identity-request-menu>
       <v-spacer></v-spacer>
       <v-btn color="primary" @click="onClickAuthorize">Authorize</v-btn>
     </v-card-actions>
@@ -60,8 +64,10 @@
 </template>
 
 <script>
+import SaveIdentityRequestMenu from "./SaveIdentityRequestMenu.vue";
 import { startAuthorize } from "../../tokenService";
 export default {
+  components: { SaveIdentityRequestMenu },
   data() {
     return {
       request: {
@@ -71,6 +77,12 @@ export default {
         pkce: true,
         scopes: ["openid", "profile"],
         port: 3010,
+      },
+      save: {
+        id: null,
+        name: "",
+        tags: [],
+        type: "AUTHORIZE",
       },
     };
   },

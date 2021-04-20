@@ -20,7 +20,7 @@ namespace Boost.Data
         public ILiteCollection<GitRepositoryIndex> GitRepos
             => _db.GetCollection<GitRepositoryIndex>("GitRepos");
 
-        public ILiteCollection<IdentityRequest> IdentityRequest
-             => _db.GetCollection<IdentityRequest>("IdentityRequests");
+        public ILiteCollection<IdentityRequestItem> IdentityRequest
+             => _db.GetCollection<IdentityRequestItem>("IdentityRequests");
     }
 }

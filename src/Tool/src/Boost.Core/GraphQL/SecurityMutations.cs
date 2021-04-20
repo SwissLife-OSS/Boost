@@ -72,32 +72,15 @@ namespace Boost.GraphQL
             return new RequestTokenPayload(tokenResult);
         }
 
-        public Task<Guid> SaveIdentityRequestAsync(
+        public async Task<SaveIdentityRequestPayload> SaveIdentityRequestAsync(
             [Service] IIdentityRequestStore requestStore,
             SaveIdentityRequestInput input,
             CancellationToken cancellationToken)
         {
-            if (input.Type == IdentityRequestType.Token)
-            {
-                var data = new TokenRequestData(
-                    input.Authority,
-                    input.ClientId,
-                    input.Secret,
-                    input.GrantType!,
-                    input.Scopes ?? new List<string>());
+            IdentityRequestItem item = await requestStore
+                .SaveAsync(input, cancellationToken);
 
-                var saveRequest = SaveIdentityRequest<TokenRequestData>.Create(data);
-
-                saveRequest.Id = input.Id;
-                saveRequest.Name = input.Name;
-                saveRequest.Tags = input.Tags ?? Array.Empty<string>();
-                saveRequest.Type = input.Type;
-                saveRequest.Data = data;
-
-                requestStore.Save(saveRequest);
-            }
-
-            return Task.FromResult(Guid.NewGuid());
+            return new SaveIdentityRequestPayload(item);
         }
     }
 
@@ -128,20 +111,17 @@ namespace Boost.GraphQL
         public RunningWebServerInfo Server { get; }
     }
 
-    public record SaveIdentityRequestInput(
-        IdentityRequestType Type,
-        string Name,
-        string Authority,
-        string ClientId)
+    public class SaveIdentityRequestPayload
     {
-        public Guid? Id { get; init; }
-        public string? Secret { get; init; }
-        public string? GrantType { get; init; }
-        public IEnumerable<string>? Scopes { get; init; }
-        public IEnumerable<string>? Tags { get; init; }
-        public bool? Pkce { get; init; }
-        public int? Port { get; init; }
+        public SaveIdentityRequestPayload(IdentityRequestItem item)
+        {
+            Item = item;
+        }
+
+        public IdentityRequestItem Item { get; }
     }
+
+
 
     public class RequestTokenPayload
     {
