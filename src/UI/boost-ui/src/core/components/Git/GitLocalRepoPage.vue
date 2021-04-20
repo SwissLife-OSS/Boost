@@ -85,7 +85,7 @@
             <v-tab-item>
               <commit-list
                 :height="cardHeight - 50"
-                :commits="repo.commits"
+                :commits="repo && repo.commits"
               ></commit-list>
             </v-tab-item>
             <v-tab-item>

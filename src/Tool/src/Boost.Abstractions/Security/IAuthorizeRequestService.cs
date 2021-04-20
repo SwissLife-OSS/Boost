@@ -17,7 +17,7 @@ namespace Boost.Security
         string ClienId,
         string Secret,
         IEnumerable<string> Scopes,
-        bool Pkce)
+        bool UsePkce)
     {
         public int Port { get; init; } = 3010;
     }

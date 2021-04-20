@@ -21,7 +21,7 @@ namespace Boost.GraphQL
                 input.ClientId,
                 input.Secret,
                 input.Scopes,
-                input.Pkce)
+                input.UsePkce)
             {
                 Port = input.Port
             };
