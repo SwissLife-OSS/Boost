@@ -44,19 +44,22 @@ stages:
         targetPath: 'src/Tool/src/Boost.Tool/AuthUI'
 
     - task: DotNetCoreCLI@2
+      displayName: dotnet build
       inputs:
         command: 'build'
         projects: '**/*.sln'
         arguments: '-c Release'
 
     - task: DotNetCoreCLI@2
+      displayName: Nuget pack
       inputs:
         command: 'pack'
         packagesToPack: '**/*.sln'
         configuration: 'Release'
         packDirectory: './nupkg'
         includesymbols: true
-        versioningScheme: 'off'
+        versioningScheme: 'byEnvVar'
+        versionEnvVar: '$(Build.SourceBranchName)'
 
     - task: PublishPipelineArtifact@1
       inputs:
