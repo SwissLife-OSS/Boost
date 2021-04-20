@@ -95,13 +95,12 @@ export default {
       if (saveAs === true) {
         input.id = null;
       }
-
-      console.log(input);
       const result = await saveRequest(input);
-
       const { item } = result.data.saveIdentityRequest;
       this.request.id = item.id;
       this.request.name = item.name;
+
+      this.$emit("saved", item);
     },
   },
 };

@@ -82,54 +82,15 @@ namespace Boost.GraphQL
 
             return new SaveIdentityRequestPayload(item);
         }
-    }
 
-    public record AuthorizeRequestInput(
-        string Authority,
-        string ClientId,
-        string Secret,
-        IEnumerable<string> Scopes,
-        bool Pkce)
-    {
-        public int Port { get; init; }
-    }
-
-    public record TokenRequestInput(
-        string Authority,
-        string ClientId,
-        string Secret,
-        string GrantType,
-        IEnumerable<string> Scopes);
-
-    public class StartAuthorizationRequestPayload
-    {
-        public StartAuthorizationRequestPayload(RunningWebServerInfo server)
+        public async Task<Guid> DeleteIdentityRequestAsync(
+            [Service] IIdentityRequestStore requestStore,
+            Guid id,
+            CancellationToken cancellationToken)
         {
-            Server = server;
+            await requestStore.DeleteAsync(id, cancellationToken);
+
+            return id;
         }
-
-        public RunningWebServerInfo Server { get; }
-    }
-
-    public class SaveIdentityRequestPayload
-    {
-        public SaveIdentityRequestPayload(IdentityRequestItem item)
-        {
-            Item = item;
-        }
-
-        public IdentityRequestItem Item { get; }
-    }
-
-
-
-    public class RequestTokenPayload
-    {
-        public RequestTokenPayload(RequestTokenResult token)
-        {
-            Result = token;
-        }
-
-        public RequestTokenResult Result { get; }
     }
 }

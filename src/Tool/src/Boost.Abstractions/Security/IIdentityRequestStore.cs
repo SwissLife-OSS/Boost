@@ -7,6 +7,7 @@ namespace Boost.Security
 {
     public interface IIdentityRequestStore
     {
+        Task DeleteAsync(Guid id, CancellationToken cancellationToken);
         Task<IdentityRequestItem> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task<IdentityRequestItem> SaveAsync(
             SaveIdentityRequestInput request,

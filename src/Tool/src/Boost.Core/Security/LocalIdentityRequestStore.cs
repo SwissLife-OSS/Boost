@@ -82,5 +82,12 @@ namespace Boost.Security
 
             return Task.FromResult(requests);
         }
+
+        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            _dbContext.IdentityRequest.Delete(id);
+
+            return Task.CompletedTask;
+        }
     }
 }
