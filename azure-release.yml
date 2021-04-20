@@ -48,9 +48,15 @@ stages:
       inputs:
         targetType: 'inline'
         script: 'yarn --cwd ./src/UI/boost-ui build'
+
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: 'ls -la src/Tool/src/Boost.Tool/UI'
+
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/src/Tool/src/Boost.Tool/UI'
+        targetPath: 'src/Tool/src/Boost.Tool/UI'
         artifact: 'ui-tool'
         publishLocation: 'pipeline'
 
@@ -68,6 +74,6 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: './src/Tool/src/Boost.Tool/AuthUI'
+        targetPath: 'src/Tool/src/Boost.Tool/AuthUI'
         artifact: 'ui-auth'
         publishLocation: 'pipeline'
