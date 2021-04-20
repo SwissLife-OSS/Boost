@@ -18,6 +18,10 @@ stages:
     vmImage: 'ubuntu-latest'
   jobs:
   - job: Build_Tool
+    dependsOn: 
+    - Build_UI
+    - Build_AuthUI
+
     displayName: Build Tool
     steps:
     - task: NuGetToolInstaller@1
@@ -64,6 +68,6 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Pipeline.Workspace)/src/Tool/src/Boost.Tool/AuthUI'
+        targetPath: './src/Tool/src/Boost.Tool/AuthUI'
         artifact: 'ui-auth'
         publishLocation: 'pipeline'
