@@ -31,6 +31,18 @@ stages:
         packageType: 'sdk'
         useGlobalJson: true
 
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'ui-tool'
+        targetPath: 'src/Tool/src/Boost.Tool/UI'
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'ui-auth'
+        targetPath: 'src/Tool/src/Boost.Tool/AuthUI'
+
     - task: DotNetCoreCLI@2
       inputs:
         command: 'build'
@@ -49,11 +61,6 @@ stages:
         targetType: 'inline'
         script: 'yarn --cwd ./src/UI/boost-ui build'
 
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'ls -la src/Tool/src/Boost.Tool/UI'
-
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: 'src/Tool/src/Boost.Tool/UI'
@@ -66,11 +73,11 @@ stages:
     - task: Bash@3
       inputs:
         targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/boost-ui'
+        script: 'yarn --cwd ./src/UI/auth-ui'
     - task: Bash@3
       inputs:
         targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/boost-ui build'
+        script: 'yarn --cwd ./src/UI/auth-ui build'
 
     - task: PublishPipelineArtifact@1
       inputs:
