@@ -108,45 +108,6 @@ namespace Boost.Commands
                 .GetWorkRootAsync(service?.DefaultWorkRoot, CommandAborded);
         }
 
-        private IEnumerable<string> RunGitCommand(string directory, params string[] commands)
-        {
-            var results = new List<string>();
-
-            foreach (var cmd in commands)
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.CreateNoWindow = true;
-                startInfo.FileName = @"git.exe";
-                startInfo.Arguments = cmd;
-                startInfo.UseShellExecute = false;
-                startInfo.RedirectStandardError = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.WorkingDirectory = directory;
-                startInfo.UseShellExecute = false;
-
-                Process? gitProcess = Process.Start(startInfo);
-
-                if (gitProcess is null)
-                {
-                    throw new ApplicationException("Process is null");
-                }
-
-                gitProcess.OutputDataReceived += DataRecevied;
-                gitProcess.ErrorDataReceived += DataRecevied;
-
-                gitProcess.BeginOutputReadLine();
-                gitProcess.BeginErrorReadLine();
-
-                gitProcess.WaitForExit();
-                if (gitProcess.ExitCode != 0)
-                {
-                    throw new ApplicationException($"ExitCode {gitProcess.ExitCode}");
-                }
-                gitProcess.Close();
-            }
-            return results;
-        }
-
         private void DataRecevied(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine(e.Data);
