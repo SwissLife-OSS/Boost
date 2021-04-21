@@ -6,7 +6,7 @@
     <ToolCommandName>boo</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Boost.Tool</PackageId>
-    <Version>0.1.0-preview1</Version>
+    <Version>0.1.0</Version>
     <IsPackable>true</IsPackable>
     <AssemblyName>Boost.Tool</AssemblyName>
     <RootNamespace>Boost.Tool</RootNamespace>
@@ -31,10 +31,12 @@
 
   <ItemGroup>
     <EmbeddedResource Include="UI/**" />
+    <EmbeddedResource Include="AuthUI/**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="UI\" />
+    <Folder Include="AuthUI\" />
   </ItemGroup>
 
 </Project>

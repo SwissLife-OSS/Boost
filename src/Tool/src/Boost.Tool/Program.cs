@@ -5,7 +5,6 @@ using Boost.GitHub.Commands;
 using Boost.Snapshooter.Commands;
 using Boost.Web;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.Tool
@@ -14,6 +13,7 @@ namespace Boost.Tool
         Name = "boost",
         FullName = "A .NET global tool to boost your development")]
     [VersionOptionFromMember(MemberName = nameof(GetVersion))]
+    [HelpOption]
     [Subcommand(
         typeof(OpenUICommand),
         typeof(SnapshooterCommand),
@@ -46,6 +46,11 @@ namespace Boost.Tool
 
                 return app.Execute(args);
             }
+        }
+
+        public void OnExecute(CommandLineApplication app)
+        {
+            app.ShowHelp();
         }
 
         public static string? GetVersion() => typeof(Program)

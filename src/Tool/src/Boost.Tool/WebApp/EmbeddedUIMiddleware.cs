@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using HotChocolate.Types;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -11,6 +11,16 @@ using Serilog;
 
 namespace Boost
 {
+    public static class EmbeddedUIMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseEmbeddedUI(
+            this IApplicationBuilder builder,
+            string path)
+        {
+            return builder.UseMiddleware<EmbeddedUIMiddleware>(path);
+        }
+    }
+
     public class EmbeddedUIMiddleware
     {
         private readonly IContentTypeProvider _contentTypeProvider;
@@ -18,19 +28,20 @@ namespace Boost
         private readonly RequestDelegate _next;
 
         public EmbeddedUIMiddleware(
-            RequestDelegate next)
+            RequestDelegate next,
+            string path)
         {
             _next = next;
-            _fileProvider = CreateManifestFileProvider();
+            _fileProvider = CreateManifestFileProvider(path);
             _contentTypeProvider = new FileExtensionContentTypeProvider();
         }
 
-        private IFileProvider CreateManifestFileProvider()
+        private IFileProvider CreateManifestFileProvider(string path)
         {
             try
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                return new ManifestEmbeddedFileProvider(assembly, "UI");
+                return new ManifestEmbeddedFileProvider(assembly, path);
             }
             catch (Exception ex)
             {

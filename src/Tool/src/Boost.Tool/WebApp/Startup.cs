@@ -28,7 +28,8 @@ namespace Boost
                 endpoints.MapHub<ConsoleHub>("signal");
             });
 
-            app.UseMiddleware(typeof(EmbeddedUIMiddleware));
+            app.UseEmbeddedUI("UI");
+            app.UseEmbeddedUI("UIAuth");
         }
     }
 }
