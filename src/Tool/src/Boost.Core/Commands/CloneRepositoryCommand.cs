@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Boost.Core.Settings;
 using Boost.Git;
 using Boost.Settings;
+using CliWrap;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Boost.Commands
@@ -19,15 +20,18 @@ namespace Boost.Commands
         private readonly IGitRemoteSearchService _searchService;
         private readonly IConnectedServiceManager _serviceManager;
         private readonly IUserSettingsManager _settingsManager;
+        private readonly IDefaultShellService _shellService;
 
         public CloneRepositoryCommand(
             IGitRemoteSearchService searchService,
             IConnectedServiceManager serviceManager,
-            IUserSettingsManager settingsManager)
+            IUserSettingsManager settingsManager,
+            IDefaultShellService defaultShellService)
         {
             _searchService = searchService;
             _serviceManager = serviceManager;
             _settingsManager = settingsManager;
+            _shellService = defaultShellService;
         }
 
         [Argument(0, "filter", ShowInHelpText = true)]
@@ -69,6 +73,8 @@ namespace Boost.Commands
 
         private async Task CloneRepositoryAsync(IConsole console, GitRemoteRepository repository)
         {
+            const string cloneCommand = "git clone";
+
             var path = await GetWorkRoot(repository);
 
             if (path is null)
@@ -80,7 +86,16 @@ namespace Boost.Commands
                 return;
             }
 
-            console.WriteLine($"Start cloning {repository.Name}... into: {path}", ConsoleColor.Blue);
+            var resultValidation = new CommandResultValidation();
+
+            Command cmd = Cli.Wrap(_shellService.GetDefault())
+                .WithArguments("/c " + $"{cloneCommand} {repository.WebUrl}")
+                .WithWorkingDirectory(path)
+                .WithValidation(resultValidation)
+                .WithStandardOutputPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)))
+                .WithStandardErrorPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)));
+
+            await cmd.ExecuteAsync();
         }
 
         private async Task<string?> GetWorkRoot(GitRemoteRepository repository)
@@ -91,44 +106,6 @@ namespace Boost.Commands
 
             return await _settingsManager
                 .GetWorkRootAsync(service?.DefaultWorkRoot, CommandAborded);
-        }
-
-        private IEnumerable<string> RunGitCommand(string directory, params string[] commands)
-        {
-            var results = new List<string>();
-
-            foreach (var cmd in commands)
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.CreateNoWindow = true;
-                startInfo.FileName = @"git.exe";
-                startInfo.Arguments = cmd;
-                startInfo.UseShellExecute = false;
-                startInfo.RedirectStandardError = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.WorkingDirectory = directory;
-
-                Process? gitProcess = Process.Start(startInfo);
-
-                if (gitProcess is null)
-                {
-                    throw new ApplicationException("Process is null");
-                }
-
-                gitProcess.OutputDataReceived += DataRecevied;
-                gitProcess.ErrorDataReceived += DataRecevied;
-
-                gitProcess.BeginOutputReadLine();
-                gitProcess.BeginErrorReadLine();
-
-                gitProcess.WaitForExit();
-                if (gitProcess.ExitCode != 0)
-                {
-                    throw new ApplicationException($"ExitCode {gitProcess.ExitCode}");
-                }
-                gitProcess.Close();
-            }
-            return results;
         }
 
         private void DataRecevied(object sender, DataReceivedEventArgs e)
