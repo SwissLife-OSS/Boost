@@ -1,104 +1,106 @@
-
 trigger:
-- main
+  - main
 
 resources:
-- repo: self
+  - repo: self
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  tag: '$(Build.BuildId)'
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
+  tag: "$(Build.BuildId)"
 
 stages:
-- stage: Release
-  displayName: Release
-  pool:
-    vmImage: 'ubuntu-latest'
-  jobs:
-  - job: Build_Tool
-    dependsOn: 
-    - Build_UI
-    - Build_AuthUI
+  - stage: Release
+    displayName: Release
+    pool:
+      vmImage: "ubuntu-latest"
+    jobs:
+      - job: Build_Tool
+        dependsOn:
+          - Build_UI
+          - Build_AuthUI
 
-    displayName: Build Tool
-    steps:
-    - task: NuGetToolInstaller@1
+        displayName: Build Tool
+        steps:
+          - task: NuGetToolInstaller@1
 
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
+          - task: UseDotNet@2
+            inputs:
+              packageType: "sdk"
+              useGlobalJson: true
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'ui-tool'
-        targetPath: 'src/Tool/src/Boost.Tool/UI'
+          - task: DownloadPipelineArtifact@2
+            displayName: Download UI
+            inputs:
+              buildType: "current"
+              artifactName: "ui-tool"
+              targetPath: "src/Tool/src/Boost.Tool/UI"
 
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'ui-auth'
-        targetPath: 'src/Tool/src/Boost.Tool/AuthUI'
+          - task: DownloadPipelineArtifact@2
+            displayName: Download Auth UI
+            inputs:
+              buildType: "current"
+              artifactName: "ui-auth"
+              targetPath: "src/Tool/src/Boost.Tool/AuthUI"
 
-    - task: DotNetCoreCLI@2
-      displayName: dotnet build
-      inputs:
-        command: 'build'
-        projects: '**/*.sln'
-        arguments: '-c Release'
+          - task: DotNetCoreCLI@2
+            displayName: dotnet build
+            inputs:
+              command: "build"
+              projects: "**/*.sln"
+              arguments: "-c Release"
 
-    - task: DotNetCoreCLI@2
-      displayName: Nuget pack
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/*.sln'
-        configuration: 'Release'
-        packDirectory: './nupkg'
-        includesymbols: true
-        versioningScheme: 'byEnvVar'
-        versionEnvVar: 'Build.SourceBranchName'
+          - task: DotNetCoreCLI@2
+            displayName: nuget pack
+            inputs:
+              command: "pack"
+              packagesToPack: "**/*.sln"
+              configuration: "Release"
+              packDirectory: "./nupkg"
+              includesymbols: true
+              versioningScheme: "byEnvVar"
+              versionEnvVar: "Build.SourceBranchName"
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'nupkg'
-        artifact: 'packages'
-        publishLocation: 'pipeline'
+          - task: PublishPipelineArtifact@1
+            displayName: publish nuget packages
+            inputs:
+              targetPath: "nupkg"
+              artifact: "packages"
+              publishLocation: "pipeline"
 
-  - job: Build_UI
-    displayName: Build UI Tool
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/boost-ui'
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/boost-ui build'
+      - job: Build_UI
+        displayName: Build UI Tool
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: "yarn --cwd ./src/UI/boost-ui"
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: "yarn --cwd ./src/UI/boost-ui build"
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'src/Tool/src/Boost.Tool/UI'
-        artifact: 'ui-tool'
-        publishLocation: 'pipeline'
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "src/Tool/src/Boost.Tool/UI"
+              artifact: "ui-tool"
+              publishLocation: "pipeline"
 
-  - job: Build_AuthUI
-    displayName: Build UI Auth
-    steps:
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/auth-ui'
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'yarn --cwd ./src/UI/auth-ui build'
+      - job: Build_AuthUI
+        displayName: Build UI Auth
+        steps:
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: "yarn --cwd ./src/UI/auth-ui"
+          - task: Bash@3
+            inputs:
+              targetType: "inline"
+              script: "yarn --cwd ./src/UI/auth-ui build"
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'src/Tool/src/Boost.Tool/AuthUI'
-        artifact: 'ui-auth'
-        publishLocation: 'pipeline'
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "src/Tool/src/Boost.Tool/AuthUI"
+              artifact: "ui-auth"
+              publishLocation: "pipeline"

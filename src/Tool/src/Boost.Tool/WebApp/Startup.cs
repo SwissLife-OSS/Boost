@@ -29,7 +29,6 @@ namespace Boost
             });
 
             app.UseEmbeddedUI("UI");
-            app.UseEmbeddedUI("UIAuth");
         }
     }
 }

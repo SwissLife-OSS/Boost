@@ -352,4 +352,6 @@ __mismatch__
 tools/**
 !tools/packages.config
 .nuget/
+.packages/
 src/Tool/src/Boost.Tool/UI
+src/Tool/src/Boost.Tool/AuthUI

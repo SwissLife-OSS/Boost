@@ -18,8 +18,11 @@
     <Authors>Philippe Birbaum</Authors>
     <Company>Swiss Life</Company>
     <Copyright>Copyright © 2021 Swiss Life</Copyright>
-    <PackageProjectUrl>https://dev.azure.com/swisslife/F2C/_git/Boost</PackageProjectUrl>
-    <RepositoryUrl>https://dev.azure.com/swisslife/F2C/_git/Boost</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/SwissLife-OSS/Boost</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SwissLife-OSS/Boost.git</RepositoryUrl>
+    <PackageIconUrl>https://github.com/SwissLife-OSS/Boost/raw/main/images/icon_boost.png</PackageIconUrl>
+    <PackageTags>dotnet tool boost GitHub AzureDevOps</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>GIT</RepositoryType>
     <IsPackable>false</IsPackable>
     <Deterministic>true</Deterministic>

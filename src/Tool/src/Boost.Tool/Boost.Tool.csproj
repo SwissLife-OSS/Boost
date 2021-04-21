@@ -6,7 +6,7 @@
     <ToolCommandName>boo</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageId>Boost.Tool</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-preview.4</Version>
     <IsPackable>true</IsPackable>
     <AssemblyName>Boost.Tool</AssemblyName>
     <RootNamespace>Boost.Tool</RootNamespace>

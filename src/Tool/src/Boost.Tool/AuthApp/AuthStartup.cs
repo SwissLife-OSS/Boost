@@ -45,6 +45,8 @@ namespace Boost.Tool.AuthApp
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapGraphQL();
             });
+
+            app.UseEmbeddedUI("AuthUI");
         }
     }
 }
