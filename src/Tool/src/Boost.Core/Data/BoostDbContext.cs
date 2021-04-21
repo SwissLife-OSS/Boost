@@ -8,7 +8,7 @@ using LiteDB;
 
 namespace Boost.Data
 {
-    public class BoostDbContext : IBoostDbContext
+    public class BoostDbContext : IBoostDbContext, IDisposable
     {
         private readonly LiteDatabase _db;
 
@@ -22,5 +22,17 @@ namespace Boost.Data
 
         public ILiteCollection<IdentityRequestItem> IdentityRequest
              => _db.GetCollection<IdentityRequestItem>("IdentityRequests");
+
+        public void Dispose()
+        {
+            try
+            {
+                //_db.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

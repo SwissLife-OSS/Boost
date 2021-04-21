@@ -7,7 +7,7 @@ using HotChocolate.Types;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class UtilsQueries
     {
         public string Encode(
@@ -24,6 +24,13 @@ namespace Boost.Core.GraphQL
             EncodingType type)
         {
             return encodingService.Decode(value, type);
+        }
+
+        public string? CreateHash(
+            [Service] ISecurityUtils securityUtils,
+            CreateHashInput input)
+        {
+            return securityUtils.CreateHash(input.Value, input.Alg);
         }
 
         public IEnumerable<string> CreateGuids(int count = 1, string? format = null)
@@ -48,4 +55,7 @@ namespace Boost.Core.GraphQL
             }
         }
     }
+
+
+    public record CreateHashInput(HashAlg Alg, string Value);
 }

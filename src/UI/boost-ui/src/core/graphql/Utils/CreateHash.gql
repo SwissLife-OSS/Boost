@@ -1,0 +1,3 @@
+query createHash($input: CreateHashInput!) {
+  createHash(input: $input)
+}

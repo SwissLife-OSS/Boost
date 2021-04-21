@@ -66,7 +66,8 @@ namespace Boost.GraphQL
                     input.ClientId,
                     input.Secret,
                     input.GrantType,
-                    input.Scopes),
+                    input.Scopes,
+                    input.Parameters),
                 cancellationToken);
 
             return new RequestTokenPayload(tokenResult);

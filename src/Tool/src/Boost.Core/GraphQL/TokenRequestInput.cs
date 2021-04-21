@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Boost.Security;
 
 namespace Boost.GraphQL
 {
@@ -7,5 +8,6 @@ namespace Boost.GraphQL
         string ClientId,
         string Secret,
         string GrantType,
-        IEnumerable<string> Scopes);
+        IEnumerable<string> Scopes,
+        IEnumerable<TokenRequestProperty> Parameters);
 }

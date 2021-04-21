@@ -42,6 +42,8 @@
               <v-select
                 label="Grant Type"
                 v-model="request.grantType"
+                item-text="name"
+                item-value="name"
                 :items="grantTypes"
               ></v-select>
             </v-col>
@@ -59,7 +61,15 @@
               ></v-combobox>
             </v-col>
           </v-row>
-          <v-row dense> </v-row>
+
+          <v-row dense v-for="field in extraFields" :key="field.name">
+            <v-col md="12">
+              <v-text-field
+                :label="field.label"
+                v-model="field.value"
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </v-tab-item>
         <v-tab-item>
           <saved-requests-list
@@ -103,13 +113,49 @@ export default {
         tags: [],
         type: "TOKEN",
       },
-      grantTypes: ["client_credentials"],
+      grantTypes: [
+        {
+          name: "client_credentials",
+        },
+        {
+          name: "personal_access_token",
+          fields: [
+            { name: "token", label: "Token", value: null },
+            { name: "username", label: "Username", value: null },
+          ],
+        },
+      ],
       tab: null,
     };
   },
+  computed: {
+    extraFields: function () {
+      var gt = this.grantTypes.find((x) => x.name === this.request.grantType);
+      if (gt.fields) {
+        return gt.fields;
+      } else {
+        return [];
+      }
+    },
+  },
   methods: {
     async onRequest() {
-      const result = await requestToken(this.request);
+      var input = {
+        authority: this.request.authority,
+        clientId: this.request.clientId,
+        secret: this.request.secret,
+        scopes: this.request.scopes,
+        grantType: this.request.grantType,
+        parameters: this.extraFields.map((x) => {
+          return {
+            name: x.name,
+            value: x.value,
+          };
+        }),
+      };
+
+      const result = await requestToken(input);
+
       this.$emit("completed", result.data.requestToken.result);
     },
     onSelectRequest: function (request) {
@@ -121,7 +167,6 @@ export default {
       this.request.clientId = request.data.clientId;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
-      this.request.grant_type = request.data.scopes;
     },
     onRequestSaved: function () {
       this.$refs.requestList.search();
