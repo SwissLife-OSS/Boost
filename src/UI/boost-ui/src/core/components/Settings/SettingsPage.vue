@@ -1,17 +1,23 @@
 <template>
-  <v-row class="ma-4">
-    <v-col md="6"><work-roots-card></work-roots-card></v-col>
-    <v-col md="6"><connected-services-card></connected-services-card></v-col>
-  </v-row>
+  <sub-navigation-bar :tabs="tabs"></sub-navigation-bar>
 </template>
 
 <script>
-import ConnectedServicesCard from "./ConnectedServicesCard.vue";
-import WorkRootsCard from "./WorkRootsCard.vue";
+import SubNavigationBar from "../Common/SubNavigationBar.vue";
 export default {
-  components: { WorkRootsCard, ConnectedServicesCard },
+  components: { SubNavigationBar },
+  created() {
+    if (this.$route.name === "Settings") {
+      this.$router.push({ name: this.tabs[0].route });
+    }
+  },
+  data() {
+    return {
+      tabs: [
+        { name: "General", route: "Settings.General" },
+        { name: "Security", route: "Settings.Security" },
+      ],
+    };
+  },
 };
 </script>
-
-<style>
-</style>

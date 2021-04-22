@@ -16,10 +16,12 @@
         <v-tab-item>
           <v-row dense>
             <v-col md="12">
-              <v-text-field
+              <v-combobox
                 label="Authority"
                 v-model="request.authority"
-              ></v-text-field>
+                :items="identityServers"
+                clearable
+              ></v-combobox>
             </v-col>
           </v-row>
           <v-row dense>
@@ -38,7 +40,7 @@
           </v-row>
           <v-row dense> </v-row>
           <v-row dense>
-            <v-col md="12">
+            <v-col md="11">
               <v-select
                 label="Grant Type"
                 v-model="request.grantType"
@@ -46,6 +48,14 @@
                 item-value="name"
                 :items="grantTypes"
               ></v-select>
+            </v-col>
+            <v-col md="1">
+              <v-icon
+                class="mt-4"
+                @click="$router.push({ name: 'Settings.Security' })"
+                title="Configure custom grants"
+                >mdi-cog</v-icon
+              >
             </v-col>
           </v-row>
           <v-row dense>
@@ -62,7 +72,7 @@
             </v-col>
           </v-row>
 
-          <v-row dense v-for="field in extraFields" :key="field.name">
+          <v-row dense v-for="field in parameters" :key="field.name">
             <v-col md="12">
               <v-text-field
                 :label="field.label"
@@ -84,6 +94,7 @@
       <save-identity-request-menu
         :data="request"
         :request="save"
+        :parameters="parameters"
         @saved="onRequestSaved"
       ></save-identity-request-menu>
       <v-spacer></v-spacer>
@@ -113,26 +124,29 @@ export default {
         tags: [],
         type: "TOKEN",
       },
-      grantTypes: [
-        {
-          name: "client_credentials",
-        },
-        {
-          name: "personal_access_token",
-          fields: [
-            { name: "token", label: "Token", value: null },
-            { name: "username", label: "Username", value: null },
-          ],
-        },
-      ],
       tab: null,
     };
   },
   computed: {
-    extraFields: function () {
+    identityServers: function () {
+      return this.$store.state.app.userSettings.tokenGenerator.identityServers;
+    },
+    grantTypes: function () {
+      const grantTypes = [
+        {
+          name: "client_credentials",
+          parameters: [],
+        },
+      ];
+
+      return grantTypes.concat(
+        this.$store.state.app.userSettings.tokenGenerator.customGrants
+      );
+    },
+    parameters: function () {
       var gt = this.grantTypes.find((x) => x.name === this.request.grantType);
-      if (gt.fields) {
-        return gt.fields;
+      if (gt.parameters) {
+        return gt.parameters;
       } else {
         return [];
       }
@@ -146,7 +160,7 @@ export default {
         secret: this.request.secret,
         scopes: this.request.scopes,
         grantType: this.request.grantType,
-        parameters: this.extraFields.map((x) => {
+        parameters: this.parameters.map((x) => {
           return {
             name: x.name,
             value: x.value,
@@ -167,9 +181,25 @@ export default {
       this.request.clientId = request.data.clientId;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
+      this.request.grantType = request.data.grantType;
+
+      console.log("PARAM", this.parameters);
+
+      for (let i = 0; i < this.parameters.length; i++) {
+        const param = this.parameters[i];
+        let value = this.request.data.parameters.find(
+          (x) => x.name === param.name
+        );
+
+        if (value) {
+          param.value = value.value;
+        }
+      }
     },
     onRequestSaved: function () {
-      this.$refs.requestList.search();
+      if (this.$refs.requestList) {
+        this.$refs.requestList.search();
+      }
     },
   },
 };

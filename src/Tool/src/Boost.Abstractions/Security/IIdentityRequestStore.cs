@@ -69,6 +69,8 @@ namespace Boost.Security
         public int? Port { get; set; }
 
         public bool? UsePkce { get; set; }
+
+        public IEnumerable<TokenRequestParameter>? Parameters { get; set; }
     }
 
     public enum IdentityRequestType

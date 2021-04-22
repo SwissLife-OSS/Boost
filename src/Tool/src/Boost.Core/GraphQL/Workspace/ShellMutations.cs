@@ -4,7 +4,7 @@ using HotChocolate.Types;
 
 namespace Boost.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Mutation)]
+    [ExtendObjectType(RootTypes.Mutation)]
     public class ShellMutations
     {
         public Task<int> ExecuteCommandAsync(
@@ -19,12 +19,5 @@ namespace Boost.GraphQL
                 WorkDirectory = input.WorkDirectory
             });
         }
-    }
-
-    public record ExecuteCommandInput(string Command)
-    {
-        public string? Arguments { get; init; }
-        public string? WorkDirectory { get; init; }
-        public string? Shell { get; init; }
     }
 }

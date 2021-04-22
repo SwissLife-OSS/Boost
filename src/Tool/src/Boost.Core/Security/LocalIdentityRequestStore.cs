@@ -55,6 +55,13 @@ namespace Boost.Security
             {
                 toSave.Data.Secret = _userDataProtector.Protect(toSave.Data.Secret);
             }
+            if (toSave.Data.Parameters is { })
+            {
+                foreach (TokenRequestParameter param in toSave.Data.Parameters)
+                {
+                    param.Value = _userDataProtector.Protect(param.Value!);
+                }
+            }
 
             dbContext.IdentityRequest.Upsert(toSave);
 
@@ -70,9 +77,16 @@ namespace Boost.Security
             IdentityRequestItem request = dbContext.IdentityRequest
                  .FindById(id);
 
-            if (request.Data.Secret is { })
+            if (request.Data?.Secret is { })
             {
                 request.Data.Secret = _userDataProtector.UnProtect(request.Data.Secret);
+            }
+            if (request.Data?.Parameters is { })
+            {
+                foreach (TokenRequestParameter param in request.Data.Parameters)
+                {
+                    param.Value = _userDataProtector.UnProtect(param.Value!);
+                }
             }
 
             return Task.FromResult(request);

@@ -6,7 +6,7 @@ using HotChocolate.Types;
 
 namespace Boost.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class AuthQueries
     {
         public Task<AuthenticationSessionInfo> GetAuthenticationSessionAsync(

@@ -9,5 +9,5 @@ namespace Boost.GraphQL
         string Secret,
         string GrantType,
         IEnumerable<string> Scopes,
-        IEnumerable<TokenRequestProperty> Parameters);
+        IEnumerable<TokenRequestParameter> Parameters);
 }

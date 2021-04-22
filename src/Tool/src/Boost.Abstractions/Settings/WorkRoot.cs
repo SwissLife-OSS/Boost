@@ -2,10 +2,10 @@ namespace Boost.Settings
 {
     public class WorkRoot
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
 
-        public string Path { get; set; }
+        public string Path { get; set; } = default!;
 
-        public bool IsDefault { get; set; }
+        public bool IsDefault { get; set; } = default!;
     }
 }

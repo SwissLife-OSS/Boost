@@ -6,7 +6,7 @@ using HotChocolate.Types;
 
 namespace Boost.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Mutation)]
+    [ExtendObjectType(RootTypes.Mutation)]
     public class WorkspaceMutations
     {
         public Task<int> OpenInVSCode(
@@ -50,18 +50,6 @@ namespace Boost.GraphQL
 
             return new CreateFileFromBase64Payload(file);
         }
-    }
-
-    public record CreateFileFromBase64Input(string Value, string? FileType);
-
-    public class CreateFileFromBase64Payload
-    {
-        public CreateFileFromBase64Payload(WorkspaceFile file)
-        {
-            File = file;
-        }
-
-        public WorkspaceFile File { get; }
     }
 }
 

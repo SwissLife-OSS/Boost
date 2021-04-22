@@ -8,7 +8,7 @@ using HotChocolate.Types;
 
 namespace Boost.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Mutation)]
+    [ExtendObjectType(RootTypes.Mutation)]
     public class SecurityMutations
     {
         public async Task<StartAuthorizationRequestPayload> StartAuthorizationRequestAsync(

@@ -75,6 +75,12 @@ export default {
     data: {
       type: Object,
     },
+    parameters: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
@@ -88,8 +94,16 @@ export default {
         id: this.request.id,
         type: this.request.type,
         tags: this.request.tags,
-        data: this.data,
+        data: Object.assign(this.data, {
+          parameters: this.parameters.map((x) => {
+            return {
+              name: x.name,
+              value: x.value,
+            };
+          }),
+        }),
       };
+
       this.menu = false;
 
       if (saveAs === true) {

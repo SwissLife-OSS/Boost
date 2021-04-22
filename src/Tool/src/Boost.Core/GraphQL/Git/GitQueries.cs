@@ -9,7 +9,7 @@ using HotChocolate.Types;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class GitQueries
     {
         public async Task<IEnumerable<GitRemoteRepository>> SearchRepositoriesAsync(
@@ -51,14 +51,6 @@ namespace Boost.Core.GraphQL
             }
 
             return await gitService.GetRepositoryAsync(path, cancellationToken);
-        }
-    }
-
-    public class GitRemoteReferenceType : ObjectType<IGitRemoteReference>
-    {
-        protected override void Configure(IObjectTypeDescriptor<IGitRemoteReference> descriptor)
-        {
-            base.Configure(descriptor);
         }
     }
 }

@@ -1,0 +1,3 @@
+mutation saveTokenRequestorSettings($input: SaveTokenGeneratorSettingsInput!) {
+  saveTokenGeneratorSettings(input: $input)
+}

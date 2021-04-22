@@ -28,7 +28,7 @@ namespace Boost.Security
         string Secret,
         string GrantType,
         IEnumerable<string> Scopes,
-        IEnumerable<TokenRequestProperty> Parameters);
+        IEnumerable<TokenRequestParameter> Parameters);
 
 
     public record RequestTokenResult(bool IsSuccess)
@@ -38,5 +38,8 @@ namespace Boost.Security
         public string? ErrorMessage { get; set; }
     }
 
-    public record TokenRequestProperty(string Name, string Value);
+    public record TokenRequestParameter(string Name)
+    {
+        public string? Value { get; set; }
+    }
 }
