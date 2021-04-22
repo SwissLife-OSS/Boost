@@ -51,7 +51,6 @@ namespace Boost
             services.AddSingleton<IIdentityRequestStore, LocalIdentityRequestStore>();
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
-            services.AddSingleton<IBoostDbContext>(new BoostDbContext(null));
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
 
             return services;

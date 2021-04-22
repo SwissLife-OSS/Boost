@@ -1,7 +1,10 @@
 <template>
   <v-row>
     <v-col md="6">
-      <token-request-card @completed="onTokenRequested"></token-request-card>
+      <token-request-card
+        @request-start="onStart"
+        @completed="onTokenRequested"
+      ></token-request-card>
     </v-col>
     <v-col md="6"
       ><token-details-card
@@ -15,7 +18,9 @@
         type="error"
         outlined
       >
-        Error requesting token {{ result.errorMessage }}
+        Error requesting token!<br /><br /><strong>{{
+          result.errorMessage
+        }}</strong>
       </v-alert>
     </v-col>
   </v-row>
@@ -35,6 +40,9 @@ export default {
   methods: {
     onTokenRequested: function (result) {
       this.result = result;
+    },
+    onStart: function () {
+      this.result = null;
     },
   },
 };

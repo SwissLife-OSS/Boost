@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="1">
+  <v-card elevation="1" :loading="loading">
     <v-toolbar light color="grey lighten-2" elevation="0" height="42">
       <v-toolbar-title>Token Request </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -125,6 +125,7 @@ export default {
         type: "TOKEN",
       },
       tab: null,
+      loading: false,
     };
   },
   computed: {
@@ -154,6 +155,8 @@ export default {
   },
   methods: {
     async onRequest() {
+      this.$emit("request-start");
+
       var input = {
         authority: this.request.authority,
         clientId: this.request.clientId,
@@ -168,7 +171,11 @@ export default {
         }),
       };
 
+      this.loading = true;
+      this.$emit("request-start");
+
       const result = await requestToken(input);
+      this.loading = false;
 
       this.$emit("completed", result.data.requestToken.result);
     },
@@ -183,13 +190,9 @@ export default {
       this.request.scopes = request.data.scopes;
       this.request.grantType = request.data.grantType;
 
-      console.log("PARAM", this.parameters);
-
       for (let i = 0; i < this.parameters.length; i++) {
         const param = this.parameters[i];
-        let value = this.request.data.parameters.find(
-          (x) => x.name === param.name
-        );
+        let value = request.data.parameters.find((x) => x.name === param.name);
 
         if (value) {
           param.value = value.value;

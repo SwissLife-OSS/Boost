@@ -78,7 +78,7 @@ namespace Boost.Security
 
                 if (request.Scopes is { } s && s.Any())
                 {
-                    pars.Add("scopes", string.Join(" ", request.Scopes));
+                    pars.Add("scope", string.Join(" ", request.Scopes));
                 }
 
                 response = await httpClient.RequestTokenAsync(

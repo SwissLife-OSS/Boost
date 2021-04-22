@@ -14,14 +14,14 @@ namespace Boost.Git
 {
     public class GitLocalRepositoryService : IGitLocalRepositoryService
     {
-        private readonly IBoostDbContext _dbContext;
+        private readonly IBoostDbContextFactory _dbContextFactory;
         private readonly IConnectedServiceManager _connectedServiceManager;
 
         public GitLocalRepositoryService(
-            IBoostDbContext dbContext,
+            IBoostDbContextFactory dbContextFactory,
             IConnectedServiceManager connectedServiceManager)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _connectedServiceManager = connectedServiceManager;
         }
 
@@ -29,15 +29,16 @@ namespace Boost.Git
             string? term)
         {
             IEnumerable<GitRepositoryIndex> repos;
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
 
             if (term is { })
             {
-                repos = _dbContext.GitRepos
+                repos = dbContext.GitRepos
                     .Find(x => x.Name.ToLower().Contains(term.ToLower()));
             }
             else
             {
-                repos = _dbContext.GitRepos.FindAll();
+                repos = dbContext.GitRepos.FindAll();
             }
 
             return repos.Select(ToLocalGitRepository);
@@ -45,7 +46,8 @@ namespace Boost.Git
 
         public int GetLocalRepositoryCount()
         {
-            return _dbContext.GitRepos.Count();
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
+            return dbContext.GitRepos.Count();
         }
 
         public async Task<GitLocalRepository?> GetRepositoryAsync(
@@ -165,7 +167,8 @@ namespace Boost.Git
         {
             try
             {
-                GitRepositoryIndex? repo = _dbContext.GitRepos.FindOne(x =>
+                using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
+                GitRepositoryIndex? repo = dbContext.GitRepos.FindOne(x =>
                     x.ServiceId == serviceId &&
                     x.Name.ToLower() == name.ToLower());
 
