@@ -10,14 +10,14 @@ namespace Boost.Security
 {
     public class LocalIdentityRequestStore : IIdentityRequestStore
     {
-        private readonly IBoostDbContext _dbContext;
+        private readonly IBoostDbContextFactory _dbContextFactory;
         private readonly IUserDataProtector _userDataProtector;
 
         public LocalIdentityRequestStore(
-            IBoostDbContext dbContext,
+            IBoostDbContextFactory dbContextFactory,
             IUserDataProtector userDataProtector)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _userDataProtector = userDataProtector;
         }
 
@@ -27,9 +27,11 @@ namespace Boost.Security
         {
             IdentityRequestItem toSave = new IdentityRequestItem();
 
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
             if (request.Id.HasValue)
             {
-                IdentityRequestItem? existing = _dbContext.IdentityRequest
+                IdentityRequestItem? existing = dbContext.IdentityRequest
                     .FindById(request.Id.Value);
 
                 if (existing is { })
@@ -53,8 +55,15 @@ namespace Boost.Security
             {
                 toSave.Data.Secret = _userDataProtector.Protect(toSave.Data.Secret);
             }
+            if (toSave.Data.Parameters is { })
+            {
+                foreach (TokenRequestParameter param in toSave.Data.Parameters)
+                {
+                    param.Value = _userDataProtector.Protect(param.Value!);
+                }
+            }
 
-            _dbContext.IdentityRequest.Upsert(toSave);
+            dbContext.IdentityRequest.Upsert(toSave);
 
             return Task.FromResult(toSave);
         }
@@ -63,20 +72,33 @@ namespace Boost.Security
             Guid id,
             CancellationToken cancellationToken)
         {
-            IdentityRequestItem request = _dbContext.IdentityRequest
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
+
+            IdentityRequestItem request = dbContext.IdentityRequest
                  .FindById(id);
 
-            if (request.Data.Secret is { })
+            if (request.Data?.Secret is { })
             {
                 request.Data.Secret = _userDataProtector.UnProtect(request.Data.Secret);
+            }
+            if (request.Data?.Parameters is { })
+            {
+                foreach (TokenRequestParameter param in request.Data.Parameters)
+                {
+                    param.Value = _userDataProtector.UnProtect(param.Value!);
+                }
             }
 
             return Task.FromResult(request);
         }
 
-        public Task<IEnumerable<IdentityRequestItem>> SearchAsync(SearchIdentityRequest searchRequest, CancellationToken cancellationToken)
+        public Task<IEnumerable<IdentityRequestItem>> SearchAsync(
+            SearchIdentityRequest searchRequest,
+            CancellationToken cancellationToken)
         {
-            IEnumerable<IdentityRequestItem> requests = _dbContext.IdentityRequest
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
+            IEnumerable<IdentityRequestItem> requests = dbContext.IdentityRequest
                 .Find(x => x.Type == searchRequest.Type)
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -85,7 +107,9 @@ namespace Boost.Security
 
         public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
-            _dbContext.IdentityRequest.Delete(id);
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
+            dbContext.IdentityRequest.Delete(id);
 
             return Task.CompletedTask;
         }

@@ -14,14 +14,14 @@ namespace Boost.Git
 {
     public class LocalRepositoryIndexer : ILocalRepositoryIndexer
     {
-        private readonly IBoostDbContext _liteDbContext;
+        private readonly IBoostDbContextFactory _dbContextFactory;
         private readonly IConnectedServiceManager _connectedServiceManager;
 
         public LocalRepositoryIndexer(
-            IBoostDbContext dbContext,
+            IBoostDbContextFactory dbContextFactory,
             IConnectedServiceManager connectedServiceManager)
         {
-            _liteDbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _connectedServiceManager = connectedServiceManager;
         }
 
@@ -30,6 +30,8 @@ namespace Boost.Git
             Action<string>? onProgress = null,
             CancellationToken cancellationToken = default)
         {
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
             IEnumerable<IConnectedService> connectedServices = await _connectedServiceManager
                 .GetServicesAsync(cancellationToken);
 
@@ -56,7 +58,7 @@ namespace Boost.Git
                         repoIndex.ServiceId = connectedService.Id;
                     }
 
-                    _liteDbContext.GitRepos.Insert(repoIndex);
+                    dbContext.GitRepos.Insert(repoIndex);
                     indexCount++;
                 }
             }
@@ -66,7 +68,9 @@ namespace Boost.Git
 
         private int ClearIndex(string workRoot)
         {
-            return _liteDbContext.GitRepos.DeleteMany(x => x.WorkRoot == workRoot);
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
+            return dbContext.GitRepos.DeleteMany(x => x.WorkRoot == workRoot);
         }
 
         private GitRepositoryIndex? Index(string directory)

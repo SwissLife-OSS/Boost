@@ -50,10 +50,8 @@ namespace Boost
             services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
             services.AddSingleton<IIdentityRequestStore, LocalIdentityRequestStore>();
             services.AddSingleton<IIdentityService, IdentityService>();
-            services.AddSingleton<IBoostDbContext>(c =>
-                new BoostDbContext(
-                    new LiteDatabase(Path.Combine(SettingsStore.GetUserDirectory(), "boost.db"))
-               ));
+            services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
+            services.AddSingleton<ISecurityUtils, SecurityUtils>();
 
             return services;
         }

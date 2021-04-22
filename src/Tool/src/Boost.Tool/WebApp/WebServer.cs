@@ -71,11 +71,9 @@ namespace Boost
                     services.AddSnapshooter();
                     services.AddSingleton<IWebShellFactory, WebShellFactory>();
                     services.AddHttpClient();
-
                     services.AddSingleton<IAuthWebServer, AuthWebServer>();
-
                     services.AddSingleton(
-                        _commandContext.Services.GetRequiredService<IBoostDbContext>());
+                        _commandContext.Services.GetRequiredService<IBoostDbContextFactory>());
                 })
                 .Build();
 

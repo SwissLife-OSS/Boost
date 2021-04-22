@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="1">
+  <v-card elevation="1" :loading="loading">
     <v-toolbar light color="grey lighten-2" elevation="0" height="42">
       <v-toolbar-title>Token Request </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -16,10 +16,12 @@
         <v-tab-item>
           <v-row dense>
             <v-col md="12">
-              <v-text-field
+              <v-combobox
                 label="Authority"
                 v-model="request.authority"
-              ></v-text-field>
+                :items="identityServers"
+                clearable
+              ></v-combobox>
             </v-col>
           </v-row>
           <v-row dense>
@@ -38,12 +40,22 @@
           </v-row>
           <v-row dense> </v-row>
           <v-row dense>
-            <v-col md="12">
+            <v-col md="11">
               <v-select
                 label="Grant Type"
                 v-model="request.grantType"
+                item-text="name"
+                item-value="name"
                 :items="grantTypes"
               ></v-select>
+            </v-col>
+            <v-col md="1">
+              <v-icon
+                class="mt-4"
+                @click="$router.push({ name: 'Settings.Security' })"
+                title="Configure custom grants"
+                >mdi-cog</v-icon
+              >
             </v-col>
           </v-row>
           <v-row dense>
@@ -59,7 +71,15 @@
               ></v-combobox>
             </v-col>
           </v-row>
-          <v-row dense> </v-row>
+
+          <v-row dense v-for="field in parameters" :key="field.name">
+            <v-col md="12">
+              <v-text-field
+                :label="field.label"
+                v-model="field.value"
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </v-tab-item>
         <v-tab-item>
           <saved-requests-list
@@ -74,6 +94,7 @@
       <save-identity-request-menu
         :data="request"
         :request="save"
+        :parameters="parameters"
         @saved="onRequestSaved"
       ></save-identity-request-menu>
       <v-spacer></v-spacer>
@@ -103,13 +124,59 @@ export default {
         tags: [],
         type: "TOKEN",
       },
-      grantTypes: ["client_credentials"],
       tab: null,
+      loading: false,
     };
+  },
+  computed: {
+    identityServers: function () {
+      return this.$store.state.app.userSettings.tokenGenerator.identityServers;
+    },
+    grantTypes: function () {
+      const grantTypes = [
+        {
+          name: "client_credentials",
+          parameters: [],
+        },
+      ];
+
+      return grantTypes.concat(
+        this.$store.state.app.userSettings.tokenGenerator.customGrants
+      );
+    },
+    parameters: function () {
+      var gt = this.grantTypes.find((x) => x.name === this.request.grantType);
+      if (gt.parameters) {
+        return gt.parameters;
+      } else {
+        return [];
+      }
+    },
   },
   methods: {
     async onRequest() {
-      const result = await requestToken(this.request);
+      this.$emit("request-start");
+
+      var input = {
+        authority: this.request.authority,
+        clientId: this.request.clientId,
+        secret: this.request.secret,
+        scopes: this.request.scopes,
+        grantType: this.request.grantType,
+        parameters: this.parameters.map((x) => {
+          return {
+            name: x.name,
+            value: x.value,
+          };
+        }),
+      };
+
+      this.loading = true;
+      this.$emit("request-start");
+
+      const result = await requestToken(input);
+      this.loading = false;
+
       this.$emit("completed", result.data.requestToken.result);
     },
     onSelectRequest: function (request) {
@@ -121,10 +188,21 @@ export default {
       this.request.clientId = request.data.clientId;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
-      this.request.grant_type = request.data.scopes;
+      this.request.grantType = request.data.grantType;
+
+      for (let i = 0; i < this.parameters.length; i++) {
+        const param = this.parameters[i];
+        let value = request.data.parameters.find((x) => x.name === param.name);
+
+        if (value) {
+          param.value = value.value;
+        }
+      }
     },
     onRequestSaved: function () {
-      this.$refs.requestList.search();
+      if (this.$refs.requestList) {
+        this.$refs.requestList.search();
+      }
     },
   },
 };

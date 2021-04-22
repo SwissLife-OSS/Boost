@@ -4,6 +4,7 @@ import MUTATION_CONNECTEDSERVICE_SAVE from "./graphql/Settings/SaveConnectedServ
 import QUERY_CONNECTEDSERVICES_GET from "./graphql/Settings/ConnectedServices.gql";
 import QUERY_CONNECTEDSERVICE_GET from "./graphql/Settings/GetConnectedService.gql";
 import MUTATION_WORKSOOTS_SAVE from "./graphql/Settings/SaveWorkRoots.gql";
+import MUTATION_TOKEN_REQUESTOR_SAVE from "./graphql/Settings/SaveTokenRequestor.gql";
 
 
 export const saveConnectedService = async (input) => {
@@ -33,6 +34,14 @@ export const saveWorkRoots = async (input) => {
         variables: { input }
     });
 };
+
+export const saveTokenRequestor = async (input) => {
+    return await apollo.mutate({
+        mutation: MUTATION_TOKEN_REQUESTOR_SAVE,
+        variables: { input }
+    });
+};
+
 
 export const mapService = (service, data) => {
 

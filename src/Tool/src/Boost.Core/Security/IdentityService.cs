@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
@@ -45,7 +46,7 @@ namespace Boost.Security
                 };
             }
 
-            return new UserInfoResult("InvalidToken"); 
+            return new UserInfoResult("InvalidToken");
         }
 
         public async Task<RequestTokenResult> RequestTokenAsync(
@@ -53,18 +54,45 @@ namespace Boost.Security
             CancellationToken cancellationToken)
         {
             HttpClient httpClient = _httpClientFactory.CreateClient();
-            DiscoveryDocumentResponse disco = await GetDiscoveryDocumentAsync(request.Authority, cancellationToken);
+            DiscoveryDocumentResponse disco = await GetDiscoveryDocumentAsync(
+                request.Authority,
+                cancellationToken);
+            TokenResponse? response = null;
 
-            TokenResponse response = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+
+            if (request.GrantType == "client_credentials")
             {
-                Address = disco.TokenEndpoint,
-                ClientId = request.ClientId,
-                ClientSecret = request.Secret,
-                GrantType = request.GrantType,
-                Scope = request.Scopes.Any() ? string.Join(" ", request.Scopes) : null
-            });
+                response = await httpClient.RequestClientCredentialsTokenAsync(
+                    new ClientCredentialsTokenRequest
+                    {
+                        Address = disco.TokenEndpoint,
+                        ClientId = request.ClientId,
+                        ClientSecret = request.Secret,
+                        GrantType = request.GrantType,
+                        Scope = request.Scopes.Any() ? string.Join(" ", request.Scopes) : null
+                    });
+            }
+            else
+            {
+                var pars = request.Parameters.ToDictionary(k => k.Name, v => v.Value);
 
-            if (!response.IsError)
+                if (request.Scopes is { } s && s.Any())
+                {
+                    pars.Add("scope", string.Join(" ", request.Scopes));
+                }
+
+                response = await httpClient.RequestTokenAsync(
+                    new TokenRequest
+                    {
+                        Address = disco.TokenEndpoint,
+                        ClientId = request.ClientId,
+                        ClientSecret = request.Secret,
+                        GrantType = request.GrantType,
+                        Parameters = new Parameters(pars)
+                    });
+            }
+
+            if (!response!.IsError)
             {
                 TokenModel? accessToken = _tokenAnalyzer.Analyze(response.AccessToken);
 

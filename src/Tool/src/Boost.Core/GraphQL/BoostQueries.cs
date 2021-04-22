@@ -4,7 +4,7 @@ using HotChocolate.Types;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class BoostQueries
     {
         private readonly IBoostApplicationContext _boostApplicationContext;

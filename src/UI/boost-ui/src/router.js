@@ -4,6 +4,10 @@ import VueRouter from "vue-router";
 import SnapshooterPage from "./modules/snapshooter/components/SnapshooterPage"
 import DashboardPage from "./core/components/Dashboard/DashboardPage"
 import SettingsPage from "./core/components/Settings/SettingsPage"
+import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
+import SecuritySettingsPage from "./core/components/Settings/SecuritySettingsPage"
+
+
 import ConfigureAzureDevOpsPage from "./core/components/Settings/ConfigureAzureDevOpsPage"
 import ConfigureGitHubPage from "./core/components/Settings/ConfigureGitHubPage"
 import WorkspacePage from "./core/components/Workspace/WorkspacePage"
@@ -135,6 +139,18 @@ const routes = [
     path: "/settings",
     name: "Settings",
     component: SettingsPage,
+    children: [
+      {
+        path: "general",
+        name: "Settings.General",
+        component: GeneralSettingsPage
+      },
+      {
+        path: "security",
+        name: "Settings.Security",
+        component: SecuritySettingsPage
+      }
+    ]
   },
   {
     path: "/settings/ado",

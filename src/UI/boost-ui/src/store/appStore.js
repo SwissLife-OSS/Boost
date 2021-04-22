@@ -1,6 +1,6 @@
 
 import { getInitialData } from "../core/appService";
-import { saveConnectedService, saveWorkRoots } from "../core/settingsService";
+import { saveConnectedService, saveTokenRequestor, saveWorkRoots } from "../core/settingsService";
 import { excuteGraphQL } from "./graphqlClient";
 
 const appStore = {
@@ -29,6 +29,9 @@ const appStore = {
         WORKROOTS_SAVED(state, workRoots) {
             state.userSettings.workRoots = workRoots;
         },
+        TOKENREQUESTOR_SAVED(state, settings) {
+            state.userSettings.tokenGenerator = settings;
+        },
         CONNECTED_SERVICE_SAVED(state, service) {
             console.log(state, service);
         }
@@ -47,6 +50,17 @@ const appStore = {
             const result = await excuteGraphQL(() => saveWorkRoots(data), dispatch);
             if (result.success) {
                 commit("WORKROOTS_SAVED", data.workRoots);
+                dispatch(
+                    "app/addMessage",
+                    { text: "Saved", type: "SUCCESS" },
+                    { root: true }
+                );
+            }
+        },
+        async saveTokenRequestorSettings({ commit, dispatch }, data) {
+            const result = await excuteGraphQL(() => saveTokenRequestor(data), dispatch);
+            if (result.success) {
+                commit("TOKENREQUESTOR_SAVED", data.settings);
                 dispatch(
                     "app/addMessage",
                     { text: "Saved", type: "SUCCESS" },

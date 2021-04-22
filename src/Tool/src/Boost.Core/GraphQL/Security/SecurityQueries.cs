@@ -8,7 +8,7 @@ using HotChocolate.Types;
 
 namespace Boost.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class SecurityQueries
     {
         public TokenModel? AnalyzeToken(

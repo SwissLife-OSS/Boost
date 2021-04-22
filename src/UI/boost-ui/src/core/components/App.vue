@@ -12,7 +12,9 @@
           max-width="26"
           src="@/assets/icon_boost.png"
         ></v-img>
-        <span class="white--text ml-2">Boost | {{ $route.name }}</span>
+        <span class="white--text ml-2"
+          >Boost | {{ getBreadCrumb($route.name) }}</span
+        >
         <v-spacer></v-spacer>
         <div v-if="app" class="workdir" :title="app.workingDirectory">
           <v-icon class="mt-0" color="yellow">mdi-folder</v-icon>
@@ -126,7 +128,7 @@ export default {
     },
     navBarItems: function () {
       return this.navItems.map((x) => {
-        x.active = x.route === this.$route.name;
+        x.active = this.$route.name.startsWith(x.route);
         x.color = x.active ? "#fff" : "#b3b3b3";
 
         return x;
@@ -143,6 +145,14 @@ export default {
     },
     onAccountClick: function () {
       this.$router.push({ name: "Account" });
+    },
+    getBreadCrumb(value) {
+      if (value) {
+        const pars = value.split(".");
+        return pars.join(" | ");
+      }
+
+      return null;
     },
   },
 };

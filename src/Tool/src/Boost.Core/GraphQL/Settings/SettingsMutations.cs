@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ using HotChocolate.Types;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Mutation)]
+    [ExtendObjectType(RootTypes.Mutation)]
     public class SettingsMutations
     {
         public async Task<SaveConnectedServicePayload> SaveConnectedServiceAsync(
@@ -44,7 +43,17 @@ namespace Boost.Core.GraphQL
 
             return true;
         }
-    }
 
-    public record SaveWorkRootsInput(IEnumerable<WorkRoot> WorkRoots);
+        public async Task<bool> SaveTokenGeneratorSettings(
+            [Service] IUserSettingsManager settingsManager,
+            SaveTokenGeneratorSettingsInput input,
+            CancellationToken cancellationToken)
+        {
+            await settingsManager.SaveTokenGeneratorSettingsAsync(
+                input.Settings,
+                cancellationToken);
+
+            return true;
+        }
+    }
 }

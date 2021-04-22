@@ -6,6 +6,16 @@ query initalData {
       path
       isDefault
     }
+    tokenGenerator{
+      customGrants{
+        name
+        parameters{
+          label
+          name
+        }
+      }
+      identityServers
+    }
   }
 
   appliation {

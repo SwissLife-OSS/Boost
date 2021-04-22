@@ -27,7 +27,8 @@ namespace Boost.Security
         string ClientId,
         string Secret,
         string GrantType,
-        IEnumerable<string> Scopes);
+        IEnumerable<string> Scopes,
+        IEnumerable<TokenRequestParameter> Parameters);
 
 
     public record RequestTokenResult(bool IsSuccess)
@@ -35,5 +36,10 @@ namespace Boost.Security
         public TokenModel? AccessToken { get; set; }
 
         public string? ErrorMessage { get; set; }
-    };
+    }
+
+    public record TokenRequestParameter(string Name)
+    {
+        public string? Value { get; set; }
+    }
 }

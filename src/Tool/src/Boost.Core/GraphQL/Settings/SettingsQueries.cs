@@ -11,7 +11,7 @@ using HotChocolate.Types;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Query)]
+    [ExtendObjectType(RootTypes.Query)]
     public class SettingsQueries
     {
         public Task<UserSettings> GetUserSettingsAsync(

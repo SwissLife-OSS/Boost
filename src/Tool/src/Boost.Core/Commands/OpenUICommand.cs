@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Boost.Infrastructure;
 using Boost.Web;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -25,8 +26,25 @@ namespace Boost.Commands
         public async Task OnExecute(IConsole console)
         {
             console.WriteLine("Starting Boost UI...");
-            console.WriteLine("Press CTRL + C to stop...");
 
+            var port = NetworkExtensions.GetAvailablePort(Port);
+
+            if (port != Port)
+            {
+                console.WriteLine($"Port {Port} is allready in use.", ConsoleColor.Red);
+                var useOther = Prompt.GetYesNo($"Start UI on port: {port}", true);
+
+                if (useOther)
+                {
+                    Port = port;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            console.WriteLine("Press CTRL + C to stop...");
             await _webServer.StartAsync(Port);
         }
     }

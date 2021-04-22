@@ -40,6 +40,20 @@ namespace Boost.Settings
                 cancellationToken: cancellationToken);
         }
 
+        public async Task SaveTokenGeneratorSettingsAsync(
+            TokenGeneratorSettings tokenGeneratorSettings,
+            CancellationToken cancellationToken)
+        {
+            UserSettings settings = await GetAsync(cancellationToken);
+
+            settings.TokenGenerator = tokenGeneratorSettings;
+
+            await _settingsStore.SaveAsync(
+                settings,
+                SettingsFileName,
+                cancellationToken: cancellationToken);
+        }
+
         public async Task<string?> GetWorkRootAsync(
             string? name,
             CancellationToken cancellationToken)

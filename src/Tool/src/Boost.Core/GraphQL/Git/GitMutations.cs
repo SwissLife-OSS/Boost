@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Boost.Core.GraphQL
 {
-    [ExtendObjectType(Name = RootTypes.Mutation)]
+    [ExtendObjectType(RootTypes.Mutation)]
     public class GitMutations
     {
         public async Task<CloneGitRepositoryPayload> CloneRepositoryAsync(

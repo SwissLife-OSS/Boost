@@ -16,10 +16,12 @@
         <v-tab-item>
           <v-row dense>
             <v-col md="12">
-              <v-text-field
+              <v-combobox
                 label="Authority"
                 v-model="request.authority"
-              ></v-text-field>
+                :items="identityServers"
+                clearable
+              ></v-combobox>
             </v-col>
           </v-row>
           <v-row dense>
@@ -110,6 +112,11 @@ export default {
       },
       tab: null,
     };
+  },
+  computed: {
+    identityServers: function () {
+      return this.$store.state.app.userSettings.tokenGenerator.identityServers;
+    },
   },
   methods: {
     async onClickAuthorize() {
