@@ -68,6 +68,12 @@ stages:
               targetPath: "nupkg"
               artifact: "packages"
               publishLocation: "pipeline"
+          - task: NuGetCommand@2
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+              nuGetFeedType: 'external'
+              publishFeedCredentials: 'nuget.org'
 
       - job: Build_UI
         displayName: Build UI Tool
