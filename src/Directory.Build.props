@@ -21,6 +21,7 @@
     <PackageProjectUrl>https://github.com/SwissLife-OSS/Boost</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SwissLife-OSS/Boost.git</RepositoryUrl>
     <PackageIconUrl>https://github.com/SwissLife-OSS/Boost/raw/main/images/icon_boost.png</PackageIconUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/SwissLife-OSS/Boost/main/LICENSE</PackageLicenseUrl>
     <PackageTags>dotnet tool boost GitHub AzureDevOps</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>GIT</RepositoryType>
