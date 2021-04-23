@@ -20,6 +20,7 @@ namespace Boost.Security
         bool UsePkce)
     {
         public int Port { get; init; } = 3010;
+        public bool SaveToken { get; init; }
     }
 
     public record TokenRequestData(

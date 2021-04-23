@@ -23,7 +23,6 @@ namespace Boost
     {
         public static IServiceCollection AddBoost(this IServiceCollection services)
         {
-            services.AddBoostDataProtection();
             services.AddSingleton<IDefaultShellService, DefaultShellService>();
             services.AddSingleton<IWorkspaceService, WorkspaceService>();
             services.AddSingleton<IPackageVersionService, PackageVersionService>();
@@ -52,19 +51,11 @@ namespace Boost
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
+            services.AddSingleton<IAuthTokenStore, FileAuthTokenStore>();
 
             return services;
         }
 
-        public static IServiceCollection AddBoostDataProtection(this IServiceCollection services)
-        {
-            IDataProtectionBuilder? dpBuilder = services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo("TTTT"))
-                .SetApplicationName("Boost")
-                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
-                
-            return services;
-        }
 
         public static IServiceCollection AddNuget(this IServiceCollection services)
         {

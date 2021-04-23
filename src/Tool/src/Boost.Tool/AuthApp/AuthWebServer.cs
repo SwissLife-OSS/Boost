@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boost.GraphQL;
 using Boost.Security;
+using Boost.Web.Authentication;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -70,13 +71,12 @@ namespace Boost.Tool.AuthApp
 
                     services.AddAuthentication(options =>
                     {
-                        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultScheme = FileAuthenticationDefaults.AuthenticationScheme;
                         options.DefaultChallengeScheme = "oidc";
                     })
-                    .AddCookie(options =>
+                    .AddFile(options =>
                     {
-                        options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                        options.Cookie.Name = $".ba.{serverOptions.Id.ToString("N").Substring(0, 8)}";
+                        options.Filename = $".ba.{serverOptions.Id.ToString("N").Substring(0, 8)}";
                     })
                     .AddOpenIdConnect("oidc", options =>
                     {

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
-using LibGit2Sharp;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -136,7 +135,7 @@ namespace Boost.Workspace
         private IEnumerable<QuickAction> GetVisualStudioSolutions(string directory)
         {
             foreach (FileInfo file in new DirectoryInfo(directory)
-                .GetFiles("*.sln", SearchOption.AllDirectories))
+                .GetFilesByExtensions(".slnf", ".sln"))
             {
                 yield return new QuickAction
                 {
