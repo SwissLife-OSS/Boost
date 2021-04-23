@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
@@ -12,6 +11,7 @@ namespace Boost.Security
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ITokenAnalyzer _tokenAnalyzer;
+
 
         public IdentityService(
             IHttpClientFactory httpClientFactory,
@@ -109,6 +109,7 @@ namespace Boost.Security
                 };
             }
         }
+
 
         public async Task<DiscoveryDocumentResponse> GetDiscoveryDocumentAsync(string authority, CancellationToken cancellationToken)
         {

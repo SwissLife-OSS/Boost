@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
 using Boost.GraphQL;
+using Boost.Security;
 using Boost.Settings;
 using HotChocolate;
 using HotChocolate.Types;
@@ -51,6 +52,13 @@ namespace Boost.Core.GraphQL
             [Service] IConnectedServiceManager serviceManager)
         {
             return serviceManager.GetServiceTypes();
+        }
+
+        public Task<IEnumerable<TokenStoreHeader>> GetStoredTokensAsync(
+            [Service] IUserDataAuthTokenStoreReader tokenReader,
+            CancellationToken cancellationToken)
+        {
+            return tokenReader.GetTokensAsync(cancellationToken);
         }
     }
 }

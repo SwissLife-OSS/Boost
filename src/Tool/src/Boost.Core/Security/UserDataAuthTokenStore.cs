@@ -1,20 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
-using Boost.Infrastructure;
+using Boost.Data;
 
 namespace Boost.Security
 {
     public class UserDataAuthTokenStore : IAuthTokenStore
     {
         private readonly ISettingsStore _settingsStore;
+        private readonly string TokenPath = "auth_token";
 
-        public UserDataAuthTokenStore(ISettingsStore settingsStore)
+        public UserDataAuthTokenStore(
+            ISettingsStore settingsStore)
         {
             _settingsStore = settingsStore;
         }
@@ -23,7 +21,8 @@ namespace Boost.Security
         {
             TokenStoreModel? tokenData = await _settingsStore.GetProtectedAsync<TokenStoreModel>(
                 name,
-                cancellationToken: cancellationToken);
+                TokenPath,
+                cancellationToken);
 
             if (tokenData is null)
             {
@@ -35,7 +34,11 @@ namespace Boost.Security
 
         public async Task StoreAsync(TokenStoreModel model, CancellationToken cancellationToken)
         {
-            await _settingsStore.SaveProtectedAsync(model, model.Name, cancellationToken: cancellationToken);
+            await _settingsStore.SaveProtectedAsync(
+                model,
+                model.Name,
+                TokenPath,
+                cancellationToken);
         }
     }
 }
