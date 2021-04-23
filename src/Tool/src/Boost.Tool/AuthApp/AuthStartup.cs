@@ -1,5 +1,5 @@
+using Boost.Web.Authentication;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 
 namespace Boost.Tool.AuthApp
@@ -18,11 +18,10 @@ namespace Boost.Tool.AuthApp
             {
                 if (context.Request.Path.StartsWithSegments("/logout"))
                 {
-                    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    await context.SignOutAsync(FileAuthenticationDefaults.AuthenticationScheme);
                     await context.SignOutAsync("oidc");
                     return;
                 }
-
 
                 if (context.Request.Path.StartsWithSegments("/graphql"))
                 {

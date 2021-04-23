@@ -6,6 +6,6 @@ namespace Boost.Web.Authentication
     {
         public string Filename { get; set; } = default!;
 
-        public bool StoreTokens { get; set; } = false;
+        public bool SaveTokens { get; set; } = false;
     }
 }

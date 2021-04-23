@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
-using Boost.Infrastructure;
 using Boost.Security;
-using Boost.Settings;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -43,11 +38,24 @@ namespace Boost.Web.Authentication
                 try
                 {
                     byte[] data = await File.ReadAllBytesAsync(path);
-                    AuthenticationTicket ticket = _ticketSerializer.Deserialize(data);
+                    AuthenticationTicket? ticket = _ticketSerializer.Deserialize(data);
 
-                    return AuthenticateResult.Success(ticket);
+                    if (ticket is { })
+                    {
+                        DateTimeOffset? expiresUtc = GetExpiresAt(ticket);
+
+                        if (expiresUtc is { } && expiresUtc.Value < Clock.UtcNow)
+                        {
+                            File.Delete(path);
+                            return AuthenticateResult.Fail("Ticket expired");
+                        }
+
+                        return AuthenticateResult.Success(ticket);
+                    }
+
+                    return AuthenticateResult.Fail($"No ticket");
                 }
-                catch ( Exception ex)
+                catch (Exception ex)
                 {
                     AuthenticateResult.Fail(ex);
                 }
@@ -97,14 +105,74 @@ namespace Boost.Web.Authentication
 
             var path = GetTicketPath();
             await File.WriteAllBytesAsync(path, data);
+
+            if (Options.SaveTokens)
+            {
+                TokenStoreModel model = CreateStoreModel(Options.Filename, ticket);
+
+                await _authTokenStore.StoreAsync(model, Context.RequestAborted);
+            }
+        }
+
+        private TokenStoreModel CreateStoreModel(
+            string name,
+            AuthenticationTicket ticket)
+        {
+            var model = new TokenStoreModel(name, Clock.UtcNow.UtcDateTime);
+
+            var accessToken = ticket.Properties.Items[".Token.access_token"]!;
+            if (ticket.Properties.Items.ContainsKey(".Token.expires_at"))
+            {
+                DateTimeOffset? expires = GetExpiresAt(ticket);
+
+                model.Tokens.Add(new TokenInfo(TokenType.Access, accessToken)
+                {
+                    ExpiresAt = expires
+                });
+            }
+
+            if (ticket.Properties.Items.ContainsKey(".Token.id_token"))
+            {
+                model.Tokens.Add(new TokenInfo(TokenType.Id, ticket.Properties.Items[".Token.id_token"]!));
+            }
+
+            if (ticket.Properties.Items.ContainsKey(".Token.refresh_token"))
+            {
+                model.Tokens.Add(new TokenInfo(TokenType.Refresh, ticket.Properties.Items[".Token.refresh_token"]!));
+            }
+
+            return model;
         }
 
         private string GetTicketPath()
             => Path.Combine(SettingsStore.GetUserDirectory("auth"), Options.Filename);
 
+        private DateTimeOffset? GetExpiresAt(AuthenticationTicket ticket)
+        {
+            if (ticket.Properties.ExpiresUtc.HasValue)
+            {
+                return ticket.Properties.ExpiresUtc;
+            }
+
+            DateTimeOffset? expires = null;
+            if (DateTimeOffset.TryParse(ticket.Properties.Items[".Token.expires_at"], out DateTimeOffset parsed))
+            {
+                expires = parsed;
+            }
+
+            return expires;
+        }
+
         protected override Task HandleSignOutAsync(AuthenticationProperties? properties)
         {
-            throw new NotImplementedException();
+            var path = GetTicketPath();
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

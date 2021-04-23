@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using Boost.Core.GraphQL;
 using Boost.Core.Settings;
 using Boost.Data;
@@ -13,8 +11,6 @@ using Boost.Settings;
 using Boost.Utils;
 using Boost.Workspace;
 using HotChocolate.Execution.Configuration;
-using LiteDB;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost
@@ -51,11 +47,10 @@ namespace Boost
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
-            services.AddSingleton<IAuthTokenStore, FileAuthTokenStore>();
+            services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
 
             return services;
         }
-
 
         public static IServiceCollection AddNuget(this IServiceCollection services)
         {

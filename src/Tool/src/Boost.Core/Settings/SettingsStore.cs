@@ -3,13 +3,19 @@ using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Boost.Settings;
+using Boost.Infrastructure;
 
 namespace Boost.Core.Settings
 {
     public class SettingsStore : ISettingsStore
     {
         private const string AppName = "boost";
+        private readonly IUserDataProtector _userDataProtector;
+
+        public SettingsStore(IUserDataProtector userDataProtector)
+        {
+            _userDataProtector = userDataProtector;
+        }
 
         public async Task SaveAsync<T>(
             T userSettings,
@@ -27,6 +33,19 @@ namespace Boost.Core.Settings
             await File.WriteAllTextAsync(path, json, cancellationToken);
         }
 
+        public async Task SaveProtectedAsync<T>(
+            T data,
+            string fileName,
+            string directory = "",
+            CancellationToken cancellationToken = default)
+        {
+            var jsonData = JsonSerializer.SerializeToUtf8Bytes(data);
+            var encrypted = _userDataProtector.Protect(jsonData);
+            var path = Path.Combine(GetUserDirectory(directory), $"{fileName}");
+
+            await File.WriteAllBytesAsync(path, encrypted, cancellationToken);
+        }
+
         public async Task<T?> GetAsync<T>(
             string fileName,
             string directory = "",
@@ -38,6 +57,24 @@ namespace Boost.Core.Settings
             {
                 var json = await File.ReadAllTextAsync(path, cancellationToken);
                 return JsonSerializer.Deserialize<T>(json);
+            }
+
+            return default;
+        }
+
+        public async Task<T?> GetProtectedAsync<T>(
+            string fileName,
+            string directory = "",
+            CancellationToken cancellationToken = default)
+        {
+            var path = Path.Combine(GetUserDirectory(directory), $"{fileName}");
+
+            if (File.Exists(path))
+            {
+                var encryptedData = await File.ReadAllBytesAsync(path, cancellationToken);
+                var jsonData = _userDataProtector.UnProtect(encryptedData);
+
+                return JsonSerializer.Deserialize<T>(jsonData);
             }
 
             return default;

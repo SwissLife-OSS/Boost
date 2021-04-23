@@ -7,8 +7,11 @@ namespace Boost.GraphQL
         string ClientId,
         string Secret,
         IEnumerable<string> Scopes,
-        bool UsePkce)
+        bool UsePkce,
+        bool SaveTokens)
     {
         public int Port { get; init; }
+
+        public string? RequestId { get; init; }
     }
 }

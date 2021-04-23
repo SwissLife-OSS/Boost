@@ -23,7 +23,9 @@ namespace Boost.GraphQL
                 input.Scopes,
                 input.UsePkce)
             {
-                Port = input.Port
+                Port = input.Port,
+                SaveTokens = input.SaveTokens,
+                RequestId = input.RequestId
             };
 
             RunningWebServerInfo session = await authService.StartAuthorizeRequestAsync(

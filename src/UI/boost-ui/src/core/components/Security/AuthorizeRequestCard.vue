@@ -62,7 +62,13 @@
               ></v-text-field>
             </v-col>
             <v-col md="4">
-              <v-switch label="usePkce" v-model="request.usePkce"></v-switch>
+              <v-switch label="Pkce" v-model="request.usePkce"></v-switch>
+            </v-col>
+            <v-col md="4">
+              <v-switch
+                label="Save Tokens"
+                v-model="request.saveTokens"
+              ></v-switch>
             </v-col>
           </v-row>
         </v-tab-item>
@@ -94,6 +100,15 @@ import SavedRequestsList from "./SavedRequestsList.vue";
 import { startAuthorize } from "../../tokenService";
 export default {
   components: { SaveIdentityRequestMenu, SavedRequestsList },
+  watch: {
+    save: {
+      handler: function () {
+        console.log("SAVE CHANGED");
+        this.request.requestId = this.save.id;
+      },
+      deep: true,
+    },
+  },
   data() {
     return {
       request: {
@@ -103,6 +118,8 @@ export default {
         usePkce: true,
         scopes: ["openid", "profile"],
         port: 3010,
+        saveTokens: false,
+        requestId: null,
       },
       save: {
         id: null,
@@ -127,16 +144,18 @@ export default {
       this.tab = 0;
       this.save.id = request.id;
       this.save.name = request.name;
-
       this.request.authority = request.data.authority;
       this.request.clientId = request.data.clientId;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
       this.request.port = request.data.port;
       this.request.usePkce = request.data.usePkce;
+      this.request.saveTokens = request.data.saveTokens;
     },
     onRequestSaved: function () {
-      this.$refs.requestList.search();
+      if (this.$refs.requestList) {
+        this.$refs.requestList.search();
+      }
     },
   },
 };

@@ -4,11 +4,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Boost.Core.Settings;
 using Boost.GraphQL;
+using Boost.Infrastructure;
 using Boost.Security;
 using Boost.Web.Authentication;
 using IdentityModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +53,9 @@ namespace Boost.Tool.AuthApp
                         AuthenticationSessionService>();
                     services.AddSingleton<ITokenAnalyzer, TokenAnalyzer>();
                     services.AddSingleton<IIdentityService, IdentityService>();
+                    services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
+                    services.AddSingleton<ISettingsStore, SettingsStore>();
+                    services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
 
                     services.AddHttpContextAccessor();
                     services.AddSameSiteOptions();
@@ -69,15 +73,21 @@ namespace Boost.Tool.AuthApp
                           }
                       });
 
+                    services.AddOptions<FileAuthenticationOptions>(FileAuthenticationDefaults.AuthenticationScheme)
+                        .Configure<AuthorizeRequestData>((options, authData) =>
+                        {
+                            options.SaveTokens = authData.SaveTokens;
+                            options.Filename = (authData.RequestId != null) ?
+                                $"R-{authData.RequestId}" :
+                                $"S-{serverOptions.Id.ToString("N").Substring(0, 8)}";
+                        });
+
                     services.AddAuthentication(options =>
                     {
                         options.DefaultScheme = FileAuthenticationDefaults.AuthenticationScheme;
                         options.DefaultChallengeScheme = "oidc";
                     })
-                    .AddFile(options =>
-                    {
-                        options.Filename = $".ba.{serverOptions.Id.ToString("N").Substring(0, 8)}";
-                    })
+                    .AddFile()
                     .AddOpenIdConnect("oidc", options =>
                     {
                         options.ResponseType = "code";
@@ -91,7 +101,6 @@ namespace Boost.Tool.AuthApp
                     });
 
                     services.AddHttpClient();
-
                 })
 
                 .Build();
