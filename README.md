@@ -6,10 +6,12 @@ Boost is a [dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/glob
 
 > Project state: in progress
 
+![nuget](https://img.shields.io/nuget/vpre/Boost.Tool)
+
 ## Installation
 
 ```bash
-dotnet tool install -g --add-source Boost.Tool
+dotnet tool install --global Boost.Tool --version 0.1.0-preview.7
 ```
 
 ## Getting started
