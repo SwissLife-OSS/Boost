@@ -3,34 +3,27 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+using Boost.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
 
-namespace Boost
+namespace Boost.Web
 {
-    public static class EmbeddedUIMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseEmbeddedUI(
-            this IApplicationBuilder builder,
-            string path)
-        {
-            return builder.UseMiddleware<EmbeddedUIMiddleware>(path);
-        }
-    }
-
     public class EmbeddedUIMiddleware
     {
         private readonly IContentTypeProvider _contentTypeProvider;
         private readonly IFileProvider _fileProvider;
+        private readonly IBoostCommandContext _boostCommandContext;
         private readonly RequestDelegate _next;
 
         public EmbeddedUIMiddleware(
+            IBoostCommandContext boostCommandContext,
             RequestDelegate next,
             string path)
         {
+            _boostCommandContext = boostCommandContext;
             _next = next;
             _fileProvider = CreateManifestFileProvider(path);
             _contentTypeProvider = new FileExtensionContentTypeProvider();
@@ -40,8 +33,9 @@ namespace Boost
         {
             try
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                return new ManifestEmbeddedFileProvider(assembly, path);
+                return new ManifestEmbeddedFileProvider(
+                    _boostCommandContext.ToolAssembly,
+                    path);
             }
             catch (Exception ex)
             {

@@ -1,0 +1,14 @@
+mutation refreshStoreToken($id: String!) {
+  refreshStoredToken(id: $id) {
+    header {
+      id
+      name
+      requestId
+      createdAt
+      hasAccessToken
+      hasIdToken
+      hasRefreshToken
+      accessTokenExpiresIn
+    }
+  }
+}

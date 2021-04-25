@@ -47,5 +47,24 @@ namespace Boost.GraphQL
         {
             return store.GetByIdAsync(id, cancellationToken);
         }
+
+        public Task<IEnumerable<TokenStoreHeader>> GetStoredTokensAsync(
+            [Service] IAuthTokenStoreReader tokenReader,
+            CancellationToken cancellationToken)
+        {
+            return tokenReader.GetTokensAsync(cancellationToken);
+        }
+
+        public Task<string?> GetStoredTokenAsync(
+            [Service] IAuthTokenStoreReader tokenReader,
+            GetStoredTokenInput input,
+            CancellationToken cancellationToken)
+        {
+            return tokenReader.GetTokenAsync(
+                input.Id,
+                input.Type,
+                input.AutoRefresh,
+                cancellationToken);
+        }
     }
 }

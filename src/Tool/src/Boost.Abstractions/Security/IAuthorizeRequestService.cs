@@ -20,6 +20,10 @@ namespace Boost.Security
         bool UsePkce)
     {
         public int Port { get; init; } = 3010;
+
+        public bool SaveTokens { get; init; }
+
+        public string? RequestId { get; init; }
     }
 
     public record TokenRequestData(
@@ -28,7 +32,12 @@ namespace Boost.Security
         string Secret,
         string GrantType,
         IEnumerable<string> Scopes,
-        IEnumerable<TokenRequestParameter> Parameters);
+        IEnumerable<TokenRequestParameter> Parameters)
+    {
+        public bool SaveTokens { get; init; }
+
+        public Guid? RequestId { get; init; }
+    }
 
 
     public record RequestTokenResult(bool IsSuccess)

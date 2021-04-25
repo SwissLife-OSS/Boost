@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Security;
@@ -23,7 +22,9 @@ namespace Boost.GraphQL
                 input.Scopes,
                 input.UsePkce)
             {
-                Port = input.Port
+                Port = input.Port,
+                SaveTokens = input.SaveTokens,
+                RequestId = input.RequestId
             };
 
             RunningWebServerInfo session = await authService.StartAuthorizeRequestAsync(
@@ -67,7 +68,11 @@ namespace Boost.GraphQL
                     input.Secret,
                     input.GrantType,
                     input.Scopes,
-                    input.Parameters),
+                    input.Parameters)
+                {
+                    RequestId = input.RequestId,
+                    SaveTokens = input.SaveTokens
+                },
                 cancellationToken);
 
             return new RequestTokenPayload(tokenResult);
@@ -90,6 +95,26 @@ namespace Boost.GraphQL
             CancellationToken cancellationToken)
         {
             await requestStore.DeleteAsync(id, cancellationToken);
+
+            return id;
+        }
+
+        public async Task<RefreshStoredTokenPayload> RefreshStoredTokenAsync(
+            [Service] IAuthTokenStoreReader tokenStore,
+            string id,
+            CancellationToken cancellationToken)
+        {
+            TokenStoreHeader header = await tokenStore.RefreshAsync(id, cancellationToken);
+
+            return new RefreshStoredTokenPayload(header);
+        }
+
+        public async Task<string> DeleteStoredTokenAsync(
+            [Service] IAuthTokenStore tokenStore,
+            string id,
+            CancellationToken cancellationToken)
+        {
+            await tokenStore.DeleteAsync(id, cancellationToken);
 
             return id;
         }

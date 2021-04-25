@@ -1,9 +1,14 @@
 using System;
 using System.Reflection;
+using Boost.AzureDevOps;
 using Boost.Commands;
+using Boost.Core.GraphQL;
+using Boost.GitHub;
 using Boost.GitHub.Commands;
+using Boost.Infrastructure;
 using Boost.Snapshooter.Commands;
 using Boost.Web;
+using Boost.WebApp;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,7 +40,20 @@ namespace Boost.Tool
                     {
                         return new BoostWebServer(
                             c.GetRequiredService<IConsole>(),
-                            new BoostCommandContext(c));
+                            new BoostCommandContext(c, (services) =>
+                            {
+                                services.AddGitHub();
+                                services.AddAzureDevOps();
+                                services.AddSnapshooter();
+
+                                services.AddGraphQLServices((gql) =>
+                                {
+                                    gql.AddSnapshooterTypes();
+                                    gql.AddGitHubTypes();
+                                    gql.AddAzureDevOpsTypes();
+
+                                });
+                            }, typeof(Program).Assembly));
                     })
                     .BuildServiceProvider())
             {
@@ -58,6 +76,4 @@ namespace Boost.Tool
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
     }
-
-    public record BoostCommandContext(IServiceProvider Services);
 }

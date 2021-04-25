@@ -70,6 +70,8 @@ namespace Boost.Security
 
         public bool? UsePkce { get; set; }
 
+        public bool SaveTokens { get; set; }
+
         public IEnumerable<TokenRequestParameter>? Parameters { get; set; }
     }
 

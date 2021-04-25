@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -11,6 +11,8 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="$(AzureDevOpsVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="$(AzureDevOpsVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="$(AzureDevOpsVersion)" />
+    <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
+    <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
   </ItemGroup>
 
   <ItemGroup>

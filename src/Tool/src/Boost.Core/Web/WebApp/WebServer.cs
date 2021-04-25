@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Boost.AzureDevOps;
+using Boost.AuthApp;
+using Boost.Core.GraphQL;
 using Boost.Data;
-using Boost.GitHub;
-using Boost.GraphQL;
+using Boost.Infrastructure;
 using Boost.Security;
-using Boost.Tool;
-using Boost.Tool.AuthApp;
 using Boost.Web;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Boost
+namespace Boost.WebApp
 {
     public class BoostWebServer : IWebServer
     {
@@ -60,20 +58,16 @@ namespace Boost
                     services.AddSameSiteOptions();
                     services.AddHttpContextAccessor();
                     services.AddSignalR();
-                    services.AddGraphQLServices(gql =>
-                    {
-                       gql.AddType<AzureDevOpsGitRemoteReference>();
-                       gql.AddType<GitHubRemoteReference>();
-                    });
                     services.AddBoost();
-                    services.AddGitHub();
-                    services.AddAzureDevOps();
-                    services.AddSnapshooter();
+                    services.AddSingleton<IBoostCommandContext>(_commandContext);
+
                     services.AddSingleton<IWebShellFactory, WebShellFactory>();
                     services.AddHttpClient();
                     services.AddSingleton<IAuthWebServer, AuthWebServer>();
+                    _commandContext.ConfigureWeb?.Invoke(services);
+
                     services.AddSingleton(
-                        _commandContext.Services.GetRequiredService<IBoostDbContextFactory>());
+                        _commandContext.Services!.GetRequiredService<IBoostDbContextFactory>());
                 })
                 .Build();
 

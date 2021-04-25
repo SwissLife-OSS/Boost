@@ -11,6 +11,11 @@ import MUTATION_IDENTITY_REQUEST_DELETE from "./graphql/Security/DeleteIdentityR
 import QUERY_IDENTITY_REQUESTS_SEARCH from "./graphql/Security/SearchIdentityRequests.gql";
 import QUERY_IDENTITY_REQUEST_GET from "./graphql/Security/GetIdentityRequest.gql";
 
+import QUERY_STORED_TOKENS_LIST from "./graphql/Security/GetStoredTokens.gql";
+import QUERY_STORED_TOKEN_GET from "./graphql/Security/GetStoredToken.gql";
+import MUTATION_STORED_TOKEN_REFRESH from "./graphql/Security/RefreshToken.gql";
+import MUTATION_STORED_TOKEN_DELETE from "./graphql/Security/DeleteStoredToken.gql";
+
 
 export const analyzeToken = async (token) => {
     return await apollo.query({
@@ -75,6 +80,32 @@ export const deleteRequest = async (id) => {
     });
 };
 
+export const listStoredTokens = async () => {
+    return await apollo.query({
+        query: QUERY_STORED_TOKENS_LIST,
+        variables: {}
+    });
+};
 
+export const getStoredToken = async (input) => {
+    return await apollo.query({
+        query: QUERY_STORED_TOKEN_GET,
+        variables: { input }
+    });
+};
+
+export const refreshToken = async (id) => {
+    return await apollo.mutate({
+        mutation: MUTATION_STORED_TOKEN_REFRESH,
+        variables: { id }
+    });
+};
+
+export const deleteToken = async (id) => {
+    return await apollo.mutate({
+        mutation: MUTATION_STORED_TOKEN_DELETE,
+        variables: { id }
+    });
+};
 
 

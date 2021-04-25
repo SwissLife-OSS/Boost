@@ -1,6 +1,7 @@
 using Boost.Git;
 using Boost.Pipelines;
 using Boost.Settings;
+using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.AzureDevOps
@@ -19,6 +20,15 @@ namespace Boost.AzureDevOps
 
             services.AddSingleton<IConnectedServiceProvider, AzureDevOpsConnectedServiceProvider>();
             return services;
+        }
+
+        public static IRequestExecutorBuilder AddAzureDevOpsTypes(
+            this IRequestExecutorBuilder builder)
+        {
+            builder
+                .AddType<AzureDevOpsGitRemoteReference>();
+
+            return builder;
         }
     }
 }
