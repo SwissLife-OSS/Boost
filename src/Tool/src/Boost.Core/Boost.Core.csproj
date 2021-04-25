@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <AssemblyName>Boost.Core</AssemblyName>
     <RootNamespace>Boost</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="CliWrap" Version="3.3.2" />
     <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
@@ -32,7 +32,7 @@
   <ItemGroup>
     <EmbeddedResource Include="UI/**" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
   </ItemGroup>
