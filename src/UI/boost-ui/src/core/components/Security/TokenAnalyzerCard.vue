@@ -139,6 +139,7 @@ export default {
   },
   methods: {
     async analyzeToken() {
+      this.userInfo = null;
       if (this.token.length < 20) {
         this.analyzed = null;
         this.errorMessage = null;
@@ -154,6 +155,9 @@ export default {
 
         this.tab = 1;
       }
+    },
+    analyze: function (token) {
+      this.token = token;
     },
     async requestUserInfo() {
       const result = await getUserInfo(this.token);

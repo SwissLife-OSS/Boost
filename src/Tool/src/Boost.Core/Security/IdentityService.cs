@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
@@ -11,14 +13,16 @@ namespace Boost.Security
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ITokenAnalyzer _tokenAnalyzer;
-
+        private readonly IAuthTokenStore _authTokenStore;
 
         public IdentityService(
             IHttpClientFactory httpClientFactory,
-            ITokenAnalyzer tokenAnalyzer)
+            ITokenAnalyzer tokenAnalyzer,
+            IAuthTokenStore authTokenStore)
         {
             _httpClientFactory = httpClientFactory;
             _tokenAnalyzer = tokenAnalyzer;
+            _authTokenStore = authTokenStore;
         }
 
         public async Task<UserInfoResult> GetUserInfoAsync(
@@ -59,7 +63,6 @@ namespace Boost.Security
                 cancellationToken);
             TokenResponse? response = null;
 
-
             if (request.GrantType == "client_credentials")
             {
                 response = await httpClient.RequestClientCredentialsTokenAsync(
@@ -96,6 +99,11 @@ namespace Boost.Security
             {
                 TokenModel? accessToken = _tokenAnalyzer.Analyze(response.AccessToken);
 
+                if ( request.SaveTokens && request.RequestId.HasValue)
+                {
+                    await SaveTokenAsync(request, accessToken, cancellationToken);
+                }
+
                 return new RequestTokenResult(true)
                 {
                     AccessToken = accessToken
@@ -110,8 +118,64 @@ namespace Boost.Security
             }
         }
 
+        private async Task SaveTokenAsync(TokenRequestData request, TokenModel? accessToken, CancellationToken cancellationToken)
+        {
+            var model = new TokenStoreModel($"R-{request.RequestId:N}", DateTime.UtcNow);
+            model.RequestId = request.RequestId;
 
-        public async Task<DiscoveryDocumentResponse> GetDiscoveryDocumentAsync(string authority, CancellationToken cancellationToken)
+            model.Tokens.Add(new TokenInfo(TokenType.Access, accessToken!.Token!)
+            {
+                ExpiresAt = accessToken.ValidTo
+            });
+
+            await _authTokenStore.StoreAsync(model, cancellationToken);
+        }
+
+        public async Task<IEnumerable<TokenInfo>> RefreshTokenAsync(
+            IdentityRequestItemData identityRequest,
+            string refreshToken,
+            CancellationToken cancellationToken)
+        {
+            var tokens = new List<TokenInfo>();
+
+            HttpClient? httpClient = _httpClientFactory.CreateClient();
+            DiscoveryDocumentResponse? disco = await GetDiscoveryDocumentAsync(
+                identityRequest.Authority,
+                cancellationToken);
+
+            TokenResponse tokenResponse = await httpClient.RequestRefreshTokenAsync(
+                new RefreshTokenRequest
+                {
+                    Address = disco.TokenEndpoint,
+                    ClientId = identityRequest.ClientId,
+                    ClientSecret = identityRequest.Secret,
+                    RefreshToken = refreshToken
+                }, cancellationToken);
+
+            if (tokenResponse.IsError)
+            {
+                throw new ApplicationException(
+                    $"Could not refresh token. {tokenResponse.Error}");
+            }
+
+            tokens.Add(new TokenInfo(TokenType.Refresh, tokenResponse.RefreshToken));
+            tokens.Add(new TokenInfo(TokenType.Access, tokenResponse.AccessToken)
+            {
+                ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn)
+            });
+
+            if (tokenResponse.IdentityToken is { })
+            {
+                tokens.Add(new TokenInfo(TokenType.Id, tokenResponse.IdentityToken));
+            }
+
+            return tokens;
+        }
+
+
+        public async Task<DiscoveryDocumentResponse> GetDiscoveryDocumentAsync(
+            string authority,
+            CancellationToken cancellationToken)
         {
             HttpClient httpClient = _httpClientFactory.CreateClient();
             DiscoveryDocumentResponse disco = await httpClient

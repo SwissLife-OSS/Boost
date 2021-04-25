@@ -1,0 +1,12 @@
+query authTokens {
+  storedTokens {
+    id
+    name
+    requestId
+    createdAt
+    hasAccessToken
+    hasIdToken
+    hasRefreshToken
+    accessTokenExpiresIn
+  }
+}

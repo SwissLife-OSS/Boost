@@ -1,0 +1,3 @@
+query authToken($input: GetStoredTokenInput!) {
+  storedToken(input: $input)
+}

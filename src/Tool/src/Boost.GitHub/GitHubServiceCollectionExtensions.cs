@@ -1,5 +1,6 @@
 using Boost.Git;
 using Boost.Settings;
+using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.GitHub
@@ -14,6 +15,15 @@ namespace Boost.GitHub
             services.AddSingleton<IGitRemoteClient, GitHubRepoClient>();
 
             return services;
+        }
+
+        public static IRequestExecutorBuilder AddGitHubTypes(
+            this IRequestExecutorBuilder builder)
+        {
+            builder
+                .AddType<GitHubRemoteReference>();
+
+            return builder;
         }
     }
 }

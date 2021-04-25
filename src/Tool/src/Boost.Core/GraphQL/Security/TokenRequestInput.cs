@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Boost.Security;
 
@@ -9,5 +10,7 @@ namespace Boost.GraphQL
         string Secret,
         string GrantType,
         IEnumerable<string> Scopes,
-        IEnumerable<TokenRequestParameter> Parameters);
+        IEnumerable<TokenRequestParameter> Parameters,
+        bool SaveTokens,
+        Guid? RequestId);
 }

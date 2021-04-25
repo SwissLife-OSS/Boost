@@ -80,6 +80,21 @@ namespace Boost.Core.Settings
             return default;
         }
 
+        public Task RemoveAsync(
+            string fileName,
+            string directory = "",
+            CancellationToken cancellationToken = default)
+        {
+            var path = Path.Combine(GetUserDirectory(directory), fileName);
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            return Task.CompletedTask;
+        }
+
         internal static string GetUserDirectory(string directory = "")
         {
             var appData = Path.Combine(

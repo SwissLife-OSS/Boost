@@ -17,7 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
-namespace Boost.Tool.AuthApp
+namespace Boost.AuthApp
 {
     public class AuthWebServer : IAuthWebServer
     {

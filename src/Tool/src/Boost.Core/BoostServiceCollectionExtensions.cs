@@ -48,7 +48,7 @@ namespace Boost
             services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
             services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
-            services.AddSingleton<IUserDataAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
+            services.AddSingleton<IAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
 
             return services;
         }

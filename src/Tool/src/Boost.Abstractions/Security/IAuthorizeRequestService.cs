@@ -32,7 +32,12 @@ namespace Boost.Security
         string Secret,
         string GrantType,
         IEnumerable<string> Scopes,
-        IEnumerable<TokenRequestParameter> Parameters);
+        IEnumerable<TokenRequestParameter> Parameters)
+    {
+        public bool SaveTokens { get; init; }
+
+        public Guid? RequestId { get; init; }
+    }
 
 
     public record RequestTokenResult(bool IsSuccess)

@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Boost.Tool.WebApp
+namespace Boost.WebApp
 {
     [Route("api/file/content")]
     public class FileContentController : Controller

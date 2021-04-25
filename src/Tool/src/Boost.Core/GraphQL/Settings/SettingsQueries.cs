@@ -53,12 +53,5 @@ namespace Boost.Core.GraphQL
         {
             return serviceManager.GetServiceTypes();
         }
-
-        public Task<IEnumerable<TokenStoreHeader>> GetStoredTokensAsync(
-            [Service] IUserDataAuthTokenStoreReader tokenReader,
-            CancellationToken cancellationToken)
-        {
-            return tokenReader.GetTokensAsync(cancellationToken);
-        }
     }
 }

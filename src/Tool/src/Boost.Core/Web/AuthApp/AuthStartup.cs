@@ -1,8 +1,10 @@
+using Boost.Web;
 using Boost.Web.Authentication;
+using Boost.WebApp;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 
-namespace Boost.Tool.AuthApp
+namespace Boost.AuthApp
 {
     public class AuthStartup
     {

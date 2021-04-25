@@ -1,7 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
+using Boost.Web;
 using Microsoft.AspNetCore.Builder;
 
-namespace Boost
+namespace Boost.WebApp
 {
     public class Startup
     {

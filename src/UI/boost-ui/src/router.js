@@ -22,7 +22,7 @@ import EncodingPage from "./core/components/Utils/EncodingPage"
 import SecurityUtilsPage from "./core/components/Utils/SecurityUtilsPage"
 import Base64ToFilePage from "./core/components/Utils/Base64ToFilePage"
 import SecurityPage from "./core/components/Security/SecurityPage"
-import TokenAnalyzerPage from "./core/components/Security/TokenAnalyzerPage"
+import TokensPage from "./core/components/Security/TokensPage"
 import TokenRequestPage from "./core/components/Security/TokenRequestPage"
 import AuthorizePage from "./core/components/Security/AuthorizePage"
 
@@ -119,9 +119,9 @@ const routes = [
     component: SecurityPage,
     children: [
       {
-        path: "security/token",
-        name: "Security.TokenAnalyzer",
-        component: TokenAnalyzerPage,
+        path: "security/tokens",
+        name: "Security.Tokens",
+        component: TokensPage,
       },
       {
         path: "security/authorize",

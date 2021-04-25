@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
-using Boost.Data;
 
 namespace Boost.Security
 {
@@ -39,6 +38,11 @@ namespace Boost.Security
                 model.Name,
                 TokenPath,
                 cancellationToken);
+        }
+
+        public Task DeleteAsync(string id, CancellationToken cancellationToken)
+        {
+            return _settingsStore.RemoveAsync(id, TokenPath, cancellationToken); 
         }
     }
 }

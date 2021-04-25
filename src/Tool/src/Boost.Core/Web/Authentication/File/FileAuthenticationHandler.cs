@@ -133,12 +133,16 @@ namespace Boost.Web.Authentication
 
             if (ticket.Properties.Items.ContainsKey(".Token.id_token"))
             {
-                model.Tokens.Add(new TokenInfo(TokenType.Id, ticket.Properties.Items[".Token.id_token"]!));
+                model.Tokens.Add(new TokenInfo(
+                    TokenType.Id,
+                    ticket.Properties.Items[".Token.id_token"]!));
             }
 
             if (ticket.Properties.Items.ContainsKey(".Token.refresh_token"))
             {
-                model.Tokens.Add(new TokenInfo(TokenType.Refresh, ticket.Properties.Items[".Token.refresh_token"]!));
+                model.Tokens.Add(new TokenInfo(
+                    TokenType.Refresh,
+                    ticket.Properties.Items[".Token.refresh_token"]!));
             }
 
             return model;
@@ -155,7 +159,7 @@ namespace Boost.Web.Authentication
             }
 
             DateTimeOffset? expires = null;
-            if (DateTimeOffset.TryParse(ticket.Properties.Items[".Token.expires_at"], out DateTimeOffset parsed))
+            if (DateTime.TryParse(ticket.Properties.Items[".Token.expires_at"], out DateTime parsed))
             {
                 expires = parsed;
             }

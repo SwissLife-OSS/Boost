@@ -80,6 +80,14 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row v-if="save.id" dense>
+            <v-col md="12">
+              <v-switch
+                label="Save Tokens"
+                v-model="request.saveTokens"
+              ></v-switch>
+            </v-col>
+          </v-row>
         </v-tab-item>
         <v-tab-item>
           <saved-requests-list
@@ -116,6 +124,7 @@ export default {
         clientId: "m2m",
         secret: "secret",
         scopes: [],
+        saveTokens: false,
         grantType: "client_credentials",
       },
       save: {
@@ -163,6 +172,8 @@ export default {
         secret: this.request.secret,
         scopes: this.request.scopes,
         grantType: this.request.grantType,
+        saveTokens: this.request.saveTokens,
+        requestId: this.save.id,
         parameters: this.parameters.map((x) => {
           return {
             name: x.name,
@@ -189,6 +200,7 @@ export default {
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
       this.request.grantType = request.data.grantType;
+      this.request.saveTokens = request.data.saveTokens;
 
       for (let i = 0; i < this.parameters.length; i++) {
         const param = this.parameters[i];
