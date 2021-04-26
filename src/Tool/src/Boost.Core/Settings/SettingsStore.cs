@@ -95,7 +95,7 @@ namespace Boost.Core.Settings
             return Task.CompletedTask;
         }
 
-        internal static string GetUserDirectory(string directory = "")
+        public static string GetUserDirectory(string directory = "")
         {
             var appData = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
