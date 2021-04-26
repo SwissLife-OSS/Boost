@@ -30,10 +30,13 @@ namespace Boost.Nuget
             CancellationToken cancellationToken)
         {
             sourceName = sourceName ?? DefaultSource;
-            PackageSource? source = await _sourceFactory.CreateAsync(sourceName, cancellationToken);
+            PackageSource? source = await _sourceFactory.CreateAsync(
+                sourceName,
+                cancellationToken);
 
             SourceRepository repository = Repository.Factory.GetCoreV3(source);
-            FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
+            FindPackageByIdResource resource = await repository
+                .GetResourceAsync<FindPackageByIdResource>();
 
             return resource;
         }
@@ -44,24 +47,29 @@ namespace Boost.Nuget
             CancellationToken cancellationToken)
         {
             sourceName = sourceName ?? DefaultSource;
-            PackageSource? source = await _sourceFactory.CreateAsync(sourceName, cancellationToken);
+            PackageSource? source = await _sourceFactory.CreateAsync(
+                sourceName,
+                cancellationToken);
 
             SourceRepository repository = Repository.Factory.GetCoreV3(source);
 
-            PackageMetadataResource metaloader = await repository.GetResourceAsync<PackageMetadataResource>();
-            IEnumerable<IPackageSearchMetadata> metadata = await metaloader.GetMetadataAsync(
-                packageId,
-                includePrerelease: true,
-                includeUnlisted: false,
-                Cache,
-                NugetLogger,
-                cancellationToken);
+            PackageMetadataResource metaloader = await repository
+                .GetResourceAsync<PackageMetadataResource>();
 
-            IPackageSearchMetadata latestStable = metadata
+            IEnumerable<IPackageSearchMetadata> metadata = await metaloader
+                .GetMetadataAsync(
+                    packageId,
+                    includePrerelease: true,
+                    includeUnlisted: false,
+                    Cache,
+                    NugetLogger,
+                    cancellationToken);
+
+            IPackageSearchMetadata? latestStable = metadata
                 .Where(x => !x.Identity.Version.IsPrerelease)
                 .OrderBy(x => x.Published).LastOrDefault();
 
-            IPackageSearchMetadata latestPrerelease = metadata
+            IPackageSearchMetadata? latestPrerelease = metadata
                 .Where(x => x.Identity.Version.IsPrerelease)
                 .OrderBy(x => x.Published).LastOrDefault();
 

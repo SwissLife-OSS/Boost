@@ -3,9 +3,9 @@ using Serilog;
 
 namespace Boost.Infrastructure
 {
-    internal class LogConfiguration
+    public class LogConfiguration
     {
-        internal static void CreateLogger()
+        public static void CreateLogger()
         {
             LoggerConfiguration logBuilder = new LoggerConfiguration()
                 .WriteTo.Console();
