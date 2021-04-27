@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Boost.Account;
 using Boost.Settings;
 
 namespace Boost

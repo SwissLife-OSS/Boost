@@ -21,7 +21,6 @@ namespace Boost
         {
             services.AddSingleton<IDefaultShellService, DefaultShellService>();
             services.AddSingleton<IWorkspaceService, WorkspaceService>();
-            services.AddSingleton<IPackageVersionService, PackageVersionService>();
             services.AddSingleton<IEncodingService, EncodingService>();
             services.AddSingleton<ITokenAnalyzer, TokenAnalyzer>();
             services.AddSingleton<IBoostApplicationContext, BoostApplicationContext>();
@@ -77,9 +76,11 @@ namespace Boost
                 .AddType<SecurityMutations>()
                 .AddType<GitMutations>()
                 .AddType<SettingsMutations>()
+                .AddType<NugetQueries>()
                 .AddType<GitRemoteRepositoryType>()
                 .AddType<LocalGitRepositoryType>()
                 .AddType<PipelineType>()
+
                 .AddDataLoader<ConnectedServiceByIdDataLoader>();
 
             return builder;

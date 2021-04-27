@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Boost.Infrastructure;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol;
@@ -14,11 +15,15 @@ namespace Boost.Nuget
     public class NugetService : INugetService
     {
         private readonly NugetPackageSourceFactory _sourceFactory;
+        private readonly IBoostApplicationContext _boostApplicationContext;
         private readonly string DefaultSource = "f2c-main-core";
 
-        public NugetService(NugetPackageSourceFactory sourceFactory)
+        public NugetService(
+            NugetPackageSourceFactory sourceFactory,
+            IBoostApplicationContext boostApplicationContext)
         {
             _sourceFactory = sourceFactory;
+            _boostApplicationContext = boostApplicationContext;
         }
 
         public ILogger NugetLogger => NullLogger.Instance;
@@ -78,6 +83,19 @@ namespace Boost.Nuget
                 LatestPreRelease = CreateVersionInfo(latestPrerelease),
                 LatestStable = CreateVersionInfo(latestStable)
             };
+        }
+
+        public async Task<NugetPackageVersionInfo> GetLatestVersionAsync(
+            string packageId,
+            CancellationToken cancellationToken)
+        {
+            ISettings settings = NuGet.Configuration.Settings.LoadDefaultSettings(
+                _boostApplicationContext.WorkingDirectory.FullName);
+
+            var packageSourceProvider = new PackageSourceProvider(settings);
+
+
+            return null;
         }
 
         public async Task<NugetPackageVersionInfo> GetLatestVersionAsync(
