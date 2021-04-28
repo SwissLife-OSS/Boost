@@ -7,16 +7,7 @@ namespace Boost.Nuget
 {
     public interface INugetService
     {
-        Task<NugetPackageVersionInfo> GetLatestVersionAsync(
-            string sourceName,
-            string packageId,
-            CancellationToken cancellationToken);
-        Task<NugetPackageVersionInfo> GetLatestVersionAsync(string packageId, CancellationToken cancellationToken);
-
-        Task<NugetPackageInfo> GetNugetPackageInfo(
-            string? sourceName,
-            string packageId,
-            CancellationToken cancellationToken);
+        Task<NugetPackageInfo?> GetNugetPackageInfoAsync(string packageId, CancellationToken cancellationToken);
     }
 
 

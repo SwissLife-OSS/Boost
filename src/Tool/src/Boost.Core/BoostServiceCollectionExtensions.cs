@@ -55,7 +55,6 @@ namespace Boost
         public static IServiceCollection AddNuget(this IServiceCollection services)
         {
             services.AddSingleton<INugetService, NugetService>();
-            services.AddSingleton<NugetPackageSourceFactory>();
 
             return services;
         }

@@ -11,11 +11,12 @@ namespace Boost.Core.GraphQL
     [ExtendObjectType(RootTypes.Query)]
     public class NugetQueries
     {
-        public Task<NugetPackageVersionInfo> GetNugetPackageVersionsAsync(
+        public Task<NugetPackageInfo?> GetNugetPackageVersionsAsync(
             [Service] INugetService nugetService,
+            string packageId,
             CancellationToken cancellationToken)
         {
-            return nugetService.GetLatestVersionAsync("Azure.Identity", cancellationToken);
+            return nugetService.GetNugetPackageInfoAsync(packageId, cancellationToken);
         }
     }
 }
