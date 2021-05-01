@@ -6,12 +6,14 @@ Boost is a [dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/glob
 
 > Project state: in progress
 
-![nuget](https://img.shields.io/nuget/vpre/Boost.Tool)
+![nuget](https://img.shields.io/nuget/v/Boost.Tool?color=%2300b339)
+![Downloads](https://img.shields.io/nuget/dt/Boost.Tool?color=%230075c2)
+[![Build Status](https://dev.azure.com/swisslife-oss/swisslife-oss/_apis/build/status/Release%20-%20Boost?branchName=refs%2Ftags%2F0.2.0-preview.1)](https://dev.azure.com/swisslife-oss/swisslife-oss/_build/latest?definitionId=39&branchName=refs%2Ftags%2F0.2.0-preview.1)
 
 ## Installation
 
 ```bash
-dotnet tool install --global Boost.Tool --version 0.1.0-preview.7
+dotnet tool install --global Boost.Tool --version 0.2.0-preview.1
 ```
 
 ## Getting started
