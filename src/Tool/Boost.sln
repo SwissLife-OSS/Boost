@@ -30,6 +30,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.AzureDevOps", "src\Bo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Boost.GitHub", "src\Boost.GitHub\Boost.GitHub.csproj", "{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D08DAC50-21DD-444D-9C2C-83533B91A58E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "test\Core.Tests\Core.Tests.csproj", "{8C7F92AA-2E00-4CE1-B061-D53B89CFD015}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +64,10 @@ Global
 		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C7F92AA-2E00-4CE1-B061-D53B89CFD015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C7F92AA-2E00-4CE1-B061-D53B89CFD015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C7F92AA-2E00-4CE1-B061-D53B89CFD015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C7F92AA-2E00-4CE1-B061-D53B89CFD015}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +79,7 @@ Global
 		{EAB7F2F2-5556-4EE2-861C-246AAC8252FD} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
 		{5EA87CC9-9814-4B72-801D-EE998B8CA9E1} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
 		{9AE9D71D-FDA3-4EF4-A81A-BCC253B8CB7A} = {71F18F7F-EFD8-4E13-8DD7-5804DD33BDF3}
+		{8C7F92AA-2E00-4CE1-B061-D53B89CFD015} = {D08DAC50-21DD-444D-9C2C-83533B91A58E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5C272342-7FEE-44B1-BE82-05006C5CA7F9}

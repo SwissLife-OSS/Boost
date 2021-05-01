@@ -18,7 +18,10 @@ namespace Boost.Certificates
                 DateTimeOffset.Now,
                 DateTimeOffset.Now.AddYears(5));
 
-            return certificate;
+            var password = Guid.NewGuid().ToString("N");
+            var exported = certificate.Export(X509ContentType.Pfx, password);
+
+            return new X509Certificate2(exported, password, X509KeyStorageFlags.Exportable);
         }
 
         public void AddToStore(
@@ -27,8 +30,10 @@ namespace Boost.Certificates
             StoreName storeName = StoreName.My)
         {
             var store = new X509Store(storeName, location);
-            store.Open(OpenFlags.MaxAllowed);
+            store.Open(OpenFlags.ReadWrite);
             store.Add(certificate);
+
+            store.Close();
         }
 
         public X509Certificate2? GetFromStore(
@@ -46,6 +51,8 @@ namespace Boost.Certificates
             {
                 return certs[0];
             }
+
+            store.Close();
 
             return null;
         }

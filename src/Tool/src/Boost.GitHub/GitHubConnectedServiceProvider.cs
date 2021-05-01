@@ -11,7 +11,10 @@ namespace Boost.GitHub
         public ConnectedServiceType Type => new ConnectedServiceType(
             GitHubConstants.ServiceTypeName,
             new ConnectedServiceFeature[] { ConnectedServiceFeature.GitRemoteRepository }
-            );
+            )
+        {
+            SecretProperties = new string[] { "PersonalAccessToken", "AccessToken", "OAuth.Secret" }
+        };
 
         public IConnectedService MapService(ConnectedService service)
         {
@@ -49,7 +52,7 @@ namespace Boost.GitHub
                     .Select(x => x as GitHubConnectedService)!;
 
                 GitHubConnectedService? ownerMatche = gitHubServices
-                    .Where( x => x.Owner is { })
+                    .Where(x => x.Owner is { })
                     .FirstOrDefault(x => x.Owner!.Equals(
                         gitHubRef.Owner,
                         StringComparison.InvariantCultureIgnoreCase));

@@ -55,7 +55,7 @@ namespace Boost.AuthApp
                     services.AddSingleton<IIdentityService, IdentityService>();
                     services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
                     services.AddSingleton<ISettingsStore, SettingsStore>();
-                    services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
+                    services.AddUserDataProtection();
 
                     services.AddHttpContextAccessor();
                     services.AddSameSiteOptions();

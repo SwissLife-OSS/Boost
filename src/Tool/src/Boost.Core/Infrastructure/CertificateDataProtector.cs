@@ -1,56 +1,78 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Boost.Certificates;
-using Boost.Settings;
+using Serilog;
 
 namespace Boost.Infrastructure
 {
-    public class CertificateDataProtector : IUserDataProtector
+    public class CertificateDataProtector : IDataProtector
     {
         private readonly ICertificateManager _certificateManager;
-        private readonly IUserSettingsManager _userSettingsManager;
+        private readonly ISymetricEncryption _symetricEncryption;
+        private byte[] _key;
+        private const string CertificateSubjectName = "boost";
+        private const string ThumbprintParameterName = "Thumbprint";
 
         public CertificateDataProtector(
             ICertificateManager certificateManager,
-            IUserSettingsManager userSettingsManager)
+            ISymetricEncryption symetricEncryption)
         {
             _certificateManager = certificateManager;
-            _userSettingsManager = userSettingsManager;
-
-            _key = Initialize().GetAwaiter().GetResult();
+            _symetricEncryption = symetricEncryption;
         }
 
+        public string Name => typeof(CertificateDataProtector).FullName!;
 
-
-        private async Task<RSA> Initialize()
+        public EncryptionKeySetting SetupNew()
         {
-            UserSettings? settings = _userSettingsManager.GetAsync(default)
-                .GetAwaiter()
-                .GetResult();
+            Guid id = Guid.NewGuid();
 
-            if (settings.Encryption.Parameters.ContainsKey("Thumbprint"))
+            X509Certificate2 cert = _certificateManager
+                .CreateSelfSignedCertificate(CertificateSubjectName + $"-{id.ToString("N").Substring(0,6)}");
+            _certificateManager.AddToStore(cert);
+
+            var settings = new EncryptionKeySetting
             {
-                return GetKeyFromThumbprint(settings);
-            }
-            else
+                Id = id,
+                Name = Name,
+                Parameters = new()
+                {
+                    ["Thumbprint"] = cert.Thumbprint
+                }
+            };
+
+            (RSA publicKey, RSA privateKey) rsaKeys = GetRsaKeyFromThumbprint(settings);
+
+            var fullKey = rsaKeys.publicKey.Encrypt(
+                Guid.NewGuid().ToByteArray(),
+                RSAEncryptionPadding.OaepSHA256);
+
+            _key = fullKey.Take(32).ToArray();
+
+            settings.Parameters.Add("Key", Convert.ToBase64String(fullKey));
+
+            return settings;
+        }
+
+        public void Setup(EncryptionKeySetting settings)
+        {
+            if (_key is null)
             {
-                X509Certificate2 cert = _certificateManager.CreateSelfSignedCertificate("boost");
+                (RSA publicKey, RSA privateKey) rsaKeys = GetRsaKeyFromThumbprint(settings);
+                var configKey = settings.Parameters["Key"];
+                var fullKey = rsaKeys.privateKey.Decrypt(
+                    Convert.FromBase64String(configKey),
+                    RSAEncryptionPadding.OaepSHA256);
 
-
-
-                return null;
+                _key = fullKey.Take(32).ToArray();
             }
         }
 
-
-        private RSA GetKeyFromThumbprint(UserSettings settings)
+        private (RSA publicKey, RSA privateKey)  GetRsaKeyFromThumbprint(EncryptionKeySetting settings)
         {
-            var thumb = settings.Encryption.Parameters["Thumbprint"];
+            var thumb = settings.Parameters[ThumbprintParameterName];
 
             X509Certificate2? cert = _certificateManager.GetFromStore(thumb);
 
@@ -60,47 +82,45 @@ namespace Boost.Infrastructure
                     $"No certificate found in UserStore with thumbprint: {thumb}");
             }
 
-            RSA? rsa = cert.GetRSAPrivateKey() as RSA;
+            RSA? privateKey = cert.GetRSAPrivateKey();
+            RSA? publicKey = cert.GetRSAPublicKey();
 
-            if (rsa is null)
+            if (privateKey is null)
             {
                 throw new ApplicationException(
                    $"Could not get RSA private key from certificate");
             }
 
-            return rsa;
-        }
+            if (publicKey is null)
+            {
+                throw new ApplicationException(
+                   $"Could not get RSA public key from certificate");
+            }
 
-        private RSA _key;
+            return (publicKey, privateKey);
+        }
 
         public byte[] Protect(byte[] data)
         {
-            return _key.Encrypt(
-                data,
-                RSAEncryptionPadding.OaepSHA256);
-        }
+            try
+            {
+                EncryptedDataEnvelope envelope = _symetricEncryption.EncryptData(data, _key);
 
-        public string Protect(string value)
-        {
-            var data = Encoding.UTF8.GetBytes(value);
-            var cipherData = Protect(data);
-
-            return Encoding.UTF8.GetString(cipherData);
+                return envelope.Data;
+            }
+            catch ( Exception ex)
+            {
+                Log.Error(ex, "CertificateDataProtector.Protect Error");
+                throw;
+            }
         }
 
         public byte[] UnProtect(byte[] data)
         {
-            return _key.Decrypt(
-                data,
-                RSAEncryptionPadding.OaepSHA256);
-        }
+            EncryptedDataEnvelope envelope = new EncryptedDataEnvelope(data, "AES256");
+            var decrypted = _symetricEncryption.DecryptFile(envelope, _key);
 
-        public string UnProtect(string value)
-        {
-            var data = Encoding.UTF8.GetBytes(value);
-            var plainData = UnProtect(data);
-
-            return Encoding.UTF8.GetString(plainData);
+            return decrypted;
         }
     }
 }

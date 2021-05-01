@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Boost.Infrastructure;
 
 namespace Boost.Settings
 {
@@ -11,20 +12,6 @@ namespace Boost.Settings
         public TokenGeneratorSettings TokenGenerator { get; set; }
             = new TokenGeneratorSettings();
 
-        public DataEncryptionSettings Encryption { get; set; } = new DataEncryptionSettings();
-    }
-
-    public class DataEncryptionSettings
-    {
-        public EnryptionType Type { get; set; }
-
-        public Dictionary<string, string> Parameters { get; set; }
-            = new Dictionary<string, string>();
-    }
-
-    public enum EnryptionType
-    {
-        None,
-        X509Certificate
+        public EncryptionKeySetting Encryption { get; set; } = new EncryptionKeySetting();
     }
 }

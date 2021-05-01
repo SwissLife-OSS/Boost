@@ -1,3 +1,4 @@
+using Boost.Certificates;
 using Boost.Core.GraphQL;
 using Boost.Core.Settings;
 using Boost.Data;
@@ -40,14 +41,23 @@ namespace Boost
             services.AddSingleton<IAuthorizeRequestService, AuthorizeRequestService>();
             services.AddNuget();
 
-            services.AddHttpClient("IDENTITY");
-            services.AddSingleton<IUserDataProtector, NoOpDataProtector>();
+            services.AddSingleton<ICertificateManager, CertificateManager>();
             services.AddSingleton<IIdentityRequestStore, LocalIdentityRequestStore>();
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddSingleton<IBoostDbContextFactory, BoostDbContextFactory>();
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
             services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
             services.AddSingleton<IAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
+            services.AddUserDataProtection();
+
+            return services;
+        }
+
+        public static IServiceCollection AddUserDataProtection(this IServiceCollection services)
+        {
+            services.AddSingleton<IDataProtector, CertificateDataProtector>();
+            services.AddSingleton<IUserDataProtector, KeyRingUserDataProtector>();
+            services.AddSingleton<ISymetricEncryption, SymetricEncryption>();
 
             return services;
         }
@@ -79,7 +89,6 @@ namespace Boost
                 .AddType<GitRemoteRepositoryType>()
                 .AddType<LocalGitRepositoryType>()
                 .AddType<PipelineType>()
-
                 .AddDataLoader<ConnectedServiceByIdDataLoader>();
 
             return builder;
