@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
+using Boost.Infrastructure;
 
 namespace Boost.Settings
 {
@@ -33,6 +34,19 @@ namespace Boost.Settings
             UserSettings settings = await GetAsync(cancellationToken);
 
             settings.WorkRoots = workRoots.ToList();
+
+            await _settingsStore.SaveAsync(
+                settings,
+                SettingsFileName,
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task SaveEncryptionSettingsAsync(
+            EncryptionKeySetting dataEncryption,
+            CancellationToken cancellationToken)
+        {
+            UserSettings settings = await GetAsync(cancellationToken);
+            settings.Encryption = dataEncryption;
 
             await _settingsStore.SaveAsync(
                 settings,

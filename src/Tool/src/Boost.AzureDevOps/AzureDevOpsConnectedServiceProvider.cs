@@ -14,7 +14,10 @@ namespace Boost.AzureDevOps
             {
                 ConnectedServiceFeature.GitRemoteRepository,
                 ConnectedServiceFeature.Pipelines
-            });
+            })
+        {
+            SecretProperties = new string[] { "PersonalAccessToken" }
+        };
 
         public IConnectedService MapService(ConnectedService service)
         {

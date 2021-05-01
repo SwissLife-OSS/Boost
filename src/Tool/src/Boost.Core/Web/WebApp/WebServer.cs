@@ -9,6 +9,7 @@ using Boost.Security;
 using Boost.Web;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,8 +54,9 @@ namespace Boost.WebApp
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddControllersWithViews()
-                        .AddRazorRuntimeCompilation();
+                    services.AddControllers()
+                        .PartManager.ApplicationParts.Add(new AssemblyPart(_commandContext.ToolAssembly));
+
                     services.AddSameSiteOptions();
                     services.AddHttpContextAccessor();
                     services.AddSignalR();

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Boost.Infrastructure;
 
 namespace Boost.Settings
 {
@@ -8,6 +9,9 @@ namespace Boost.Settings
 
         public IList<WorkRoot> WorkRoots { get; set; } = new List<WorkRoot>();
 
-        public TokenGeneratorSettings TokenGenerator { get; set; } = new TokenGeneratorSettings();
+        public TokenGeneratorSettings TokenGenerator { get; set; }
+            = new TokenGeneratorSettings();
+
+        public EncryptionKeySetting Encryption { get; set; } = new EncryptionKeySetting();
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -119,6 +120,11 @@ namespace Boost.Web.Authentication
             AuthenticationTicket ticket)
         {
             var model = new TokenStoreModel(name, Clock.UtcNow.UtcDateTime);
+
+            if (name.StartsWith("R"))
+            {
+                model.RequestId = Guid.Parse(name.Split("-").Last());
+            }
 
             var accessToken = ticket.Properties.Items[".Token.access_token"]!;
             if (ticket.Properties.Items.ContainsKey(".Token.expires_at"))

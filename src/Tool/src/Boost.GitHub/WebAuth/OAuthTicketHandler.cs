@@ -30,7 +30,10 @@ namespace Boost.GitHub.WebAuth
             }
 
             service.Properties.Add(
-                new ConnectedServiceProperty("AccessToken", ctx.AccessToken));
+                new ConnectedServiceProperty("AccessToken")
+                {
+                    Value = ctx.AccessToken
+                });
 
             await csm.SaveAsync(service, ctx.HttpContext.RequestAborted);
         }

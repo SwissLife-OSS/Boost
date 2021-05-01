@@ -1,67 +1,94 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Common;
+using Boost.Infrastructure;
 using NuGet.Configuration;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
-using NuGet.Versioning;
 
 namespace Boost.Nuget
 {
     public class NugetService : INugetService
     {
-        private readonly NugetPackageSourceFactory _sourceFactory;
-        private readonly string DefaultSource = "f2c-main-core";
+        //https://gist.github.com/alistairjevans/4de1dccfb7288e0460b7b04f9a700a04
 
-        public NugetService(NugetPackageSourceFactory sourceFactory)
+        private readonly IBoostApplicationContext _boostApplicationContext;
+
+        public NugetService(
+            IBoostApplicationContext boostApplicationContext)
         {
-            _sourceFactory = sourceFactory;
+            _boostApplicationContext = boostApplicationContext;
         }
 
-        public ILogger NugetLogger => NullLogger.Instance;
+        private NuGet.Common.ILogger NugetLogger => new SerilogNugetLogger();
 
-        public SourceCacheContext Cache => new SourceCacheContext();
+        private SourceCacheContext Cache => new SourceCacheContext();
 
-        public async Task<FindPackageByIdResource> GetResourceAsync(
-            string sourceName,
-            CancellationToken cancellationToken)
+        public async Task<NugetPackageInfo?> GetNugetPackageInfoAsync(
+              string packageId,
+              CancellationToken cancellationToken)
         {
-            sourceName = sourceName ?? DefaultSource;
-            PackageSource? source = await _sourceFactory.CreateAsync(sourceName, cancellationToken);
+            IEnumerable<SourceRepository> repositories = BuildRepositories();
 
-            SourceRepository repository = Repository.Factory.GetCoreV3(source);
-            FindPackageByIdResource resource = await repository.GetResourceAsync<FindPackageByIdResource>();
+            foreach (SourceRepository? repo in repositories)
+            {
+                NugetPackageInfo? pgkInfo = await GetNugetPackageInfoAsync(
+                    repo,
+                    packageId,
+                    cancellationToken);
 
-            return resource;
+                if (pgkInfo is { })
+                {
+                    return pgkInfo;
+                }
+            }
+
+            return null;
         }
 
-        public async Task<NugetPackageInfo> GetNugetPackageInfo(
-            string? sourceName,
+        private IEnumerable<SourceRepository> BuildRepositories()
+        {
+            ISettings settings = NuGet.Configuration.Settings.LoadDefaultSettings(
+                _boostApplicationContext.WorkingDirectory.FullName);
+
+            var packageSourceProvider = new PackageSourceProvider(settings);
+
+            var sourceRepositoryProvider = new SourceRepositoryProvider(
+                packageSourceProvider,
+                Repository.Provider.GetCoreV3());
+
+            IEnumerable<SourceRepository>? repositories = sourceRepositoryProvider.GetRepositories();
+            return repositories;
+        }
+
+        private async Task<NugetPackageInfo?> GetNugetPackageInfoAsync(
+            SourceRepository repository,
             string packageId,
             CancellationToken cancellationToken)
         {
-            sourceName = sourceName ?? DefaultSource;
-            PackageSource? source = await _sourceFactory.CreateAsync(sourceName, cancellationToken);
-
-            SourceRepository repository = Repository.Factory.GetCoreV3(source);
-
-            PackageMetadataResource metaloader = await repository.GetResourceAsync<PackageMetadataResource>();
-            IEnumerable<IPackageSearchMetadata> metadata = await metaloader.GetMetadataAsync(
-                packageId,
-                includePrerelease: true,
-                includeUnlisted: false,
-                Cache,
-                NugetLogger,
+            PackageMetadataResource metaloader = await GetResourceAsync<PackageMetadataResource>(
+                repository,
                 cancellationToken);
 
-            IPackageSearchMetadata latestStable = metadata
+            IEnumerable<IPackageSearchMetadata> metadata = await metaloader
+                .GetMetadataAsync(
+                    packageId,
+                    includePrerelease: true,
+                    includeUnlisted: false,
+                    Cache,
+                    NugetLogger,
+                    cancellationToken);
+
+            if (!metadata.Any())
+            {
+                return null;
+            }
+
+            IPackageSearchMetadata? latestStable = metadata
                 .Where(x => !x.Identity.Version.IsPrerelease)
                 .OrderBy(x => x.Published).LastOrDefault();
 
-            IPackageSearchMetadata latestPrerelease = metadata
+            IPackageSearchMetadata? latestPrerelease = metadata
                 .Where(x => x.Identity.Version.IsPrerelease)
                 .OrderBy(x => x.Published).LastOrDefault();
 
@@ -72,30 +99,16 @@ namespace Boost.Nuget
             };
         }
 
-        public async Task<NugetPackageVersionInfo> GetLatestVersionAsync(
-            string sourceName,
-            string packageId,
+        private async Task<NResource> GetResourceAsync<NResource>(
+            SourceRepository repository,
             CancellationToken cancellationToken)
+                where NResource : class, INuGetResource
         {
-            sourceName = sourceName ?? DefaultSource;
-            PackageSource source = await _sourceFactory.CreateAsync(sourceName, cancellationToken);
+            NResource resource = await repository
+                .GetResourceAsync<NResource>(cancellationToken);
 
-            SourceRepository repository = Repository.Factory.GetCoreV3(source);
-
-            PackageMetadataResource metaloader = await repository.GetResourceAsync<PackageMetadataResource>();
-            IEnumerable<IPackageSearchMetadata> metadata = await metaloader.GetMetadataAsync(
-                packageId,
-                includePrerelease: true,
-                includeUnlisted: false,
-                Cache,
-                NugetLogger,
-                cancellationToken);
-
-            IPackageSearchMetadata latest = metadata.OrderBy(x => x.Published).LastOrDefault();
-
-            return CreateVersionInfo(latest);
+            return resource;
         }
-
 
         private NugetPackageVersionInfo? CreateVersionInfo(IPackageSearchMetadata? metadata)
         {

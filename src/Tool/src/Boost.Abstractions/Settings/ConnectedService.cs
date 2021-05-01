@@ -17,11 +17,19 @@ namespace Boost.Settings
             = new List<ConnectedServiceProperty>();
     }
 
-    public record ConnectedServiceProperty(string Name, string Value);
+    public record ConnectedServiceProperty(string Name)
+    {
+        public string? Value { get; set; }
+
+        public bool? IsSecret { get; set; }
+    };
 
     public record ConnectedServiceType(
         string Name,
-        IEnumerable<ConnectedServiceFeature> Features);
+        IEnumerable<ConnectedServiceFeature> Features)
+    {
+        public IEnumerable<string> SecretProperties { get; init; } = new List<string>();
+    };
 
     public enum ConnectedServiceFeature
     {

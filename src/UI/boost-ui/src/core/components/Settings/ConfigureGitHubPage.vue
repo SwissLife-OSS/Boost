@@ -52,7 +52,7 @@
           ></v-col>
         </v-row>
         <v-row dense>
-          <v-col md="12"
+          <v-col md="6"
             ><v-select
               v-model="config.defaultWorkRoot"
               :items="workRoots"
@@ -60,6 +60,9 @@
               item-text="name"
               item-value="name"
             ></v-select
+          ></v-col>
+          <v-col md="6"
+            ><v-text-field v-model="config.owner" label="Owner"></v-text-field
           ></v-col>
         </v-row>
       </v-card-text>
@@ -88,6 +91,7 @@ export default {
         name: "",
         mode: "PersonalAccessToken",
         defaultWorkRoot: null,
+        owner: null,
         oauth: {
           clientId: null,
           secret: null,
@@ -111,7 +115,10 @@ export default {
         name: "Mode",
         value: this.config.mode,
       });
-
+      input.properties.push({
+        name: "Owner",
+        value: this.config.owner,
+      });
       if (this.config.mode === "PersonalAccessToken") {
         input.properties.push({
           name: "PersonalAccessToken",

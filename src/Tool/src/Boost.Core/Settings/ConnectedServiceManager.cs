@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Git;
+using Boost.Infrastructure;
 using Boost.Settings;
 
 namespace Boost.Core.Settings
@@ -13,14 +14,17 @@ namespace Boost.Core.Settings
     public class ConnectedServiceManager : IConnectedServiceManager
     {
         private readonly ISettingsStore _settingsStore;
+        private readonly IUserDataProtector _userDataProtector;
         private readonly IEnumerable<IConnectedServiceProvider> _providers;
         private const string SettingPath = "connected";
 
         public ConnectedServiceManager(
             ISettingsStore settingsStore,
+            IUserDataProtector userDataProtector,
             IEnumerable<IConnectedServiceProvider> providers)
         {
             _settingsStore = settingsStore;
+            _userDataProtector = userDataProtector;
             _providers = providers;
         }
 
@@ -36,7 +40,8 @@ namespace Boost.Core.Settings
             ConnectedService connectedService,
             CancellationToken cancellationToken)
         {
-            //Validate first?
+            ProtectSecrets(connectedService);
+
             await _settingsStore.SaveAsync(
                 connectedService,
                 connectedService.Id.ToString("N"),
@@ -44,6 +49,34 @@ namespace Boost.Core.Settings
                 cancellationToken);
 
             return connectedService;
+        }
+
+        private void ProtectSecrets(ConnectedService connectedService)
+        {
+            IConnectedServiceProvider provider = _providers
+                .First(x => x.Type.Name == connectedService.Type);
+
+            foreach (ConnectedServiceProperty property in connectedService.Properties
+                .Where(x => provider.Type.SecretProperties.Contains(x.Name)))
+            {
+                if (property.Value is string)
+                {
+                    property.Value = _userDataProtector.Protect(property.Value);
+                    property.IsSecret = true;
+                }
+            }
+        }
+
+        private void UnProtectSecrets(ConnectedService connectedService)
+        {
+            foreach (ConnectedServiceProperty property in connectedService.Properties
+                .Where(x => x.IsSecret.GetValueOrDefault()))
+            {
+                if (property.Value is string)
+                {
+                    property.Value = _userDataProtector.UnProtect(property.Value);
+                }
+            }
         }
 
         public async Task<IEnumerable<IConnectedService>> GetServicesAsync(
@@ -101,6 +134,11 @@ namespace Boost.Core.Settings
                     id.ToString("N"),
                     SettingPath,
                     cancellationToken);
+
+            if (service is { })
+            {
+                UnProtectSecrets(service);
+            }
 
             return service;
         }

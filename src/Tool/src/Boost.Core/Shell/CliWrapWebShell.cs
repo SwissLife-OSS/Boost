@@ -76,9 +76,19 @@ namespace Boost.Shell
             return exitCode;
         }
 
-        public Task<int> ExecuteAsync(params ShellCommand[] commands)
+        public async Task<int> ExecuteAsync(params ShellCommand[] commands)
         {
-            throw new NotImplementedException();
+            foreach (ShellCommand cmd in commands)
+            {
+                int result = await ExecuteAsync(cmd);
+
+                if (result != 0)
+                {
+                    return result;
+                }
+            }
+
+            return 0;
         }
     }
 }

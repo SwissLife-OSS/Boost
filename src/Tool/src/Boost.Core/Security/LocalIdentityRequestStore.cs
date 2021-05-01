@@ -96,11 +96,17 @@ namespace Boost.Security
             SearchIdentityRequest searchRequest,
             CancellationToken cancellationToken)
         {
-            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
 
             IEnumerable<IdentityRequestItem> requests = dbContext.IdentityRequest
                 .Find(x => x.Type == searchRequest.Type)
-                .OrderByDescending(x => x.CreatedAt);
+                .OrderByDescending(x => x.CreatedAt)
+                .ToList();
+
+            if (searchRequest.Tag is { })
+            {
+                requests = requests.Where(x => x.Tags.Contains(searchRequest.Tag));
+            }
 
             return Task.FromResult(requests);
         }

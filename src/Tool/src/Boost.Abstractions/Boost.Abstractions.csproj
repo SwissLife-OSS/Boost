@@ -10,11 +10,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="NuGet.Protocol" Version="5.9.0" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.0-beta.56" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>
