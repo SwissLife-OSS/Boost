@@ -48,6 +48,7 @@ namespace Boost
             services.AddSingleton<ISecurityUtils, SecurityUtils>();
             services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
             services.AddSingleton<IAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
+
             services.AddUserDataProtection();
 
             return services;

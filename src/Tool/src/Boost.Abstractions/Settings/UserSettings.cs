@@ -11,7 +11,5 @@ namespace Boost.Settings
 
         public TokenGeneratorSettings TokenGenerator { get; set; }
             = new TokenGeneratorSettings();
-
-        public EncryptionKeySetting Encryption { get; set; } = new EncryptionKeySetting();
     }
 }

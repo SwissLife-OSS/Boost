@@ -31,7 +31,7 @@ namespace Boost.WebApp
             _commandContext = commandContext;
         }
 
-        public async Task StartAsync(int port)
+        public async Task StartAsync(int port, string? path = null)
         {
             LogConfiguration.CreateLogger();
 
@@ -75,10 +75,16 @@ namespace Boost.WebApp
 
             if (!Debugger.IsAttached)
             {
+                if (path is { })
+                {
+                    url = url + $"/{path}";
+                }
+
                 Process browser = ProcessHelpers.OpenBrowser(url);
             }
 
             _console.WriteLine($"Boost server started on {url}");
+            _console.WriteLine("Press CTRL + C to stop...");
 
             await _host.RunAsync();
         }

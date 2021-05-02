@@ -8,7 +8,7 @@ namespace Boost.Web
 {
     public interface IWebServer
     {
-        public Task StartAsync(int port);
+        public Task StartAsync(int port, string? path = null);
         Task StopAsync();
     }
 }

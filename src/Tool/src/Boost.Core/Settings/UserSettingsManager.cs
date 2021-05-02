@@ -11,7 +11,7 @@ namespace Boost.Settings
     public class UserSettingsManager : IUserSettingsManager
     {
         private readonly ISettingsStore _settingsStore;
-        private readonly string SettingsFileName = "UserSettings";
+        internal static readonly string SettingsFileName = "UserSettings";
 
         public UserSettingsManager(ISettingsStore settingsStore)
         {
@@ -34,19 +34,6 @@ namespace Boost.Settings
             UserSettings settings = await GetAsync(cancellationToken);
 
             settings.WorkRoots = workRoots.ToList();
-
-            await _settingsStore.SaveAsync(
-                settings,
-                SettingsFileName,
-                cancellationToken: cancellationToken);
-        }
-
-        public async Task SaveEncryptionSettingsAsync(
-            EncryptionKeySetting dataEncryption,
-            CancellationToken cancellationToken)
-        {
-            UserSettings settings = await GetAsync(cancellationToken);
-            settings.Encryption = dataEncryption;
 
             await _settingsStore.SaveAsync(
                 settings,

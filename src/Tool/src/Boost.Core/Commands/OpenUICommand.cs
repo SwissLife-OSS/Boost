@@ -23,6 +23,9 @@ namespace Boost.Commands
         [Option("--port <PORT>", Description = "Webserver port")]
         public int Port { get; set; } = 3003;
 
+        [Option("--path <PATH>", Description = "Url path")]
+        public string? Path { get; set; }
+
         public async Task OnExecute(IConsole console)
         {
             console.WriteLine("Starting Boost UI...");
@@ -44,8 +47,7 @@ namespace Boost.Commands
                 }
             }
 
-            console.WriteLine("Press CTRL + C to stop...");
-            await _webServer.StartAsync(Port);
+            await _webServer.StartAsync(Port, Path);
         }
     }
 

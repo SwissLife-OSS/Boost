@@ -1,7 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Boost.Core.Settings;
 using Boost.Git;
 using Boost.Settings;
+using Boost.Workspace;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Boost.Commands
@@ -13,27 +18,34 @@ namespace Boost.Commands
     public class IndexRepositoriesCommand : CommandBase
     {
         private readonly IUserSettingsManager _settingsManager;
-        private readonly LocalRepositoryIndexer _localRepositoryIndexer;
+        private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
+        private readonly IWorkspaceService _workspaceService;
 
         public IndexRepositoriesCommand(
             IUserSettingsManager settingsManager,
-            LocalRepositoryIndexer localRepositoryIndexer)
+            ILocalRepositoryIndexer localRepositoryIndexer,
+            IWorkspaceService workspaceService)
         {
             _settingsManager = settingsManager;
             _localRepositoryIndexer = localRepositoryIndexer;
+            _workspaceService = workspaceService;
         }
 
-        public async Task OnExecute(IConsole console)
+        public async Task OnExecute(CommandLineApplication app, IConsole console)
         {
-            UserSettings? settings = await _settingsManager.GetAsync(CommandAborded);
+            var utils = new WorkrootCommandUtils(app, console);
 
-            foreach (WorkRoot wr in settings.WorkRoots)
+            IEnumerable<WorkRoot> workroots = await utils.GetWorkRootsAsync(CommandAborded);
+
+            foreach (WorkRoot wr in workroots)
             {
                 await _localRepositoryIndexer.IndexWorkRootAsync(
                     wr,
-                    onProgress: null,
+                    onProgress: (msg) => console.WriteLine(msg),
                     CommandAborded);
             }
+
+            console.WriteLine("Repo indexing completed", ConsoleColor.Green);
         }
     }
 }
