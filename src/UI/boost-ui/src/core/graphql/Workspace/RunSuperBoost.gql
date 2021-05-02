@@ -1,0 +1,3 @@
+mutation runSuperBoost($input: RunSuperBoostInput!) {
+  runSuperBoost(input: $input)
+}

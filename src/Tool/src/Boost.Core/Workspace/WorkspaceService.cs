@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
@@ -118,14 +120,43 @@ namespace Boost.Workspace
 
             if (Directory.Exists(directory))
             {
+                WorkspaceConfig? wsConfig = GetWorkspaceConfig(directory);
+
+                if (wsConfig is { })
+                {
+                    foreach (WorkspaceSuperBoost superBoost in wsConfig.SuperBoosts)
+                    {
+                        actions.Add(new QuickAction
+                        {
+                            Type = QuickActionTypes.RunSuperBoost,
+                            Title = superBoost.Name,
+                            Description = superBoost.Description,
+                            Value = directory
+                        });
+                    }
+                }
+
                 actions.Add(new QuickAction
                 {
-                    Type = "CODE_DIRECTORY",
+                    Type = QuickActionTypes.OpenDirectoryInCode,
                     Title = directory,
                     Value = directory,
                     Description = "Open directory"
                 });
-
+                actions.Add(new QuickAction
+                {
+                    Type = QuickActionTypes.OpenDirectoryInExplorer,
+                    Title = directory,
+                    Value = directory,
+                    Description = "Open directory"
+                });
+                actions.Add(new QuickAction
+                {
+                    Type = QuickActionTypes.OpenDirectoryInTerminal,
+                    Title = directory,
+                    Value = directory,
+                    Description = "Open in Terminal"
+                });
                 actions.AddRange(GetVisualStudioSolutions(directory));
             }
 
@@ -139,7 +170,7 @@ namespace Boost.Workspace
             {
                 yield return new QuickAction
                 {
-                    Type = "VS_SOLUTION",
+                    Type = QuickActionTypes.OpenVisualStudioSolution,
                     Title = file.Name,
                     Description = file.Directory?.Name,
                     Value = file.FullName
@@ -176,6 +207,92 @@ namespace Boost.Workspace
             var cmd = new ShellCommand(fileName);
 
             return shell.ExecuteAsync(cmd);
+        }
+
+        public Task<int> OpenInExplorer(string directory)
+        {
+            IWebShell shell = _webShellFactory.CreateShell("pwsh");
+            var cmd = new ShellCommand("ii")
+            {
+                Arguments = ".",
+                WorkDirectory = directory
+            };
+
+            return shell.ExecuteAsync(cmd);
+        }
+
+        public Task<int> OpenInTerminal(string directory)
+        {
+            IWebShell shell = _webShellFactory.CreateShell("pwsh");
+            var cmd = new ShellCommand("wt.exe")
+            {
+                Arguments = $"-w 0 nt -d {directory}",
+                WorkDirectory = directory
+            };
+
+            return shell.ExecuteAsync(cmd);
+        }
+
+        public async Task<int> RunSuperBoostAsync(string name, string directory)
+        {
+            WorkspaceConfig? wsConfig = GetWorkspaceConfig(directory);
+
+            WorkspaceSuperBoost? superBoost = wsConfig?.SuperBoosts
+                .FirstOrDefault(x => x.Name == name);
+
+            int resultCode = 0;
+
+            if (superBoost is { })
+            {
+                foreach (SuperBoostAction? action in superBoost.Actions)
+                {
+                    var path = BuildPath(action.Value);
+
+                    switch (action.Type)
+                    {
+                        case QuickActionTypes.OpenDirectoryInCode:
+                            resultCode += await OpenInCode(path);
+                            break;
+                        case QuickActionTypes.OpenVisualStudioSolution:
+                            resultCode += await OpenFile(path);
+                            break;
+                        case QuickActionTypes.OpenDirectoryInExplorer:
+                            resultCode += await OpenInExplorer(path);
+                            break;
+                        case QuickActionTypes.OpenDirectoryInTerminal:
+                            resultCode += await OpenInTerminal(path);
+                            break;
+                    }
+                }
+
+                string BuildPath(string? value)
+                {
+                    if (value is { })
+                    {
+                        return Path.Combine(
+                            directory,
+                            value.Replace('/', Path.DirectorySeparatorChar));
+                    }
+
+                    return directory;
+                }
+            }
+
+            return resultCode;
+        }
+
+
+        private WorkspaceConfig? GetWorkspaceConfig(string directory)
+        {
+            var path = Path.Combine(directory, "boost.json");
+
+            if (File.Exists(path))
+            {
+                var json = File.ReadAllText(path);
+                return JsonSerializer.Deserialize<WorkspaceConfig>(json);
+            }
+
+            return null;
         }
 
         private string GetShellByFile(FileInfo file)

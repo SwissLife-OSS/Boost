@@ -1,5 +1,5 @@
 
-import { openFile, getQuickActions, openInCode } from "../workspaceService";
+import { openFile, getQuickActions, openInCode, openInExplorer, openInTerminal, runSuperBoost } from "../workspaceService";
 export default {
 
     computed: {
@@ -7,7 +7,6 @@ export default {
             return this.$store.state.app.workingDirectory;
         },
     },
-
     methods: {
 
         async openFile(filename) {
@@ -15,13 +14,22 @@ export default {
         },
         async openDirectoryInCode(directory) {
             await openInCode({
-                directory: directory
+                directory
             })
         },
         async openFileInCode(file) {
             await openInCode({
-                file: file
+                file
             })
+        },
+        async openInExplorer(directory) {
+            await openInExplorer(directory);
+        },
+        async openInTerminal(directory) {
+            await openInTerminal(directory);
+        },
+        async runSuperBoost(input) {
+            await runSuperBoost(input);
         },
         async loadQuickActions(directory) {
             const result = await getQuickActions(directory);

@@ -1,0 +1,22 @@
+{
+    "SuperBoosts": [
+        {
+            "Name": "Start DEV",
+            "Description": "Backend in VS | UI in Code | Terminal",
+            "Actions": [
+                {
+                    "Type": "VS_SOLUTION",
+                    "Value": "src/Tool/Boost.sln"
+                },
+                {
+                    "Type": "CODE_DIRECTORY",
+                    "Value": "src/UI/boost-ui"
+                },
+                {
+                    "Type": "TERMINAL_DIRECTORY",
+                    "Value": null
+                }
+            ]
+        }
+    ]
+}

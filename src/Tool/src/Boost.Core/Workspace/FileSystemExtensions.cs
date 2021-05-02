@@ -14,7 +14,7 @@ namespace Boost.Workspace
             if (extensions == null)
                 throw new ArgumentNullException(nameof(extensions));
 
-            IEnumerable<FileInfo> files = dir.EnumerateFiles();
+            IEnumerable<FileInfo> files = dir.EnumerateFiles("*.*", SearchOption.AllDirectories);
             return files.Where(f => extensions.Contains(
                 f.Extension,
                 StringComparer.InvariantCultureIgnoreCase));

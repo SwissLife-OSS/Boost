@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Boost.Workspace;
 using HotChocolate;
 using HotChocolate.Types;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Boost.GraphQL
 {
@@ -28,6 +29,27 @@ namespace Boost.GraphQL
             string fileName)
         {
             return workspaceService.OpenFile(fileName);
+        }
+
+        public Task<int> OpenInExplorer(
+            [Service] IWorkspaceService workspaceService,
+            string directory)
+        {
+            return workspaceService.OpenInExplorer(directory);
+        }
+
+        public Task<int> OpenInTerminal(
+            [Service] IWorkspaceService workspaceService,
+            string directory)
+        {
+            return workspaceService.OpenInTerminal(directory);
+        }
+
+        public Task<int> RunSuperBoostAsync(
+            [Service] IWorkspaceService workspaceService,
+            RunSuperBoostInput input)
+        {
+            return workspaceService.RunSuperBoostAsync(input.Name, input.Directory);
         }
 
         public Task<int> ExecuteFileAction(
