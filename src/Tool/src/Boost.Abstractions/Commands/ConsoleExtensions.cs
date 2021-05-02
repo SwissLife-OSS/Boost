@@ -43,16 +43,21 @@ namespace Boost.Commands
             console.Write(new string(' ', indent));
         }
 
+        public static void ClearLine(this IConsole console)
+        {
+            console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+        }
+
         public static int ChooseFromList(this IConsole console, IEnumerable<string> items)
         {
             int nr = 1;
 
             foreach (var item in items)
             {
-                ConsoleColor color = ConsoleColor.White;
+                ConsoleColor color = ConsoleColor.Yellow;
                 if (nr % 2 == 0)
                 {
-                    color = ConsoleColor.Yellow;
+                    color = ConsoleColor.Cyan;
                 }
 
                 console.WriteLine($"{nr}. {item}", color);

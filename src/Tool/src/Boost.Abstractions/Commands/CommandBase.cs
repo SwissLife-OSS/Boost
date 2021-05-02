@@ -8,6 +8,6 @@ namespace Boost.Commands
     public abstract class CommandBase
     {
         public CancellationToken CommandAborded
-            => new CancellationTokenSource(TimeSpan.FromSeconds(15)).Token;
+            => new CancellationTokenSource(TimeSpan.FromSeconds(30)).Token;
     }
 }

@@ -4,6 +4,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
+using Boost.Settings;
+using Serilog;
 
 namespace Boost.Core.Settings
 {
@@ -23,14 +25,22 @@ namespace Boost.Core.Settings
             string directory = "",
             CancellationToken cancellationToken = default)
         {
-            var json = JsonSerializer.Serialize(userSettings, new JsonSerializerOptions
+            try
             {
-                WriteIndented = true
-            });
+                var json = JsonSerializer.Serialize(userSettings, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
 
-            var path = Path.Combine(GetUserDirectory(directory), $"{fileName}.json");
+                var path = Path.Combine(GetUserDirectory(directory), $"{fileName}.json");
 
-            await File.WriteAllTextAsync(path, json, cancellationToken);
+                await File.WriteAllTextAsync(path, json, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error writing user settings");
+                throw;
+            }
         }
 
         public async Task SaveProtectedAsync<T>(
@@ -108,5 +118,10 @@ namespace Boost.Core.Settings
 
             return appData;
         }
+
+        public static string UserSettingsFilePath
+            => Path.Combine(
+                    GetUserDirectory(),
+                    $"{UserSettingsManager.SettingsFileName}.json");
     }
 }

@@ -51,6 +51,15 @@ export default {
         case "CODE_DIRECTORY":
           this.openDirectoryInCode(action.value);
           break;
+        case "EXPLORER_DIRECTORY":
+          this.openInExplorer(action.value);
+          break;
+        case "TERMINAL_DIRECTORY":
+          this.openInTerminal(action.value);
+          break;
+        case "SUPERBOOST":
+          this.runSuperBoost({ name: action.title, directory: action.value });
+          break;
       }
     },
     actionImage(action) {
@@ -58,7 +67,13 @@ export default {
         case "VS_SOLUTION":
           return require("../../../assets/vs_icon.png");
         case "CODE_DIRECTORY":
-          return require("../../../assets/vscode_icon.svg");
+          return require("../../../assets/vscode_icon.png");
+        case "EXPLORER_DIRECTORY":
+          return require("../../../assets/directory_icon.png");
+        case "TERMINAL_DIRECTORY":
+          return require("../../../assets/terminal_icon.png");
+        case "SUPERBOOST":
+          return require("../../../assets/superboost.png");
       }
     },
   },

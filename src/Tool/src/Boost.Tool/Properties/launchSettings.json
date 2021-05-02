@@ -2,7 +2,7 @@
   "profiles": {
     "Boost.Tool": {
       "commandName": "Project",
-      "commandLineArgs": "ui"
+      "commandLineArgs": "index"
     }
   }
 }

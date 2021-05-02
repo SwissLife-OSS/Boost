@@ -12,7 +12,6 @@ namespace Boost.Workspace
             CancellationToken cancellationToken);
 
         IEnumerable<FileSystemItem> GetFileSystemItems(string directory);
-        IEnumerable<QuickAction> GetQuickActions(string? directory);
         WorkspaceContext GetWorkspace(string? directory = null);
         Task<int> OpenFileInCode(string fileName);
         Task<int> OpenInCode(string directory);
@@ -21,5 +20,9 @@ namespace Boost.Workspace
             string value,
             string? fileType,
             CancellationToken cancellationToken);
+        Task<int> OpenInExplorer(string directory);
+        Task<int> OpenInTerminal(string directory);
+        Task<int> RunSuperBoostAsync(string name, string directory);
+        IEnumerable<QuickAction> GetQuickActions(string directory);
     }
 }

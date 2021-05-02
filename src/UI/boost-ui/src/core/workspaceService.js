@@ -3,6 +3,9 @@ import apollo from "../apollo";
 import MUTATION_EXEC_COMMAND from "./graphql/Workspace/ExecuteCommand.gql";
 import MUTATION_CODE_OPEN from "./graphql/Workspace/OpenInCode.gql";
 import MUTATION_FILE_OPEN from "./graphql/Workspace/OpenFile.gql";
+import MUTATION_EXPLORER_OPEN from "./graphql/Workspace/OpenInExplorer.gql";
+import MUTATION_TERMINAL_OPEN from "./graphql/Workspace/OpenInTerminal.gql";
+import MUTATION_SUPERBOOST_RUN from "./graphql/Workspace/RunSuperBoost.gql";
 import MUTATION_EXECUTE_FILE_ACTION from "./graphql/Workspace/ExecuteFileAction.gql";
 import MUTATION_FILE_CREATE_FROMBASE64 from "./graphql/Workspace/CreateFileFromBase64.gql";
 import QUERY_WORKSPACE_GET from "./graphql/Workspace/GetWorkspace.gql";
@@ -35,6 +38,27 @@ export const openFile = async (fileName) => {
     return await apollo.mutate({
         mutation: MUTATION_FILE_OPEN,
         variables: { fileName }
+    });
+};
+
+export const openInExplorer = async (directory) => {
+    return await apollo.mutate({
+        mutation: MUTATION_EXPLORER_OPEN,
+        variables: { directory }
+    });
+};
+
+export const openInTerminal = async (directory) => {
+    return await apollo.mutate({
+        mutation: MUTATION_TERMINAL_OPEN,
+        variables: { directory }
+    });
+};
+
+export const runSuperBoost = async (input) => {
+    return await apollo.mutate({
+        mutation: MUTATION_SUPERBOOST_RUN,
+        variables: { input }
     });
 };
 

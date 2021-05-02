@@ -1,18 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Boost.Workspace
 {
     public class QuickAction
     {
-        public string Type { get; set; }
+        public string Type { get; set; } = default!;
 
-        public string Title { get; set; }
+        public string Title { get; set; } = default!;
 
         public string? Description { get; set; }
-        public string Value { get; set; }
+
+        public string Value { get; set; } = default!;
+
+        public override string ToString()
+        {
+            switch (Type)
+            {
+                case QuickActionTypes.OpenVisualStudioSolution:
+                    return $"Open {Value}";
+                case QuickActionTypes.OpenDirectoryInExplorer:
+                    return "Open in explorer";
+                case QuickActionTypes.OpenDirectoryInCode:
+                    return "Open in Code";
+                case QuickActionTypes.OpenDirectoryInTerminal:
+                    return "Open in Terminal";
+                case QuickActionTypes.RunSuperBoost:
+                    return $"SuperBoost: {Title}";
+                default:
+                    return Title;
+            }
+        }
     }
 }

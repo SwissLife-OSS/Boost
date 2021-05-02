@@ -1,0 +1,3 @@
+mutation openIn($directory: String!) {
+  openInExplorer(directory: $directory)
+}

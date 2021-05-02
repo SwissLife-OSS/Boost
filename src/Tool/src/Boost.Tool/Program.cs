@@ -16,7 +16,9 @@ namespace Boost.Tool
 {
     [Command(
         Name = "boost",
-        FullName = "A .NET global tool to boost your development")]
+        FullName = "A .NET global tool to boost your development",
+        UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.StopParsingAndCollect,
+        AllowArgumentSeparator = true)]
     [VersionOptionFromMember(MemberName = nameof(GetVersion))]
     [HelpOption]
     [Subcommand(
@@ -24,6 +26,8 @@ namespace Boost.Tool
         typeof(SnapshooterCommand),
         typeof(GitHubAuthCommand),
         typeof(CloneRepositoryCommand),
+        typeof(OpenSolutionCommand),
+        typeof(SwitchRepositoryCommand),
         typeof(IndexRepositoriesCommand))]
     class Program
     {
@@ -36,6 +40,7 @@ namespace Boost.Tool
                     .AddSingleton<IReporter>(provider =>
                         new ConsoleReporter(provider.GetRequiredService<IConsole>()))
                     .AddToolServices()
+                    .AddSingleton<IWebShellFactory, ConsoleWebShellFactory>()
                     .AddSingleton<IWebServer>( c =>
                     {
                         return new BoostWebServer(
@@ -69,6 +74,12 @@ namespace Boost.Tool
         public void OnExecute(CommandLineApplication app)
         {
             app.ShowHelp();
+            var startUI = Prompt.GetYesNo("Start UI?", true);
+
+            if (startUI)
+            {
+                app.Execute("ui");
+            }
         }
 
         public static string? GetVersion() => typeof(Program)
