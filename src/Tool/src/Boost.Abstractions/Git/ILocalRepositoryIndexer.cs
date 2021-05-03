@@ -7,6 +7,7 @@ namespace Boost.Git
 {
     public interface ILocalRepositoryIndexer
     {
+        Task IndexRepository(WorkRoot workRoot, string path, CancellationToken cancellationToken);
         Task<int> IndexWorkRootAsync(
             WorkRoot workRoot,
             Action<string>? onProgress = null,

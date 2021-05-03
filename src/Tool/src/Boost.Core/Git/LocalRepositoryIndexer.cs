@@ -41,29 +41,53 @@ namespace Boost.Git
             foreach (DirectoryInfo? dir in new DirectoryInfo(workRoot.Path)
                 .GetDirectories())
             {
-                Log.Information("Indexing: {Path}", dir.FullName);
+                AddToIndex(workRoot, dir.FullName, connectedServices, dbContext);
 
                 GitRepositoryIndex? repoIndex = Index(dir.FullName);
+                indexCount++;
 
-                if (repoIndex is { })
-                {
-                    repoIndex.WorkRoot = workRoot.Name;
-                    onProgress?.Invoke(dir.FullName);
-
-                    IConnectedService? connectedService = _connectedServiceManager
-                        .MatchServiceFromGitRemote(repoIndex.RemoteReference, connectedServices);
-
-                    if (connectedService is { })
-                    {
-                        repoIndex.ServiceId = connectedService.Id;
-                    }
-
-                    dbContext.GitRepos.Insert(repoIndex);
-                    indexCount++;
-                }
             }
 
             return indexCount;
+        }
+
+        public async Task IndexRepository(
+            WorkRoot workRoot,
+            string path,
+            CancellationToken cancellationToken)
+        {
+            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
+            IEnumerable<IConnectedService> connectedServices = await _connectedServiceManager
+                .GetServicesAsync(cancellationToken);
+
+            AddToIndex(workRoot, path, connectedServices, dbContext);
+        }
+
+        private void AddToIndex(
+            WorkRoot workRoot,
+            string path,
+            IEnumerable<IConnectedService> connectedServices,
+            IBoostDbContext dbContext)
+        {
+            Log.Information("Indexing: {Path}", path);
+
+            GitRepositoryIndex? repoIndex = Index(path);
+
+            if (repoIndex is { })
+            {
+                repoIndex.WorkRoot = workRoot.Name;
+
+                IConnectedService? connectedService = _connectedServiceManager
+                    .MatchServiceFromGitRemote(repoIndex.RemoteReference, connectedServices);
+
+                if (connectedService is { })
+                {
+                    repoIndex.ServiceId = connectedService.Id;
+                }
+
+                dbContext.GitRepos.Insert(repoIndex);
+            }
         }
 
         private int ClearIndex(string workRoot)

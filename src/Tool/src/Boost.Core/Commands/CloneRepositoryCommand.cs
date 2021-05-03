@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
@@ -21,17 +22,21 @@ namespace Boost.Commands
         private readonly IConnectedServiceManager _serviceManager;
         private readonly IUserSettingsManager _settingsManager;
         private readonly IDefaultShellService _shellService;
+        private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
+        private WorkrootCommandUtils _wsUtils;
 
         public CloneRepositoryCommand(
             IGitRemoteSearchService searchService,
             IConnectedServiceManager serviceManager,
             IUserSettingsManager settingsManager,
-            IDefaultShellService defaultShellService)
+            IDefaultShellService defaultShellService,
+            ILocalRepositoryIndexer localRepositoryIndexer)
         {
             _searchService = searchService;
             _serviceManager = serviceManager;
             _settingsManager = settingsManager;
             _shellService = defaultShellService;
+            _localRepositoryIndexer = localRepositoryIndexer;
         }
 
         [Argument(0, "filter", ShowInHelpText = true)]
@@ -40,8 +45,11 @@ namespace Boost.Commands
         [Option("--source|-s", Description = "Connected service name")]
         public string? Source { get; set; }
 
-        public async Task OnExecute(IConsole console)
+        public async Task OnExecute(CommandLineApplication app, IConsole console)
         {
+            _wsUtils = new WorkrootCommandUtils(app, console);
+            await _wsUtils.GetWorkRootsAsync(CommandAborded);
+
             var services = new List<string>();
             if (Source is { })
             {
@@ -75,9 +83,9 @@ namespace Boost.Commands
         {
             const string cloneCommand = "git clone";
 
-            var path = await GetWorkRoot(repository);
+            WorkRoot? workroot = await GetWorkRoot(repository);
 
-            if (path is null)
+            if (workroot is null)
             {
                 console.WriteLine(
                     "No workroot could be found to clone repository, " +
@@ -90,15 +98,21 @@ namespace Boost.Commands
 
             Command cmd = Cli.Wrap(_shellService.GetDefault())
                 .WithArguments("/c " + $"{cloneCommand} {repository.WebUrl}")
-                .WithWorkingDirectory(path)
+                .WithWorkingDirectory(workroot.Path)
                 .WithValidation(resultValidation)
                 .WithStandardOutputPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)))
                 .WithStandardErrorPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)));
 
             await cmd.ExecuteAsync();
+
+            string path = Path.Combine(workroot.Path, repository.Name);
+            console.WriteLine($"Cloned {repository.Name} to {path}");
+            await _localRepositoryIndexer.IndexRepository(workroot, path, CommandAborded);
+
+            await _wsUtils.ShowQuickActions(path);
         }
 
-        private async Task<string?> GetWorkRoot(GitRemoteRepository repository)
+        private async Task<WorkRoot?> GetWorkRoot(GitRemoteRepository repository)
         {
             ConnectedService? service = await _serviceManager.GetServiceAsync(
                 repository.ServiceId,

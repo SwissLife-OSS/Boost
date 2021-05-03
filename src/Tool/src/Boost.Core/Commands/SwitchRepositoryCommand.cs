@@ -69,34 +69,7 @@ namespace Boost.Commands
 
             GitLocalRepository? repo = repos[index];
 
-            QuickAction[] quickActions =
-                _workspaceService.GetQuickActions(repo.WorkingDirectory).ToArray();
-
-            Console.WriteLine($"Choose action on: {repo.Name}");
-
-            var actionIndex = console.ChooseFromList(
-                quickActions.Select(x => x.ToString()));
-
-            QuickAction? action = quickActions[actionIndex];
-
-            switch (action.Type)
-            {
-                case QuickActionTypes.OpenVisualStudioSolution:
-                    ProcessHelpers.Open(action.Value);
-                    break;
-                case QuickActionTypes.OpenDirectoryInExplorer:
-                    await _workspaceService.OpenInExplorer(action.Value);
-                    break;
-                case QuickActionTypes.OpenDirectoryInCode:
-                    await _workspaceService.OpenInCode(action.Value);
-                    break;
-                case QuickActionTypes.OpenDirectoryInTerminal:
-                    await _workspaceService.OpenInTerminal(action.Value);
-                    break;
-                case QuickActionTypes.RunSuperBoost:
-                    await _workspaceService.RunSuperBoostAsync(action.Title, repo.WorkingDirectory);
-                    break;
-            }
+            await utils.ShowQuickActions(repo.WorkingDirectory);
         }
     }
 }

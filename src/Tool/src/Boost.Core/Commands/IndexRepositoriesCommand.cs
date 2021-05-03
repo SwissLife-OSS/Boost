@@ -17,18 +17,12 @@ namespace Boost.Commands
         Description = "Index Repositories"), HelpOption]
     public class IndexRepositoriesCommand : CommandBase
     {
-        private readonly IUserSettingsManager _settingsManager;
         private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
-        private readonly IWorkspaceService _workspaceService;
 
         public IndexRepositoriesCommand(
-            IUserSettingsManager settingsManager,
-            ILocalRepositoryIndexer localRepositoryIndexer,
-            IWorkspaceService workspaceService)
+            ILocalRepositoryIndexer localRepositoryIndexer)
         {
-            _settingsManager = settingsManager;
             _localRepositoryIndexer = localRepositoryIndexer;
-            _workspaceService = workspaceService;
         }
 
         public async Task OnExecute(CommandLineApplication app, IConsole console)

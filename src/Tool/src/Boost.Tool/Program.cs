@@ -27,6 +27,8 @@ namespace Boost.Tool
         typeof(GitHubAuthCommand),
         typeof(CloneRepositoryCommand),
         typeof(OpenSolutionCommand),
+        typeof(QuickActionsCommand),
+        typeof(VersionCommand),
         typeof(SwitchRepositoryCommand),
         typeof(IndexRepositoriesCommand))]
     class Program
@@ -74,6 +76,8 @@ namespace Boost.Tool
         public void OnExecute(CommandLineApplication app)
         {
             app.ShowHelp();
+
+            var v = GetVersion();
             var startUI = Prompt.GetYesNo("Start UI?", true);
 
             if (startUI)

@@ -73,6 +73,41 @@ namespace Boost.Commands
             return settings.WorkRoots;
         }
 
+        public async Task ShowQuickActions(string path)
+        {
+            IWorkspaceService workspaceService = _app.GetRequiredService<IWorkspaceService>();
+            var dir = new DirectoryInfo(path);
+
+            QuickAction[] quickActions =
+                workspaceService.GetQuickActions(path).ToArray();
+
+            Console.WriteLine($"Choose action on: {dir.Name}");
+
+            var actionIndex = _console.ChooseFromList(
+                quickActions.Select(x => x.ToString()));
+
+            QuickAction? action = quickActions[actionIndex];
+
+            switch (action.Type)
+            {
+                case QuickActionTypes.OpenVisualStudioSolution:
+                    ProcessHelpers.Open(action.Value);
+                    break;
+                case QuickActionTypes.OpenDirectoryInExplorer:
+                    await workspaceService.OpenInExplorer(action.Value);
+                    break;
+                case QuickActionTypes.OpenDirectoryInCode:
+                    await workspaceService.OpenInCode(action.Value);
+                    break;
+                case QuickActionTypes.OpenDirectoryInTerminal:
+                    await workspaceService.OpenInTerminal(action.Value);
+                    break;
+                case QuickActionTypes.RunSuperBoost:
+                    await workspaceService.RunSuperBoostAsync(action.Title, path);
+                    break;
+            }
+        }
+
         private async Task AddCurrentWorkroot(
             IUserSettingsManager settingsManager,
             CancellationToken cancellationToken)

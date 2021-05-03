@@ -55,7 +55,7 @@ namespace Boost.Settings
                 cancellationToken: cancellationToken);
         }
 
-        public async Task<string?> GetWorkRootAsync(
+        public async Task<WorkRoot?> GetWorkRootAsync(
             string? name,
             CancellationToken cancellationToken)
         {
@@ -69,16 +69,15 @@ namespace Boost.Settings
 
                 if (wr is { })
                 {
-                    return wr.Path;
+                    return wr;
                 }
             }
-
 
             WorkRoot? defaultWorkRoot = userSettings.WorkRoots.SingleOrDefault(x => x.IsDefault);
 
             if (defaultWorkRoot is { })
             {
-                return defaultWorkRoot.Path;
+                return defaultWorkRoot;
             }
 
             return null;

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using Boost.Infrastructure;
+using Boost.Workspace;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Boost.Commands
@@ -11,10 +13,17 @@ namespace Boost.Commands
         Description = "Opens Visual Studio solution"), HelpOption]
     public class OpenSolutionCommand
     {
+        private readonly IBoostApplicationContext _applicationContext;
+
+        public OpenSolutionCommand(IBoostApplicationContext applicationContext)
+        {
+            _applicationContext = applicationContext;
+        }    
+
         public void OnExecute(IConsole console)
         {
-            FileInfo[] solutions = new DirectoryInfo("")
-                .EnumerateFiles("*.sln", SearchOption.AllDirectories)
+            FileInfo[] solutions = _applicationContext.WorkingDirectory
+                .GetFilesByExtensions(".slnf", ".sln")
                 .ToArray();
 
             if (solutions.Count() == 1)
@@ -27,12 +36,16 @@ namespace Boost.Commands
                 console.WriteLine("---------------------------");
                 console.WriteLine();
 
-                var index = console.ChooseFromList(solutions.Select(x => $"{x.Name} in {x.Directory!.Name}"));
+                var index = console.ChooseFromList(
+                    solutions.Select(x => $"{x.Name} in {x.Directory!.Name}"));
+
                 OpenSolution(solutions[index].FullName);
             }
             else
             {
-                console.WriteLine("No solution found.", ConsoleColor.Yellow);
+                console.WriteLine(
+                    "No solution found in current directory.",
+                    ConsoleColor.Yellow);
             }
         }
 

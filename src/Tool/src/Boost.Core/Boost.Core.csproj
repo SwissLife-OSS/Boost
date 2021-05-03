@@ -5,6 +5,9 @@
     <AssemblyName>Boost.Core</AssemblyName>
     <RootNamespace>Boost</RootNamespace>
     <Nullable>enable</Nullable>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
