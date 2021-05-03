@@ -4,5 +4,6 @@ query quickActions($directory: String) {
     title
     description
     value
+    tags
   }
 }

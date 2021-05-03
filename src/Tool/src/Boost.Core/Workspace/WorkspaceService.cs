@@ -158,6 +158,7 @@ namespace Boost.Workspace
                     Description = "Open in Terminal"
                 });
                 actions.AddRange(GetVisualStudioSolutions(directory));
+                actions.AddRange(GetJavascriptProjects(directory));
             }
 
             return actions;
@@ -175,6 +176,29 @@ namespace Boost.Workspace
                     Description = file.Directory?.Name,
                     Value = file.FullName
                 };
+            }
+        }
+
+        private IEnumerable<QuickAction> GetJavascriptProjects(string directory)
+        {
+            foreach (string filename in
+                Directory.EnumerateFiles(directory, "package.json", SearchOption.AllDirectories))
+            {
+                var file = new FileInfo(filename);
+
+                if (file.Directory!.FullName is { } && !file.FullName.Contains("node_modules"))
+                {
+                    var directoryName = file.Directory!.FullName;
+
+                    yield return new QuickAction
+                    {
+                        Type = QuickActionTypes.OpenDirectoryInCode,
+                        Title = directoryName,
+                        Description = $"Open js project in Code",
+                        Value = directoryName,
+                        Tags = new[] { "js" }
+                    };
+                }
             }
         }
 
@@ -281,7 +305,6 @@ namespace Boost.Workspace
             return resultCode;
         }
 
-
         private WorkspaceConfig? GetWorkspaceConfig(string directory)
         {
             var path = Path.Combine(directory, "boost.json");
@@ -344,6 +367,7 @@ namespace Boost.Workspace
             ["md"] = new FileEditorInfo("markdown"),
             ["sln"] = new FileEditorInfo("xml") { Actions = new List<string> { "Open" } },
         };
+
         private readonly IWebShellFactory _webShellFactory;
         private readonly IBoostApplicationContext _applicationContext;
         private readonly IEnumerable<IFileContentTypeHandler> _fileHandlers;

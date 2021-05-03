@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Boost.Workspace
 {
     public class QuickAction
@@ -9,6 +11,8 @@ namespace Boost.Workspace
         public string? Description { get; set; }
 
         public string Value { get; set; } = default!;
+
+        public IEnumerable<string> Tags { get; set; } = new List<string>();
 
         public override string ToString()
         {
