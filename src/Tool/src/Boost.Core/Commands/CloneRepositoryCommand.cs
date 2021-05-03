@@ -94,6 +94,19 @@ namespace Boost.Commands
                 return;
             }
 
+            //Check if repo allready cloned
+            string path = Path.Combine(workroot.Path, repository.Name);
+
+            if (Directory.Exists(path))
+            {
+                console.WriteLine($"Repo allready cloned in: {path}.");
+                console.WriteLine();
+
+                await _wsUtils.ShowQuickActions(path);
+
+                return;
+            }
+
             var resultValidation = new CommandResultValidation();
 
             Command cmd = Cli.Wrap(_shellService.GetDefault())
@@ -105,7 +118,6 @@ namespace Boost.Commands
 
             await cmd.ExecuteAsync();
 
-            string path = Path.Combine(workroot.Path, repository.Name);
             console.WriteLine($"Cloned {repository.Name} to {path}");
             await _localRepositoryIndexer.IndexRepository(workroot, path, CommandAborded);
 

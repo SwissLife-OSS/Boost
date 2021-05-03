@@ -63,10 +63,15 @@ export default {
       }
     },
     actionImage(action) {
+      console.log(action.tags);
+
       switch (action.type) {
         case "VS_SOLUTION":
           return require("../../../assets/vs_icon.png");
         case "CODE_DIRECTORY":
+          if (action.tags.includes("js")) {
+            return require("../../../assets/js_icon.png");
+          }
           return require("../../../assets/vscode_icon.png");
         case "EXPLORER_DIRECTORY":
           return require("../../../assets/directory_icon.png");

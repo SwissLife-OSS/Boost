@@ -81,7 +81,8 @@ namespace Boost.Commands
             QuickAction[] quickActions =
                 workspaceService.GetQuickActions(path).ToArray();
 
-            Console.WriteLine($"Choose action on: {dir.Name}");
+            Console.WriteLine($"Quick actions: {dir.Name}");
+            Console.WriteLine($"------------------------------------");
 
             var actionIndex = _console.ChooseFromList(
                 quickActions.Select(x => x.ToString()));
