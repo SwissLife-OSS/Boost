@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
 using Boost.Nuget;
+using Boost.Tool;
 using McMaster.Extensions.CommandLineUtils;
 using Semver;
 
@@ -28,7 +29,7 @@ namespace Boost.Commands
             CommandLineApplication app,
             IConsole console)
         {
-            var currentVersion = _boostApplicationContext.Version;
+            var currentVersion = Program.GetVersion();
             Console.WriteLine($"Installed:\t\t{currentVersion}");
 
             NugetPackageInfo? version = await _nugetService

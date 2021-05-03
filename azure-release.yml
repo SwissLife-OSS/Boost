@@ -49,7 +49,7 @@ stages:
             inputs:
               command: "build"
               projects: "**/*.sln"
-              arguments: "-c Release"
+              arguments: "-c Release /p:Version=$(Build.SourceBranchName)"
 
           - task: DotNetCoreCLI@2
             displayName: nuget pack
@@ -57,6 +57,7 @@ stages:
               command: "pack"
               packagesToPack: "**/*.sln"
               configuration: "Release"
+              nobuild: true
               packDirectory: "./nupkg"
               includesymbols: true
               versioningScheme: "byEnvVar"
@@ -70,10 +71,10 @@ stages:
               publishLocation: "pipeline"
           - task: NuGetCommand@2
             inputs:
-              command: 'push'
-              packagesToPush: 'nupkg/*.nupkg;'
-              nuGetFeedType: 'external'
-              publishFeedCredentials: 'nuget.org'
+              command: "push"
+              packagesToPush: "nupkg/*.nupkg;"
+              nuGetFeedType: "external"
+              publishFeedCredentials: "nuget.org"
 
       - job: Build_UI
         displayName: Build UI Tool
