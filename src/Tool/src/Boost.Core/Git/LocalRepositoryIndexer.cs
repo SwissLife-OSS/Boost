@@ -44,8 +44,8 @@ namespace Boost.Git
                 AddToIndex(workRoot, dir.FullName, connectedServices, dbContext);
 
                 GitRepositoryIndex? repoIndex = Index(dir.FullName);
+                onProgress?.Invoke(dir.FullName);
                 indexCount++;
-
             }
 
             return indexCount;

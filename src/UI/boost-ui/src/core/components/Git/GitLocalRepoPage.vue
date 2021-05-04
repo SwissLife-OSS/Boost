@@ -19,6 +19,7 @@
             <v-tabs background-color="grey lighten-3" height="44" v-model="tab">
               <v-tab>Overview</v-tab>
               <v-tab>Quick Actions</v-tab>
+              <v-tab>Links</v-tab>
               <v-tab>Commits</v-tab>
               <v-tab>ReadMe</v-tab>
               <v-tab>Files</v-tab>
@@ -83,6 +84,12 @@
               ></quick-actions-list>
             </v-tab-item>
             <v-tab-item>
+              <web-link-list
+                :height="cardHeight - 50"
+                :links="webLinks"
+              ></web-link-list>
+            </v-tab-item>
+            <v-tab-item>
               <commit-list
                 :height="cardHeight - 50"
                 :commits="repo && repo.commits"
@@ -118,11 +125,12 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { getQuickActions, getDirectoryChildren } from "../../workspaceService";
+import WebLinkList from "../Common/WebLinkList.vue";
 import FileExplorerView from "../Workspace/FileExplorerView.vue";
 import QuickActionsList from "../Workspace/QuickActionsList.vue";
 import CommitList from "./CommitList.vue";
 export default {
-  components: { QuickActionsList, FileExplorerView, CommitList },
+  components: { QuickActionsList, FileExplorerView, CommitList, WebLinkList },
   props: ["id"],
   watch: {
     id: {
@@ -152,6 +160,13 @@ export default {
     }),
     cardHeight: function () {
       return this.$vuetify.breakpoint.height - 200;
+    },
+    webLinks: function () {
+      if (this.repo) {
+        return this.repo.links;
+      }
+
+      return [];
     },
   },
   methods: {

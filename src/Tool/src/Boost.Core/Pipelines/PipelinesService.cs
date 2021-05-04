@@ -66,7 +66,6 @@ namespace Boost.Pipelines
             return null;
         }
 
-
         private IPipelinesClient? CreateClient(string serviceType)
         {
             IPipelinesClient? client = _pipelinesClients

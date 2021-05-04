@@ -112,6 +112,14 @@ namespace Boost.Workspace
             return 0;
         }
 
+        public IEnumerable<WebLink> GetWebLinks(string? directory)
+        {
+            directory = directory ?? _applicationContext.WorkingDirectory.FullName;
+            WorkspaceConfig? wsConfig = GetWorkspaceConfig(directory);
+
+            return wsConfig?.WebLinks ?? Array.Empty<WebLink>();
+        }
+
         public IEnumerable<QuickAction> GetQuickActions(string? directory)
         {
             directory = directory ?? _applicationContext.WorkingDirectory.FullName;
