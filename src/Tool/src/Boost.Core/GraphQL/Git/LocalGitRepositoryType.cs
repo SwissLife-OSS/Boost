@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boost.Git;
 using Boost.Settings;
+using Boost.Workspace;
 using HotChocolate;
 using HotChocolate.Types;
 
@@ -22,6 +23,9 @@ namespace Boost.Core.GraphQL
 
             descriptor.Field("remote")
                 .ResolveWith<Resolvers>(_ => _.GetRemoteAsync(default!, default!, default!));
+
+            descriptor.Field("links")
+                .ResolveWith<Resolvers>(_ => _.GetWebLinks(default!, default!));
 
             descriptor
                 .Field("commits")
@@ -92,6 +96,22 @@ namespace Boost.Core.GraphQL
                 }
 
                 return null;
+            }
+
+            public IEnumerable<WebLink> GetWebLinks(
+                [Parent] GitLocalRepository repository,
+                [Service] IWorkspaceService workspaceService)
+            {
+                var links = new List<WebLink>();
+
+                if (repository.RemoteReference is { } r)
+                {
+                    links.Add( new WebLink("Remote repository", r.Url));
+                }
+
+                IEnumerable<WebLink> wsLinks = workspaceService.GetWebLinks(repository.WorkingDirectory);
+
+                return links.Concat(wsLinks);
             }
         }
     }

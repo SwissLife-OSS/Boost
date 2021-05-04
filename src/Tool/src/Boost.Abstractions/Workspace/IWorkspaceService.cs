@@ -24,5 +24,14 @@ namespace Boost.Workspace
         Task<int> OpenInTerminal(string directory);
         Task<int> RunSuperBoostAsync(string name, string directory);
         IEnumerable<QuickAction> GetQuickActions(string directory);
+
+        IEnumerable<WebLink> GetWebLinks(string directory);
+    }
+
+    public record WebLink(string Title, string Url)
+    {
+        public string? SubTitle { get; init; }
+
+        public string? Icon { get; init; }
     }
 }

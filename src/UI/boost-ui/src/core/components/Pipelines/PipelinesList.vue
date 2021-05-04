@@ -66,7 +66,6 @@ import { getPipelinesByRepo } from "../../pipelinesService";
 
 export default {
   props: ["serviceId", "repositoryId"],
-
   watch: {
     repositoryId: {
       immediate: true,

@@ -26,7 +26,12 @@ query getLocalRepo($id: String) {
     remoteReference {
       url
     }
-
+    links{
+      title,
+      subTitle,
+      icon,
+      url
+    }
     remote {
       id
       name
