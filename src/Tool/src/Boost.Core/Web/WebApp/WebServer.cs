@@ -70,6 +70,10 @@ namespace Boost.WebApp
 
                     services.AddSingleton(
                         _commandContext.Services!.GetRequiredService<IBoostDbContextFactory>());
+
+                    services.AddSingleton(
+                        _commandContext.Services!.GetRequiredService<IUserDataProtector>());
+
                 })
                 .Build();
 

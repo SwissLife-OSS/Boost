@@ -7,7 +7,8 @@ namespace Boost.Certificates
     public class CertificateManager : ICertificateManager
     {
         public X509Certificate2 CreateSelfSignedCertificate(
-            string subject)
+            string subject,
+            string password)
         {
             using var rsa = RSA.Create();
             var certRequest = new CertificateRequest($"cn={subject}",
@@ -15,10 +16,9 @@ namespace Boost.Certificates
                 RSASignaturePadding.Pkcs1);
 
             X509Certificate2 certificate = certRequest.CreateSelfSigned(
-                DateTimeOffset.Now,
+                DateTimeOffset.Now.AddMinutes(-5),
                 DateTimeOffset.Now.AddYears(5));
 
-            var password = Guid.NewGuid().ToString("N");
             var exported = certificate.Export(X509ContentType.Pfx, password);
 
             return new X509Certificate2(exported, password, X509KeyStorageFlags.Exportable);

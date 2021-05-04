@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Boost.Certificates;
 using Boost.Core.Settings;
 using Boost.GraphQL;
 using Boost.Infrastructure;
@@ -55,7 +56,14 @@ namespace Boost.AuthApp
                     services.AddSingleton<IIdentityService, IdentityService>();
                     services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
                     services.AddSingleton<ISettingsStore, SettingsStore>();
+
+                    services.AddSingleton<ICertificateManager, CertificateManager>();
                     services.AddUserDataProtection();
+                    services.AddSingleton(c =>
+                    {
+                        return c.GetRequiredService<IBoostCommandContext>()
+                            .Services.GetRequiredService<IUserDataProtector>();
+                    });
 
                     services.AddHttpContextAccessor();
                     services.AddSameSiteOptions();
@@ -73,7 +81,8 @@ namespace Boost.AuthApp
                           }
                       });
 
-                    services.AddOptions<FileAuthenticationOptions>(FileAuthenticationDefaults.AuthenticationScheme)
+                    services.AddOptions<FileAuthenticationOptions>(
+                        FileAuthenticationDefaults.AuthenticationScheme)
                         .Configure<AuthorizeRequestData>((options, authData) =>
                         {
                             options.SaveTokens = authData.SaveTokens;

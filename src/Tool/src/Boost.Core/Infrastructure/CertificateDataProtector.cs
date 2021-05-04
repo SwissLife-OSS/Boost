@@ -1,8 +1,11 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Boost.Certificates;
+using Boost.Core.Settings;
+using HotChocolate;
 using Serilog;
 
 namespace Boost.Infrastructure
@@ -28,10 +31,18 @@ namespace Boost.Infrastructure
         public EncryptionKeySetting SetupNew()
         {
             Guid id = Guid.NewGuid();
+            var password = Guid.NewGuid().ToString("N");
 
             X509Certificate2 cert = _certificateManager
-                .CreateSelfSignedCertificate(CertificateSubjectName + $"-{id.ToString("N").Substring(0,6)}");
-            _certificateManager.AddToStore(cert);
+                .CreateSelfSignedCertificate(
+                CertificateSubjectName + $"-{id.ToString("N").Substring(0, 6)}",
+                password);
+
+            var certPath = System.IO.Path.Combine(
+                SettingsStore.GetUserDirectory("key"), $"{cert.Thumbprint}.pfx");
+
+            File.WriteAllBytes(certPath, cert.Export(X509ContentType.Pfx, password));
+            _certificateManager.AddToStore(cert, StoreLocation.CurrentUser);
 
             var settings = new EncryptionKeySetting
             {
@@ -39,7 +50,8 @@ namespace Boost.Infrastructure
                 Name = Name,
                 Parameters = new()
                 {
-                    ["Thumbprint"] = cert.Thumbprint
+                    [ThumbprintParameterName] = cert.Thumbprint,
+                    ["Pass"] = password
                 }
             };
 
@@ -70,11 +82,28 @@ namespace Boost.Infrastructure
             }
         }
 
-        private (RSA publicKey, RSA privateKey)  GetRsaKeyFromThumbprint(EncryptionKeySetting settings)
+        private (RSA publicKey, RSA privateKey) GetRsaKeyFromThumbprint(
+            EncryptionKeySetting settings)
         {
             var thumb = settings.Parameters[ThumbprintParameterName];
+            X509Certificate2? cert = null;
 
-            X509Certificate2? cert = _certificateManager.GetFromStore(thumb);
+            if (settings.Parameters.ContainsKey("Pass"))
+            {
+                var certPath = System.IO.Path.Combine(
+                     SettingsStore.GetUserDirectory("key"), $"{thumb}.pfx");
+
+                cert = new X509Certificate2(
+                    File.ReadAllBytes(certPath),
+                    settings.Parameters["Pass"]);
+            }
+            else
+            {
+                cert = _certificateManager.GetFromStore(
+                    thumb,
+                    StoreLocation.CurrentUser);
+            }
+
 
             if (cert is null)
             {
@@ -108,7 +137,7 @@ namespace Boost.Infrastructure
 
                 return envelope.Data;
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex, "CertificateDataProtector.Protect Error");
                 throw;
