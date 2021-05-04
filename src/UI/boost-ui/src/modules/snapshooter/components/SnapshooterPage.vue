@@ -10,13 +10,21 @@
             flat
             hide-details
             clearable
+            :loading="loading"
           ></v-text-field
         ></v-col>
         <v-col md="3"
           ><v-switch v-model="withMismatchOnly" label="Mismatch"></v-switch>
         </v-col>
         <v-col md="1">
+          <v-progress-circular
+            class="mt-4"
+            v-if="contentLoading"
+            indeterminate
+            size="30"
+          ></v-progress-circular>
           <v-icon
+            v-else
             class="mt-4"
             @click="onRefresh"
             color="grey darken-2"
@@ -32,12 +40,6 @@
       >
         Hooray! no mismatches found.
       </v-alert>
-      <v-progress-linear
-        color="primary"
-        top
-        indeterminate
-        v-if="loading"
-      ></v-progress-linear>
       <v-treeview
         :style="{
           height: $vuetify.breakpoint.height - 100 + 'px',
@@ -95,7 +97,7 @@
             :value="content.mismatch"
             :original="content.snapshot"
             language="json"
-            :style="{ height: $vuetify.breakpoint.height - 120 + 'px' }"
+            :style="{ height: $vuetify.breakpoint.height - 150 + 'px' }"
           />
         </div>
         <div v-else>
@@ -103,7 +105,7 @@
             class="editor"
             :value="content.snapshot"
             language="json"
-            :style="{ height: $vuetify.breakpoint.height - 120 + 'px' }"
+            :style="{ height: $vuetify.breakpoint.height - 150 + 'px' }"
           />
         </div>
       </div>
@@ -134,6 +136,7 @@ export default {
   data() {
     return {
       loading: false,
+      contentLoading: false,
       active: [],
       searchText: "",
       withMismatchOnly: true,
@@ -186,13 +189,6 @@ export default {
     onRefresh: function () {
       this.getDirectories();
     },
-    setInline: function (value) {
-      this.diffOptions.renderSideBySide = !value;
-
-      this.$refs.editor.reset();
-
-      console.log(value);
-    },
     async getDirectories() {
       this.loading = true;
       const result = await getsnapshooterDirectories(this.withMismatchOnly);
@@ -215,28 +211,28 @@ export default {
       this.loading = false;
     },
     async getContent(node) {
+      this.contentLoading = true;
       this.selectedNode = node;
-      this.content = null;
       const result = await getContent({
         fileName: node.fileName,
         missmatchFileName: node.missmatchFileName,
       });
 
       this.content = result.data.snapshooterSnapshot;
+      this.contentLoading = false;
     },
     async approveAll() {
       await approveAll();
-
       this.content = null;
 
       this.getDirectories();
     },
     async approve() {
-      await approve({
+      const result = await approve({
         fileName: this.selectedNode.fileName,
         missmatchFileName: this.selectedNode.missmatchFileName,
       });
-      this.content = "";
+      this.content = result.data.approveSnapshot.Snapshot;
       this.getDirectories();
     },
   },

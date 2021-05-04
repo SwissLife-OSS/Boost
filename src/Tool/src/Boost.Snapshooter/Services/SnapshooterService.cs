@@ -90,7 +90,17 @@ namespace Boost.Snapshooter
 
         public SnapshotContent ApproveSnapshot(string fileName, string? missmatchFilename)
         {
-            File.Move(missmatchFilename, fileName, overwrite: true);
+            var file = new FileInfo(missmatchFilename);
+
+            if (file.Exists)
+            {
+                File.Move(missmatchFilename, fileName, overwrite: true);
+
+                if (!file.Directory.EnumerateFiles().Any())
+                {
+                    Directory.Delete(file.Directory.FullName);
+                }
+            }
 
             return GetSnapshot(fileName, missmatchFilename: null);
         }
@@ -101,10 +111,17 @@ namespace Boost.Snapshooter
 
             foreach (SnapshotInfo? snap in snaps)
             {
+                var file = new FileInfo(snap.MissmatchFileName!);
+
                 File.Move(
-                    snap.MissmatchFileName,
+                    snap.MissmatchFileName!,
                     snap.FileName,
                     overwrite: true);
+
+                if (!file.Directory.EnumerateFiles().Any())
+                {
+                    Directory.Delete(file.Directory.FullName);
+                }
             }
 
             return snaps.Count();

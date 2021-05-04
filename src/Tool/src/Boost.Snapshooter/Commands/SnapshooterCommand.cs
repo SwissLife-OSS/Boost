@@ -19,19 +19,22 @@ namespace Boost.Snapshooter.Commands
             _snapshooterService = snapshooterService;
         }
 
-        [Argument(0, "action", ShowInHelpText = true)]
+        [Argument(0, "action", ShowInHelpText = true, Description = "accept|info")]
         public string? Action { get; set; } = "info";
-
 
         public void OnExecute(IConsole console)
         {
             switch (Action)
             {
-                case "info":
+                case "accept":
+                    var approved = _snapshooterService.ApproveAllMismatches();
+                    console.WriteLine($"{approved} mismatched accepted");
+                    break;
+                default:
                     IEnumerable<SnapshotInfo> snapshots = _snapshooterService
                         .GetSnapshots(withMismatchOnly: false);
 
-                    if ( snapshots.Count() == 0)
+                    if (snapshots.Count() == 0)
                     {
                         console.WriteLine("No snapshots found.", ConsoleColor.Yellow);
                     }
@@ -42,11 +45,31 @@ namespace Boost.Snapshooter.Commands
                         console.WriteLine("Snapshooter summary:");
                         console.WriteLine("--------------------");
                         console.WriteLine($"Total snapshots: {snapshots.Count()}");
-                        console.WriteLine($"Total missmatched: {mismatches.Count()}", ConsoleColor.Red);
+                        console.WriteLine($"Total mismatches: {mismatches.Count()}",
+                            mismatches.Count() == 0 ? ConsoleColor.Green : ConsoleColor.Red);
 
-                        foreach (SnapshotInfo mm in mismatches)
+                        if (mismatches.Count() > 0)
                         {
-                            console.WriteLine(mm.Name);
+                            console.WriteLine();
+                            console.WriteLine("Mismatches");
+                            console.WriteLine("-----------");
+
+                            foreach (SnapshotInfo mm in mismatches)
+                            {
+                                console.WriteLine($"{mm.Name} in {mm.Directory}");
+                            }
+
+                            console.WriteLine();
+                            console.WriteLine("You can use `boo snap accept` to accept all mismatches.");
+
+                            var approveAll = Prompt.GetYesNo(
+                                "Approve all now?",
+                                false);
+
+                            if (approveAll)
+                            {
+                                _snapshooterService.ApproveAllMismatches();
+                            }
                         }
                     }
 
