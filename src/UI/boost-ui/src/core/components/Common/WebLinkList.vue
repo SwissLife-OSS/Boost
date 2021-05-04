@@ -12,7 +12,7 @@
         selectable
         @click="onClickLink(link)"
       >
-        <v-list-item-avatar size="24">
+        <v-list-item-avatar size="24" rounded="0">
           <v-icon v-if="link.icon === null || link.icon.startsWith('mdi')">{{
             getIcon(link.icon)
           }}</v-icon>
@@ -58,7 +58,7 @@ export default {
       switch (link.icon.toLowerCase()) {
         case "github":
           return require("../../../assets/cs/GitHub.png");
-        case "abo":
+        case "ado":
           return require("../../../assets/cs/AzureDevOps.png");
         default:
           return null;

@@ -18,5 +18,17 @@
                 }
             ]
         }
+    ],
+    "WebLinks": [
+        {
+            "Title": "Release Build",
+            "Url": "https://dev.azure.com/swisslife-oss/swisslife-oss/_build?definitionId=39",
+            "Icon": "https://cdn.vsassets.io/ext/ms.vss-build-web/common-library/Nav-Launch.3tiJhd8JGiL0mrog.png"
+        },
+        {
+            "Title": "Nuget",
+            "Url": "https://www.nuget.org/packages/Boost.Tool",
+            "Icon": "https://www.nuget.org/Content/gallery/img/logo-og-600x600.png"
+        }
     ]
 }
