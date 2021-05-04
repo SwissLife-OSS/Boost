@@ -30,6 +30,7 @@ namespace Boost.Commands
             IConsole console)
         {
             var currentVersion = Program.GetVersion();
+
             Console.WriteLine($"Installed:\t\t{currentVersion}");
 
             NugetPackageInfo? version = await _nugetService
