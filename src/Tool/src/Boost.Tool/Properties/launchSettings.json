@@ -2,7 +2,7 @@
   "profiles": {
     "Boost.Tool": {
       "commandName": "Project",
-      "commandLineArgs": "cr securedoc"
+      "commandLineArgs": "ui"
     }
   }
 }

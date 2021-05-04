@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import MonacoEditor from "vue-monaco";
+import MonacoEditor from "../Common/MonacoEditor";
 import pdf from "vue-pdf";
 
 export default {

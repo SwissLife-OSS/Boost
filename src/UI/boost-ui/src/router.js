@@ -6,8 +6,6 @@ import DashboardPage from "./core/components/Dashboard/DashboardPage"
 import SettingsPage from "./core/components/Settings/SettingsPage"
 import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
 import SecuritySettingsPage from "./core/components/Settings/SecuritySettingsPage"
-
-
 import ConfigureAzureDevOpsPage from "./core/components/Settings/ConfigureAzureDevOpsPage"
 import ConfigureGitHubPage from "./core/components/Settings/ConfigureGitHubPage"
 import WorkspacePage from "./core/components/Workspace/WorkspacePage"
@@ -33,7 +31,6 @@ VueRouter.prototype.push = function push(location) {
 };
 
 Vue.use(VueRouter);
-
 
 const routes = [
   {

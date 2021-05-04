@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -166,9 +165,16 @@ namespace Boost.Workspace
 
         private IEnumerable<QuickAction> GetVisualStudioSolutions(string directory)
         {
+            int nr = 0;
+
             foreach (FileInfo file in new DirectoryInfo(directory)
                 .GetFilesByExtensions(".slnf", ".sln"))
             {
+                if ( nr > 10)
+                {
+                    break;
+                }
+
                 yield return new QuickAction
                 {
                     Type = QuickActionTypes.OpenVisualStudioSolution,
@@ -181,12 +187,19 @@ namespace Boost.Workspace
 
         private IEnumerable<QuickAction> GetJavascriptProjects(string directory)
         {
+            int nr = 0;
+
             foreach (string filename in
                 Directory.EnumerateFiles(directory, "package.json", SearchOption.AllDirectories))
             {
+                if (nr > 10)
+                {
+                    break;
+                }
+
                 var file = new FileInfo(filename);
 
-                if (file.Directory!.FullName is { } && !file.FullName.Contains("node_modules"))
+                if (file.Directory!.FullName is { } && !file.FullName.Contains("node_module"))
                 {
                     var directoryName = file.Directory!.FullName;
 
