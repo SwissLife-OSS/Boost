@@ -10,6 +10,7 @@ const workspaceStore = {
         },
         local: {
             loading: false,
+            indexEmptyWarning: false,
             items: []
         },
         details: {
@@ -29,6 +30,12 @@ const workspaceStore = {
         REPOS_LOCAL_LOADED(state, repos) {
             state.local.items = repos;
             state.local.loading = false;
+            if (repos.length > 0) {
+                state.local.indexEmptyWarning = false;
+            }
+        },
+        REPO_LOCAL_INDEX_EMPTY_SET(state, value) {
+            state.local.indexEmptyWarning = value;
         },
         REPOS_LIST_LOADING(state, loading) {
             state.list.loading = loading;
@@ -68,6 +75,10 @@ const workspaceStore = {
             const result = await excuteGraphQL(() => searchLocalRepos(input), dispatch);
             if (result.success) {
                 commit("REPOS_LOCAL_LOADED", result.data.searchLocalRepositories);
+
+                if (result.data.searchLocalRepositories.length === 0 && input.term.length == 0) {
+                    commit("REPO_LOCAL_INDEX_EMPTY_SET", true);
+                }
             }
 
             return null;

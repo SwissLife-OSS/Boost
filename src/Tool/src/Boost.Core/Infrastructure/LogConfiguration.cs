@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using Boost.Core.Settings;
 using Serilog;
+using Serilog.Events;
 
 namespace Boost.Infrastructure
 {
@@ -7,18 +9,19 @@ namespace Boost.Infrastructure
     {
         public static void CreateLogger()
         {
-            LoggerConfiguration logBuilder = new LoggerConfiguration()
-                .WriteTo.Console();
+            var logPath = SettingsStore.GetUserDirectory("logs");
+            LogEventLevel minLevel = LogEventLevel.Information;
 
             if (Debugger.IsAttached)
             {
-                logBuilder.MinimumLevel.Debug();
-            }
-            else
-            {
-                logBuilder.MinimumLevel.Warning();
+                minLevel = LogEventLevel.Debug;
             }
 
+            LoggerConfiguration logBuilder = new LoggerConfiguration()
+                .WriteTo.File($"{logPath}/boost.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(restrictedToMinimumLevel: minLevel);
+
+            logBuilder.MinimumLevel.Debug();
             Log.Logger = logBuilder.CreateLogger();
         }
     }

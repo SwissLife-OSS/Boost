@@ -86,7 +86,7 @@ namespace Boost.Infrastructure
             EncryptionKeySetting settings)
         {
             var thumb = settings.Parameters[ThumbprintParameterName];
-            X509Certificate2? cert = null;
+            X509Certificate2? cert;
 
             if (settings.Parameters.ContainsKey("Pass"))
             {

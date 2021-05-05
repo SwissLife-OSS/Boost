@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Boost.AuthApp;
-using Boost.Core.GraphQL;
 using Boost.Data;
 using Boost.Infrastructure;
 using Boost.Security;

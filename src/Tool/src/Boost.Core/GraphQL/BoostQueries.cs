@@ -37,6 +37,7 @@ namespace Boost.Core.GraphQL
             Action<IRequestExecutorBuilder>? configure = null)
         {
             IRequestExecutorBuilder builder = services.AddGraphQLServer()
+                .ModifyRequestOptions(m => m.IncludeExceptionDetails = true)
                 .AddQueryType(d => d.Name(RootTypes.Query))
                 .AddMutationType(d => d.Name(RootTypes.Mutation))
                 .AddBoostTypes();
