@@ -35,7 +35,21 @@
         </v-list-item-group>
       </v-list>
     </v-col>
-    <v-col md="10"> <router-view></router-view> </v-col>
+    <v-col md="10">
+      <v-alert
+        v-if="indexEmptyWarning && repos.length === 0"
+        type="warning"
+        outlined
+      >
+        Looks like you have not indexed you local repositories. Make sure you
+        have configured at least 1 work root and you did execute indexing.
+        <br />
+        <br />
+        <router-link :to="{ name: 'Git.Index' }">Index now</router-link>
+      </v-alert>
+
+      <router-view></router-view>
+    </v-col>
   </v-row>
 </template>
 
@@ -55,6 +69,7 @@ export default {
     ...mapState("git", {
       repos: (state) => state.local.items,
       listLoading: (state) => state.local.loading,
+      indexEmptyWarning: (state) => state.local.indexEmptyWarning,
     }),
   },
   methods: {

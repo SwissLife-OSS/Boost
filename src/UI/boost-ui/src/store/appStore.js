@@ -1,6 +1,6 @@
 
 import { getInitialData } from "../core/appService";
-import { saveConnectedService, saveTokenRequestor, saveWorkRoots } from "../core/settingsService";
+import { saveConnectedService, saveTokenRequestor, saveWorkRoots, getConnectedServices } from "../core/settingsService";
 import { excuteGraphQL } from "./graphqlClient";
 
 const appStore = {
@@ -10,6 +10,7 @@ const appStore = {
         console: [],
         userSettings: null,
         app: null,
+        connectedServices: []
     }),
     mutations: {
         MESSAGE_ADDED(state, message) {
@@ -34,6 +35,9 @@ const appStore = {
         },
         CONNECTED_SERVICE_SAVED(state, service) {
             console.log(state, service);
+        },
+        CONNECTED_SERVICES_LOADED(state, services) {
+            state.connectedServices = services;
         }
     },
     actions: {
@@ -67,6 +71,17 @@ const appStore = {
                     { root: true }
                 );
             }
+        },
+        async loadConnectedServices({ commit, dispatch }) {
+            const result = await excuteGraphQL(() => getConnectedServices(), dispatch);
+            if (result.success) {
+                const { connectedServices } = result.data;
+                commit("CONNECTED_SERVICES_LOADED", connectedServices);
+
+                return connectedServices;
+            }
+
+            return null;
         },
         async saveConnectedService({ commit, dispatch }, service) {
             const result = await excuteGraphQL(() => saveConnectedService(service), dispatch);

@@ -24,6 +24,11 @@ namespace Boost.Snapshooter
             foreach (FileInfo? ss in _boostApplicationContext.WorkingDirectory
                 .GetFiles("*.snap", SearchOption.AllDirectories))
             {
+                if (ss.FullName.Contains("node_modules"))
+                {
+                    continue;
+                }
+
                 if (ss.Directory.Name.Contains("__snapshots__"))
                 {
                     snapshots.Add(new SnapshotInfo

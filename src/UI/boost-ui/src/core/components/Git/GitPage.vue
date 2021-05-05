@@ -8,7 +8,7 @@ export default {
   components: { SubNavigationBar },
   created() {
     if (this.$route.name === "Git") {
-      this.$router.push({ name: this.tabs[0].route });
+      this.$router.replace({ name: this.tabs[0].route });
     }
   },
   data() {

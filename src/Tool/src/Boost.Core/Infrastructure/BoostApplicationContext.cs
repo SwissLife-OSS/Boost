@@ -10,8 +10,8 @@ namespace Boost.Infrastructure
         public DirectoryInfo WorkingDirectory
             => GetWorkingDirectory();
 
-        public string? Version => typeof(BoostApplicationContext)
-             .Assembly?
+        public string? Version =>
+             Assembly.GetExecutingAssembly()
              .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
              .InformationalVersion;
 
