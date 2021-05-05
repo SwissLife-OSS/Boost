@@ -8,7 +8,7 @@ Boost is a [dotnet tool](https://docs.microsoft.com/en-us/dotnet/core/tools/glob
 
 [![nuget](https://img.shields.io/nuget/v/Boost.Tool?color=%2300b339)](https://www.nuget.org/packages/Boost.Tool)
 [![Downloads](https://img.shields.io/nuget/dt/Boost.Tool?color=%230075c2)](https://www.nuget.org/stats/packages/Boost.Tool?groupby=Version)
-[![Build Status](https://dev.azure.com/swisslife-oss/swisslife-oss/_apis/build/status/Release%20-%20Boost?branchName=refs%2Ftags%2F0.2.0-preview.4)](https://dev.azure.com/swisslife-oss/swisslife-oss/_build/latest?definitionId=39&branchName=refs%2Ftags%2F0.2.0)
+[![Build Status](https://dev.azure.com/swisslife-oss/swisslife-oss/_apis/build/status/Release%20-%20Boost?branchName=refs%2Ftags%2F0.2.2)](https://dev.azure.com/swisslife-oss/swisslife-oss/_build/latest?definitionId=39&branchName=refs%2Ftags%2F0.2.2)
 
 ## Installation
 
@@ -36,6 +36,9 @@ Or just start the UI
 boo ui
 ```
 
+> Boost hast been tested mostly with Windows 10, Powershell core and Windows Terminal. Most features should also work with OSX or Ubuntu but have not been fully tested yet.
+
+
 ### Update global tool
 
 ```bash
@@ -46,7 +49,6 @@ dotnet tool update -g  Boost.Tool
 ```bash
 dotnet tool uninstall -g Boost.Tool
 ```
-
 
 ## Community
 
