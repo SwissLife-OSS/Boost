@@ -1,9 +1,9 @@
-using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Boost.GraphQL;
 using Boost.Infrastructure;
-using HotChocolate.Execution.Configuration;
+using HotChocolate;
 using HotChocolate.Types;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.Core.GraphQL
 {
@@ -28,23 +28,13 @@ namespace Boost.Core.GraphQL
 
             return app;
         }
-    }
 
-    public static class GraphQLServiceCollectionExtensions
-    {
-        public static IServiceCollection AddGraphQLServices(
-            this IServiceCollection services,
-            Action<IRequestExecutorBuilder>? configure = null)
+        public Task<BoostVersionInfo> GetVersionAsync(
+            [Service] IVersionChecker versionChecker,
+            CancellationToken cancellationToken)
         {
-            IRequestExecutorBuilder builder = services.AddGraphQLServer()
-                .ModifyRequestOptions(m => m.IncludeExceptionDetails = true)
-                .AddQueryType(d => d.Name(RootTypes.Query))
-                .AddMutationType(d => d.Name(RootTypes.Mutation))
-                .AddBoostTypes();
+            return versionChecker.GetVersionInfo(cancellationToken);
 
-            configure?.Invoke(builder);
-
-            return services;
         }
     }
 }

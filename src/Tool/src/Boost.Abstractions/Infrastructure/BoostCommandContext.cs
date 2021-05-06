@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,5 +24,10 @@ namespace Boost.Infrastructure
         public IServiceProvider? Services { get; }
         public Action<IServiceCollection>? ConfigureWeb { get; }
         public Assembly ToolAssembly { get; }
+    }
+
+    public class AppSettings
+    {
+        public string PackageId { get; set; } = "Boost.Tool";
     }
 }

@@ -51,7 +51,8 @@ namespace Boost.Commands
                 {
                     case 0:
                         IWebServer? webServer = _app.GetRequiredService<IWebServer>();
-                        await webServer.StartAsync(3003, "settings");
+                        var url = await webServer.StartAsync(3003);
+                        ProcessHelpers.OpenBrowser(url + "/settings");
                         break;
                     case 1:
                         //first ensure file exists

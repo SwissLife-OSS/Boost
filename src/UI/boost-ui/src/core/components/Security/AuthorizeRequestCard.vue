@@ -103,7 +103,6 @@ export default {
   watch: {
     save: {
       handler: function () {
-        console.log("SAVE CHANGED");
         this.request.requestId = this.save.id;
       },
       deep: true,
@@ -112,9 +111,9 @@ export default {
   data() {
     return {
       request: {
-        authority: "https://demo.identityserver.io",
-        clientId: "interactive.confidential",
-        secret: "secret",
+        authority: null,
+        clientId: null,
+        secret: null,
         usePkce: true,
         scopes: ["openid", "profile"],
         port: 3010,
@@ -144,6 +143,7 @@ export default {
       this.tab = 0;
       this.save.id = request.id;
       this.save.name = request.name;
+      this.save.tags = request.tags;
       this.request.authority = request.data.authority;
       this.request.clientId = request.data.clientId;
       this.request.secret = request.data.secret;

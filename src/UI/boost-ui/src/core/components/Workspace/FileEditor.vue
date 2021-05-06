@@ -72,7 +72,6 @@ export default {
   },
   methods: {
     onNavigate: function (step) {
-      console.log(this.pdf.currentPage, step);
       this.pdf.currentPage = this.pdf.currentPage + step;
     },
   },

@@ -7,21 +7,36 @@ namespace Boost.Infrastructure
 {
     public class LogConfiguration
     {
-        public static void CreateLogger()
+        public static void CreateLogger(string level="warning")
         {
             var logPath = SettingsStore.GetUserDirectory("logs");
-            LogEventLevel minLevel = LogEventLevel.Information;
 
             if (Debugger.IsAttached)
             {
-                minLevel = LogEventLevel.Debug;
+                level = "debug";
             }
 
             LoggerConfiguration logBuilder = new LoggerConfiguration()
                 .WriteTo.File($"{logPath}/boost.txt", rollingInterval: RollingInterval.Day)
-                .WriteTo.Console(restrictedToMinimumLevel: minLevel);
+                .WriteTo.Console();
 
-            logBuilder.MinimumLevel.Debug();
+            switch (level.ToLower())
+            {
+                case "error":
+                    logBuilder.MinimumLevel.Error();
+                    break;
+                case "warning":
+                default:
+                    logBuilder.MinimumLevel.Warning();
+                    break;
+                case "info":
+                    logBuilder.MinimumLevel.Information();
+                    break;
+                case "debug":
+                    logBuilder.MinimumLevel.Debug();
+                    break;
+            }
+
             Log.Logger = logBuilder.CreateLogger();
         }
     }

@@ -35,6 +35,7 @@
             >mdi-alert</v-icon
           >
         </div>
+        <span class="mr-4" v-if="version">v{{ version.installed }}</span>
         <v-icon @click="dialog = !dialog">mdi-console</v-icon>
         <v-icon @click="onAccountClick">mdi-account</v-icon>
         <span @click="onAccountClick" v-if="me">{{ me.name }}</span>
@@ -57,12 +58,37 @@
       <v-main>
         <router-view></router-view>
       </v-main>
+      <v-snackbar
+        color="red darken-3"
+        v-model="versionSnack"
+        dark
+        rounded="pill"
+        :timeout="5000"
+      >
+        <span v-if="version" @click="onClickVersion">
+          <v-icon>mdi-information-outline</v-icon>
+
+          A new version is availlable:
+          <strong>{{ version.latest.version }}</strong>
+        </span>
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="versionSnack = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-app>
   </me-loader>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import MeLoader from "./Common/MeLoader.vue";
 
 export default {
@@ -79,8 +105,12 @@ export default {
       this.$store.dispatch("workspace/addConsoleMessage", data);
     });
   },
+  mounted() {
+    this.getVersion();
+  },
   data: () => ({
     dialog: false,
+    versionSnack: false,
     navItems: [
       {
         text: "Workspace",
@@ -122,7 +152,7 @@ export default {
     ],
   }),
   computed: {
-    ...mapState("app", ["statusMessage", "app"]),
+    ...mapState("app", ["statusMessage", "app", "version"]),
     me: function () {
       return null;
     },
@@ -135,7 +165,13 @@ export default {
       });
     },
   },
+  watch: {
+    version: function () {
+      this.versionSnack = true;
+    },
+  },
   methods: {
+    ...mapActions("app", ["getVersion"]),
     onNavigate: function (nav) {
       if (nav.isServer) {
         window.location.href = "/" + nav.route;
@@ -144,7 +180,11 @@ export default {
       }
     },
     onAccountClick: function () {
+      this.versionSnack = false;
       this.$router.push({ name: "Account" });
+    },
+    onClickVersion: function () {
+      this.$router.push({ name: "Info" });
     },
     getBreadCrumb(value) {
       if (value) {

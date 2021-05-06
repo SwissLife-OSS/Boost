@@ -14,28 +14,5 @@ namespace Boost.Infrastructure
 
     public record KeyContext(Guid Id, IDictionary<string, string> Parameters);
 
-    public class DataProtectorKeyRing
-    {
-        public Guid? ActiveKeyId { get; set; }
-
-        public IList<EncryptionKeySetting> Protectors { get; set; } = new List<EncryptionKeySetting>();
-    }
-
-    public class EncryptionKeySetting
-    {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Parameters { get; set; }
-            = new Dictionary<string, string>();
-    }
-
-    public enum EnryptionType
-    {
-        None,
-        X509Certificate
-    }
-
     public record ProtectedData(byte[] Data, Guid KeyId);
 }

@@ -26,15 +26,17 @@ namespace Boost.Commands
         [Option("--path <PATH>", Description = "Url path")]
         public string? Path { get; set; }
 
+        [Option("--log <level>", Description = "Log level: debug|info|warning|error")]
+        public string LogLevel { get; set; } = "warning";
+
         public async Task OnExecute(IConsole console)
         {
             console.WriteLine("Starting Boost UI...");
-
             var port = NetworkExtensions.GetAvailablePort(Port);
 
             if (port != Port)
             {
-                console.WriteLine($"Port {Port} is allready in use.", ConsoleColor.Red);
+                console.WriteLine($"Port {Port} is allready in use.", ConsoleColor.Yellow);
                 var useOther = Prompt.GetYesNo($"Start UI on port: {port}", true);
 
                 if (useOther)
@@ -46,9 +48,43 @@ namespace Boost.Commands
                     return;
                 }
             }
+            _webServer.LogLevel = LogLevel;
 
-            await _webServer.StartAsync(Port, Path);
+            var url = await _webServer.StartAsync(Port);
+
+            if (!Debugger.IsAttached)
+            {
+                if (Path is { })
+                {
+                    url = url + $"/{Path}";
+                }
+
+                ProcessHelpers.OpenBrowser(url);
+            }
+            var stopMessage = "Press 'q' or 'esc' to stop";
+            Console.WriteLine(stopMessage);
+
+            while (true)
+            {
+                ConsoleKeyInfo key = Console.ReadKey();
+                if (key.KeyChar == 'q' || key.Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
+                else
+                {
+                    console.ClearLine();
+                    console.WriteLine("Unknown command", ConsoleColor.Red);
+                    Console.WriteLine(stopMessage);
+                }
+            }
+
+            console.WriteLine("Stopping boost....");
+            await _webServer.StopAsync();
+
+            _webServer.Dispose();
         }
+
     }
 
     [Command(

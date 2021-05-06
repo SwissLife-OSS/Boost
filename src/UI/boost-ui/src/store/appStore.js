@@ -1,5 +1,5 @@
 
-import { getInitialData } from "../core/appService";
+import { getInitialData, getVersion } from "../core/appService";
 import { saveConnectedService, saveTokenRequestor, saveWorkRoots, getConnectedServices } from "../core/settingsService";
 import { excuteGraphQL } from "./graphqlClient";
 
@@ -10,7 +10,8 @@ const appStore = {
         console: [],
         userSettings: null,
         app: null,
-        connectedServices: []
+        connectedServices: [],
+        version: null
     }),
     mutations: {
         MESSAGE_ADDED(state, message) {
@@ -26,6 +27,9 @@ const appStore = {
         INIT_DATA_LOADED(state, data) {
             state.userSettings = data.userSettings;
             state.app = data.appliation
+        },
+        VERSION_LOADED(state, version) {
+            state.version = version;
         },
         WORKROOTS_SAVED(state, workRoots) {
             state.userSettings.workRoots = workRoots;
@@ -48,6 +52,12 @@ const appStore = {
             const result = await excuteGraphQL(() => getInitialData(), dispatch);
             if (result.success) {
                 commit("INIT_DATA_LOADED", result.data);
+            }
+        },
+        async getVersion({ commit, dispatch }) {
+            const result = await excuteGraphQL(() => getVersion(), dispatch);
+            if (result.success) {
+                commit("VERSION_LOADED", result.data.version);
             }
         },
         async saveWorkRoots({ commit, dispatch }, data) {

@@ -1,0 +1,14 @@
+query version {
+  version {
+    installed
+    packageId
+    latest {
+      published
+      version
+    }
+    preRelease {
+      published
+      version
+    }
+  }
+}

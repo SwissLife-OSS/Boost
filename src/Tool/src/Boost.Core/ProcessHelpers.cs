@@ -37,12 +37,11 @@ namespace Boost
             }
         }
 
-        public static Process OpenBrowser(string url)
+        public static Process? OpenBrowser(string url)
         {
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.CreateNoWindow = true;
                 startInfo.FileName = url;
                 startInfo.UseShellExecute = true;
 

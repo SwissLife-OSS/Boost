@@ -2,7 +2,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import SnapshooterPage from "./modules/snapshooter/components/SnapshooterPage"
-import DashboardPage from "./core/components/Dashboard/DashboardPage"
+import InfoPage from "./core/components/Info/InfoPage"
 import SettingsPage from "./core/components/Settings/SettingsPage"
 import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
 import SecuritySettingsPage from "./core/components/Settings/SecuritySettingsPage"
@@ -34,9 +34,9 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    component: DashboardPage
+    path: "/info",
+    name: "Info",
+    component: InfoPage
   },
   {
     path: "/utils",

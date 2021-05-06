@@ -30,13 +30,4 @@ namespace Boost.Infrastructure
             return new DirectoryInfo(Directory.GetCurrentDirectory());
         }
     }
-
-    public class BoostApplication
-    {
-        public string WorkingDirectory { get; set; } = default!;
-
-        public bool ConfigurationRequired { get; set; }
-
-        public string Version { get; set; } = default!;
-    }
 }

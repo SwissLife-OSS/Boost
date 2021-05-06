@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Boost.Web
 {
-    public interface IWebServer
+    public interface IWebServer : IDisposable
     {
-        public Task StartAsync(int port, string? path = null);
+        string LogLevel { get; set; }
+
+        public Task<string> StartAsync(int port);
         Task StopAsync();
     }
 }

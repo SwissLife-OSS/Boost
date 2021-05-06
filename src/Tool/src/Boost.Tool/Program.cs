@@ -42,6 +42,7 @@ namespace Boost.Tool
                     .AddSingleton<IReporter>(provider =>
                         new ConsoleReporter(provider.GetRequiredService<IConsole>()))
                     .AddToolServices()
+                    .AddSingleton(new AppSettings())
                     .AddSingleton<IWebShellFactory, ConsoleWebShellFactory>()
                     .AddSingleton<IWebServer>( c =>
                     {
@@ -76,8 +77,6 @@ namespace Boost.Tool
         public void OnExecute(CommandLineApplication app)
         {
             app.ShowHelp();
-
-            var v = GetVersion();
             var startUI = Prompt.GetYesNo("Start UI?", true);
 
             if (startUI)

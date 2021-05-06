@@ -63,8 +63,6 @@ export default {
       }
     },
     actionImage(action) {
-      console.log(action.tags);
-
       switch (action.type) {
         case "VS_SOLUTION":
           return require("../../../assets/vs_icon.png");
