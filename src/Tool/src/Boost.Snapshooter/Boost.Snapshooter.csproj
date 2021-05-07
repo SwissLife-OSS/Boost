@@ -4,6 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Boost.Snapshooter</AssemblyName>
     <RootNamespace>Boost.Snapshooter</RootNamespace>
+    <PackageId>Boost.Tool.Snapshooter</PackageId>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

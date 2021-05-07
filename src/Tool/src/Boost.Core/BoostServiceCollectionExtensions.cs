@@ -91,6 +91,7 @@ namespace Boost
                 .AddType<GitRemoteRepositoryType>()
                 .AddType<LocalGitRepositoryType>()
                 .AddType<PipelineType>()
+                .AddType<UserSettingsType>()
                 .AddDataLoader<ConnectedServiceByIdDataLoader>();
 
             return builder;

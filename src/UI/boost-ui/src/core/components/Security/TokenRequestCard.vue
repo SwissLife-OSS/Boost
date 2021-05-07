@@ -120,9 +120,9 @@ export default {
   data() {
     return {
       request: {
-        authority: "https://demo.identityserver.io",
-        clientId: "m2m",
-        secret: "secret",
+        authority: null,
+        clientId: null,
+        secret: null,
         scopes: [],
         saveTokens: false,
         grantType: "client_credentials",
