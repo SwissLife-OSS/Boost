@@ -35,10 +35,11 @@
             >mdi-alert</v-icon
           >
         </div>
-        <span class="mr-4" v-if="version">v{{ version.installed }}</span>
-        <v-icon @click="dialog = !dialog">mdi-console</v-icon>
-        <v-icon @click="onAccountClick">mdi-account</v-icon>
-        <span @click="onAccountClick" v-if="me">{{ me.name }}</span>
+
+        <div style="cursor: pointer" @click="$router.push({ name: 'Info' })">
+          <v-icon class="mt-n1">mdi-information-outline</v-icon>
+          <span class="mr-2" v-if="version">{{ version.installed }}</span>
+        </div>
       </v-system-bar>
       <v-navigation-drawer width="62" class="nav" app>
         <div
@@ -167,7 +168,9 @@ export default {
   },
   watch: {
     version: function () {
-      this.versionSnack = true;
+      if (this.version.newerAvailable) {
+        this.versionSnack = true;
+      }
     },
   },
   methods: {

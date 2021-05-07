@@ -13,6 +13,7 @@
 
         {{ tab.name }}
       </router-link>
+      <slot></slot>
     </v-system-bar>
     <div class="ma-2 pa-0">
       <router-view></router-view>

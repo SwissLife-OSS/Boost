@@ -1,5 +1,6 @@
 query initalData {
   userSettings {
+    location
     defaultShell
     workRoots {
       name

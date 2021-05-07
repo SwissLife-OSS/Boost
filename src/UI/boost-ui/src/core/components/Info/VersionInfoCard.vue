@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="1">
     <v-toolbar light color="grey lighten-2" elevation="0" height="42">
-      <v-toolbar-title>Boost Version</v-toolbar-title>
+      <v-toolbar-title>Boost version info</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-card-text v-if="version">
@@ -36,6 +36,26 @@
             }})</strong
           ></v-col
         >
+      </v-row>
+      <v-row v-if="version.newerAvailable">
+        <v-col>
+          <v-alert type="info" outlined>
+            A new version is available:<br /><br />
+            <pre>dotnet tool update -g {{ version.packageId }}</pre>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row v-if="version.newerPreReleaseAvailable">
+        <v-col>
+          <v-alert type="info" outlined>
+            A new pre-release is available:<br /><br />
+            <pre>
+dotnet tool update -g {{ version.packageId }} --version {{
+                version.latest.version
+              }}</pre
+            >
+          </v-alert>
+        </v-col>
       </v-row>
     </v-card-text>
   </v-card>
