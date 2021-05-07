@@ -5,13 +5,13 @@
         :to="{ name: tab.route }"
         class="tab-button"
         v-for="tab in tabs"
-        :key="tab.name"
+        :key="tab.id"
       >
         <v-icon class="mr-1" color="white" v-if="tab.icon">{{
           tab.icon
         }}</v-icon>
 
-        {{ tab.name }}
+        {{ tab.title }}
       </router-link>
       <slot></slot>
     </v-system-bar>
@@ -24,9 +24,29 @@
 <script>
 export default {
   props: {
-    tabs: {
+    items: {
       type: Array,
       default: () => [],
+    },
+    navId: {
+      type: String,
+    },
+  },
+
+  mounted() {
+    if (this.navId && this.$route.name === this.navId) {
+      this.$router.replace({ name: this.tabs[0].route });
+    }
+  },
+  computed: {
+    tabs: function () {
+      if (this.items.length > 0) {
+        return this.items;
+      }
+      const tabs = this.$store.getters["app/subNavigation"](this.navId);
+
+      this.$emit("loaded", tabs);
+      return tabs;
     },
   },
 };

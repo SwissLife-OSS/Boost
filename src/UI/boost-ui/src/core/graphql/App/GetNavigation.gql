@@ -1,0 +1,17 @@
+query appNavigation {
+  appNavigation {
+    title
+    items {
+      id
+      title
+      route
+      icon
+      children {
+        id
+        icon
+        route
+        title
+      }
+    }
+  }
+}

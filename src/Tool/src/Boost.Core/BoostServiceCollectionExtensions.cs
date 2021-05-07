@@ -5,6 +5,7 @@ using Boost.Data;
 using Boost.Git;
 using Boost.GraphQL;
 using Boost.Infrastructure;
+using Boost.Navigation;
 using Boost.Nuget;
 using Boost.Pipelines;
 using Boost.Security;
@@ -49,6 +50,7 @@ namespace Boost
             services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
             services.AddSingleton<IAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
             services.AddSingleton<IVersionChecker, VersionChecker>();
+            services.AddSingleton<IAppNavigationService, AppNavigationService>();
 
             services.AddUserDataProtection();
 

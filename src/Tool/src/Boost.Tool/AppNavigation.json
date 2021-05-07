@@ -1,0 +1,97 @@
+{
+  "Title":  "Boost",
+  "Items": [
+    {
+      "Title": "Workspace",
+      "Icon": "mdi-folder-outline",
+      "Route": "Workspace"
+    },
+    {
+      "Title": "Git",
+      "Icon": "mdi-git",
+      "Route": "Git",
+      "Children": [
+        {
+          "Title": "Current",
+          "Route": "Git.Current"
+        },
+        {
+          "Title": "All Local",
+          "Route": "Git.Local"
+        },
+        {
+          "Title": "Remote",
+          "Route": "Git.Remote"
+        },
+        {
+          "Title": "Indexing",
+          "Route": "Git.Index"
+        }
+      ]
+    },
+    {
+      "Title": "Utils",
+      "Icon": "mdi-hammer-screwdriver",
+      "Route": "Utils",
+      "Children": [
+        {
+          "Title": "Encoding & Guids",
+          "Route": "Utils.Encoding"
+        },
+        {
+          "Title": "Base64 to File",
+          "Route": "Utils.Base64ToFile"
+        },
+        {
+          "Title": "Security",
+          "Route": "Utils.Security"
+        }
+      ]
+    },
+    {
+      "Title": "Security",
+      "Icon": "mdi-lock-check",
+      "Route": "Security",
+      "Children": [
+        {
+          "Title": "Tokens",
+          "Route": "Security.Tokens"
+        },
+        {
+          "Title": "Authorize (OIDC)",
+          "Route": "Security.Authorize"
+        },
+        {
+          "Title": "Token requestor",
+          "Route": "Security.TokenRequest"
+        }
+      ]
+    },
+    {
+      "Title": "Snapshooter",
+      "Route": "Snapshooter",
+      "Icon": "mdi-test-tube"
+    },
+    {
+      "Title": "Settings",
+      "Icon": "mdi-cog-outline",
+      "Route": "Settings",
+      "Children": [
+        {
+          "Title": "General",
+          "Route": "Settings.General"
+        },
+        {
+          "Title": "Security",
+          "Route": "Settings.Security"
+        }
+      ]
+    },
+    {
+      "Title": "GraphQL",
+      "Icon": "mdi-graphql",
+      "IsServer": true,
+      "Route": "graphql"
+    }
+  ]
+}

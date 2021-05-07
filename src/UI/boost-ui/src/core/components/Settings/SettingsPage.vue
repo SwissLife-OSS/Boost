@@ -1,5 +1,5 @@
 <template>
-  <sub-navigation-bar :tabs="tabs">
+  <sub-navigation-bar navId="Settings">
     <template>
       <v-spacer></v-spacer>
       <v-tooltip bottom v-if="userSettings">
@@ -25,19 +25,6 @@ import workspaceMixins from "../workspaceMixins";
 export default {
   components: { SubNavigationBar },
   mixins: [workspaceMixins],
-  created() {
-    if (this.$route.name === "Settings") {
-      this.$router.replace({ name: this.tabs[0].route });
-    }
-  },
-  data() {
-    return {
-      tabs: [
-        { name: "General", route: "Settings.General" },
-        { name: "Security", route: "Settings.Security" },
-      ],
-    };
-  },
   computed: {
     ...mapState("app", ["userSettings"]),
   },
