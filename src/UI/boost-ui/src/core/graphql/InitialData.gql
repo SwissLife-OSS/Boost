@@ -25,13 +25,15 @@ query initalData {
     version
   }
 
-    appNavigation {
+  appNavigation {
     title
     items {
       id
+      isServer
       title
       route
       icon
+      
       children {
         id
         icon

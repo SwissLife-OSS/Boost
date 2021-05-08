@@ -19,6 +19,8 @@ namespace Boost.Navigation
         public string Route { get; set; } = default!;
 
         public string? Icon { get; set; } = default!;
+
+        public bool IsServer { get; set; }
     }
 
     public class MainNavigationItem : NavigationItem
