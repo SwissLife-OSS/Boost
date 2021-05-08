@@ -35,17 +35,19 @@
             >mdi-alert</v-icon
           >
         </div>
-
         <div style="cursor: pointer" @click="$router.push({ name: 'Info' })">
           <v-icon class="mt-n1">mdi-information-outline</v-icon>
-          <span class="mr-2" v-if="version">{{ version.installed }}</span>
+          <span class="mr-4" v-if="version">{{ version.installed }}</span>
         </div>
+        <v-btn @click="$router.push({ name: 'Settings' })" icon
+          ><v-icon>mdi-cog-outline</v-icon></v-btn
+        >
       </v-system-bar>
       <v-navigation-drawer width="62" class="nav" app>
         <div
           class="nav-item"
-          v-for="(nav, i) in navBarItems"
-          :key="i"
+          v-for="nav in navBarItems"
+          :key="nav.id"
           :title="nav.name"
           @click="onNavigate(nav)"
         >
@@ -59,6 +61,7 @@
       <v-main>
         <router-view></router-view>
       </v-main>
+
       <v-snackbar
         color="red darken-3"
         v-model="versionSnack"
@@ -109,56 +112,19 @@ export default {
   mounted() {
     this.getVersion();
   },
-  data: () => ({
-    dialog: false,
-    versionSnack: false,
-    navItems: [
-      {
-        text: "Workspace",
-        icon: "mdi-folder-outline",
-        route: "Workspace",
-      },
-      {
-        text: "Git",
-        icon: "mdi-git",
-        route: "Git",
-      },
-      {
-        text: "Utils",
-        icon: "mdi-hammer-screwdriver",
-        route: "Utils",
-      },
-      {
-        text: "Security",
-        icon: "mdi-lock-check",
-        route: "Security",
-      },
-      {
-        text: "Snapshooter",
-        route: "Snapshooter",
-        icon: "mdi-test-tube",
-        image2: require("../../assets/ss_logo.png"),
-      },
-      {
-        text: "Settings",
-        icon: "mdi-cog-outline",
-        route: "Settings",
-      },
-      {
-        text: "GraphQL",
-        icon: "mdi-graphql",
-        isServer: true,
-        route: "graphql",
-      },
-    ],
-  }),
+  data() {
+    return {
+      dialog: false,
+      versionSnack: false,
+    };
+  },
   computed: {
-    ...mapState("app", ["statusMessage", "app", "version"]),
+    ...mapState("app", ["statusMessage", "app", "version", "navigation"]),
     me: function () {
       return null;
     },
     navBarItems: function () {
-      return this.navItems.map((x) => {
+      return this.$store.state.app.navigation.items.map((x) => {
         x.active = this.$route.name.startsWith(x.route);
         x.color = x.active ? "#fff" : "#b3b3b3";
 

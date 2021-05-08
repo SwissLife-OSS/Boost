@@ -11,48 +11,58 @@
       </v-toolbar>
 
       <v-card-text>
-        <v-row dense>
-          <v-col md="12"
-            ><v-text-field v-model="config.name" label="Name"></v-text-field
-          ></v-col>
-        </v-row>
-        <v-row dense>
-          <v-col md="6"
-            ><v-text-field
-              v-model="config.account"
-              label="Account"
-            ></v-text-field
-          ></v-col>
-          <v-col md="6"
-            ><v-text-field
-              label="Default Project"
-              v-model="config.defaultProject"
-            ></v-text-field
-          ></v-col>
-        </v-row>
-        <v-row dense>
-          <v-col md="12"
-            ><v-text-field
-              v-model="config.personalAccessToken"
-              label="Personal Access Token"
-            ></v-text-field
-          ></v-col>
-        </v-row>
-        <v-row dense>
-          <v-col md="12"
-            ><v-select
-              v-model="config.defaultWorkRoot"
-              :items="workRoots"
-              label="Default work root"
-              item-text="name"
-              item-value="name"
-            ></v-select
-          ></v-col>
-        </v-row>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-row dense>
+            <v-col md="12"
+              ><v-text-field
+                v-model="config.name"
+                :rules="config.nameRules"
+                label="Name"
+              ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row dense>
+            <v-col md="6"
+              ><v-text-field
+                v-model="config.account"
+                :rules="config.accountRules"
+                label="Account"
+              ></v-text-field
+            ></v-col>
+            <v-col md="6"
+              ><v-text-field
+                label="Default Project"
+                v-model="config.defaultProject"
+                :rules="config.defaultProjectRules"
+              ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row dense>
+            <v-col md="12"
+              ><v-text-field
+                v-model="config.personalAccessToken"
+                label="Personal Access Token"
+                :rules="config.tokenRules"
+              ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row dense>
+            <v-col md="12"
+              ><v-select
+                v-model="config.defaultWorkRoot"
+                :items="workRoots"
+                label="Default work root"
+                item-text="name"
+                item-value="name"
+              ></v-select
+            ></v-col>
+          </v-row>
+        </v-form>
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -60,12 +70,14 @@
 
 <script>
 import { getConnectedService, mapService } from "../../settingsService";
+import { FormRuleBuilder } from "../Common/FormRuleBuilder";
 
 import configureServiceMixin from "./configureServiceMixin";
 export default {
   mixins: [configureServiceMixin],
   data() {
     return {
+      valid: false,
       config: {
         id: null,
         name: "",
@@ -73,11 +85,25 @@ export default {
         defaultProject: null,
         personalAccessToken: null,
         defaultWorkRoot: null,
+        nameRules: new FormRuleBuilder("Name", this).addRequired(2).build(),
+        accountRules: new FormRuleBuilder("Account", this)
+          .addRequired(2)
+          .build(),
+        tokenRules: new FormRuleBuilder("Token", this).addRequired(10).build(),
+        defaultProjectRules: new FormRuleBuilder("Default project", this)
+          .addRequired(2)
+          .build(),
       },
     };
   },
   methods: {
     async save() {
+      const isValid = this.$refs.form.validate();
+
+      if (!isValid) {
+        return;
+      }
+
       const input = {
         id: this.config.id,
         name: this.config.name,

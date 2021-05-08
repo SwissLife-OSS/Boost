@@ -24,4 +24,22 @@ query initalData {
     configurationRequired
     version
   }
+
+  appNavigation {
+    title
+    items {
+      id
+      isServer
+      title
+      route
+      icon
+      
+      children {
+        id
+        icon
+        route
+        title
+      }
+    }
+  }
 }

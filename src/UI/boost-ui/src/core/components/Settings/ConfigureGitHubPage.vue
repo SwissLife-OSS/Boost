@@ -10,65 +10,79 @@
         <v-icon color="grey darken-3" @click="$router.back()">mdi-close</v-icon>
       </v-toolbar>
       <v-card-text>
-        <v-row dense>
-          <v-col md="8"
-            ><v-text-field v-model="config.name" label="Name"></v-text-field
-          ></v-col>
-          <v-col md="4"
-            ><v-select
-              :items="configModes"
-              v-model="config.mode"
-              label="Mode"
-            ></v-select
-          ></v-col>
-        </v-row>
-        <v-row dense v-if="config.mode === 'OAuth'">
-          <v-col md="4"
-            ><v-text-field
-              v-model="config.oauth.clientId"
-              label="ClientId"
-            ></v-text-field
-          ></v-col>
-          <v-col md="4"
-            ><v-text-field
-              label="Secret"
-              v-model="config.oauth.secret"
-            ></v-text-field
-          ></v-col>
-          <v-col md="4">
-            <p>
-              <a target="_blank" href="https://github.com/settings/developers"
-                >Configure GitHub App</a
-              >
-            </p>
-          </v-col>
-        </v-row>
-        <v-row dense v-if="config.mode === 'PersonalAccessToken'">
-          <v-col md="12"
-            ><v-text-field
-              v-model="config.personalAccessToken"
-              label="Personal Access Token"
-            ></v-text-field
-          ></v-col>
-        </v-row>
-        <v-row dense>
-          <v-col md="6"
-            ><v-select
-              v-model="config.defaultWorkRoot"
-              :items="workRoots"
-              label="Default work root"
-              item-text="name"
-              item-value="name"
-            ></v-select
-          ></v-col>
-          <v-col md="6"
-            ><v-text-field v-model="config.owner" label="Owner"></v-text-field
-          ></v-col>
-        </v-row>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-row dense>
+            <v-col md="8"
+              ><v-text-field
+                v-model="config.name"
+                :rules="config.nameRules"
+                label="Name"
+              ></v-text-field
+            ></v-col>
+            <v-col md="4"
+              ><v-select
+                :items="configModes"
+                v-model="config.mode"
+                label="Mode"
+              ></v-select
+            ></v-col>
+          </v-row>
+          <v-row dense v-if="config.mode === 'OAuth'">
+            <v-col md="4"
+              ><v-text-field
+                v-model="config.oauth.clientId"
+                :rules="config.clientIdRules"
+                label="ClientId"
+              ></v-text-field
+            ></v-col>
+            <v-col md="4"
+              ><v-text-field
+                label="Secret"
+                v-model="config.oauth.secret"
+                :rules="config.secretRules"
+              ></v-text-field
+            ></v-col>
+            <v-col md="4">
+              <p>
+                <a target="_blank" href="https://github.com/settings/developers"
+                  >Configure GitHub App</a
+                >
+              </p>
+            </v-col>
+          </v-row>
+          <v-row dense v-if="config.mode === 'PersonalAccessToken'">
+            <v-col md="12"
+              ><v-text-field
+                v-model="config.personalAccessToken"
+                label="Personal Access Token"
+                :rules="config.tokenRules"
+              ></v-text-field
+            ></v-col>
+          </v-row>
+          <v-row dense>
+            <v-col md="6"
+              ><v-select
+                v-model="config.defaultWorkRoot"
+                :items="workRoots"
+                label="Default work root"
+                item-text="name"
+                item-value="name"
+              ></v-select
+            ></v-col>
+            <v-col md="6"
+              ><v-text-field
+                v-model="config.owner"
+                :rules="config.ownerRules"
+                label="Owner"
+              ></v-text-field
+            ></v-col>
+          </v-row>
+        </v-form>
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="save">Save</v-btn>
+        <v-btn color="primary" :disabled="!valid" @click="save">Save</v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -80,12 +94,13 @@ import {
   mapService,
   getServicePropertyValue,
 } from "../../settingsService";
-
+import { FormRuleBuilder } from "../Common/FormRuleBuilder";
 import configureServiceMixin from "./configureServiceMixin";
 export default {
   mixins: [configureServiceMixin],
   data() {
     return {
+      valid: false,
       config: {
         id: null,
         name: "",
@@ -97,12 +112,28 @@ export default {
           secret: null,
         },
         personalAccessToken: null,
+        nameRules: new FormRuleBuilder("Name", this).addRequired(2).build(),
+        ownerRules: new FormRuleBuilder("Owner", this).addRequired(3).build(),
+        tokenRules: new FormRuleBuilder("Token", this)
+          .addRequired(10, (form) => form.config.mode === "PersonalAccessToken")
+          .build(),
+        clientIdRules: new FormRuleBuilder("ClientId", this)
+          .addRequired(5, (form) => form.config.mode === "OAuth")
+          .build(),
+        secretRules: new FormRuleBuilder("Secret", this)
+          .addRequired(5, (form) => form.config.mode === "OAuth")
+          .build(),
       },
       configModes: ["PersonalAccessToken", "OAuth"],
     };
   },
   methods: {
     async save() {
+      const isValid = this.$refs.form.validate();
+
+      if (!isValid) {
+        return;
+      }
       const input = {
         id: this.config.id,
         name: this.config.name,

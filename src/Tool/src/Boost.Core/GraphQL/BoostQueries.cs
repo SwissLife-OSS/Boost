@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boost.GraphQL;
 using Boost.Infrastructure;
+using Boost.Navigation;
 using HotChocolate;
 using HotChocolate.Types;
 
@@ -34,7 +35,12 @@ namespace Boost.Core.GraphQL
             CancellationToken cancellationToken)
         {
             return versionChecker.GetVersionInfo(cancellationToken);
+        }
 
+        public AppNavigation GetAppNavigation(
+            [Service] IAppNavigationService appNavigationService)
+        {
+            return appNavigationService.GetNavigation();
         }
     }
 }

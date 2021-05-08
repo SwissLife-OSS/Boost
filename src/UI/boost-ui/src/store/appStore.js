@@ -1,5 +1,5 @@
 
-import { getInitialData, getVersion } from "../core/appService";
+import { getInitialData, getNavigation, getVersion } from "../core/appService";
 import { saveConnectedService, saveTokenRequestor, saveWorkRoots, getConnectedServices } from "../core/settingsService";
 import { excuteGraphQL } from "./graphqlClient";
 
@@ -11,7 +11,10 @@ const appStore = {
         userSettings: null,
         app: null,
         connectedServices: [],
-        version: null
+        version: null,
+        navigation: {
+            items: []
+        }
     }),
     mutations: {
         MESSAGE_ADDED(state, message) {
@@ -26,10 +29,14 @@ const appStore = {
         },
         INIT_DATA_LOADED(state, data) {
             state.userSettings = data.userSettings;
-            state.app = data.appliation
+            state.app = data.appliation;
+            state.navigation = data.appNavigation;
         },
         VERSION_LOADED(state, version) {
             state.version = version;
+        },
+        NAVIGATION_LOADED(state, nav) {
+            state.navigation = nav;
         },
         WORKROOTS_SAVED(state, workRoots) {
             state.userSettings.workRoots = workRoots;
@@ -58,6 +65,12 @@ const appStore = {
             const result = await excuteGraphQL(() => getVersion(), dispatch);
             if (result.success) {
                 commit("VERSION_LOADED", result.data.version);
+            }
+        },
+        async getNavigation({ commit, dispatch }) {
+            const result = await excuteGraphQL(() => getNavigation(), dispatch);
+            if (result.success) {
+                commit("NAVIGATION_LOADED", result.data.appNavigation);
             }
         },
         async saveWorkRoots({ commit, dispatch }, data) {
@@ -110,7 +123,12 @@ const appStore = {
         },
     },
     getters: {
+        subNavigation: state => (id) => {
+            var nav = state.navigation.items.find(x => x.id === id);
 
+            console.log(nav);
+            return nav.children;
+        }
     }
 };
 

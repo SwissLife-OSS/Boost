@@ -33,6 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="AppNavigation.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="AppNavigation.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="UI\" />
     <Folder Include="AuthUI\" />
   </ItemGroup>
