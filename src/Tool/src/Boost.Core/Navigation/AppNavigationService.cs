@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Boost.Infrastructure;
 
@@ -16,8 +17,11 @@ namespace Boost.Navigation
 
         public AppNavigation GetNavigation()
         {
+            string? name = _commandContext.ToolAssembly.GetManifestResourceNames()
+                .FirstOrDefault(x => x.EndsWith("AppNavigation.json"));
+
             Stream? stream = _commandContext.ToolAssembly
-                .GetManifestResourceStream("Boost.Tool.AppNavigation.json");
+                .GetManifestResourceStream(name!);
 
             if (stream is { })
             {
