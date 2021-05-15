@@ -256,7 +256,7 @@ namespace Boost.Workspace
 
         public Task<int> OpenInExplorer(string directory)
         {
-            IWebShell shell = _webShellFactory.CreateShell("pwsh");
+            IWebShell shell = _webShellFactory.CreateShell();
             var cmd = new ShellCommand("ii")
             {
                 Arguments = ".",
@@ -268,7 +268,7 @@ namespace Boost.Workspace
 
         public Task<int> OpenInTerminal(string directory)
         {
-            IWebShell shell = _webShellFactory.CreateShell("pwsh");
+            IWebShell shell = _webShellFactory.CreateShell();
             var cmd = new ShellCommand("wt.exe")
             {
                 Arguments = $"-w 0 nt -d {directory}",
