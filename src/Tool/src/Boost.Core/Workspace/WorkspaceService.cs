@@ -93,7 +93,7 @@ namespace Boost.Workspace
 
         public async Task<int> ExecuteFileActionAsync(string fileName, string action)
         {
-            FileInfo? file = new FileInfo(fileName);
+            FileInfo file = new(fileName);
 
             switch (action)
             {
