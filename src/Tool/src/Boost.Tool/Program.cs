@@ -30,6 +30,7 @@ namespace Boost.Tool
         typeof(QuickActionsCommand),
         typeof(VersionCommand),
         typeof(SwitchRepositoryCommand),
+        typeof(LocalProxyCommand),
         typeof(IndexRepositoriesCommand))]
     class Program
     {
