@@ -2,6 +2,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import SnapshooterPage from "./modules/snapshooter/components/SnapshooterPage"
+import AzureServiceBusPage from "./modules/azureservicebus/components/AzureServiceBusPage"
 import InfoPage from "./core/components/Info/InfoPage"
 import SettingsPage from "./core/components/Settings/SettingsPage"
 import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
@@ -175,6 +176,11 @@ const routes = [
     path: "/snap",
     name: "Snapshooter",
     component: SnapshooterPage
+  },
+  {
+    path: "/azureservicebus",
+    name: "AzureServiceBus",
+    component: AzureServiceBusPage
   },
 ];
 

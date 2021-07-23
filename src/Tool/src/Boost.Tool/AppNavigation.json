@@ -73,6 +73,11 @@
       "Icon": "mdi-test-tube"
     },
     {
+      "Title": "AzureServiceBus",
+      "Route": "AzureServiceBus",
+      "Icon": "mdi-email-newsletter"
+    },
+    {
       "Title": "Settings",
       "Icon": "mdi-cog-outline",
       "Route": "Settings",

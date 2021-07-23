@@ -42,7 +42,7 @@
       </v-alert>
       <v-treeview
         :style="{
-          height: $vuetify.breakpoint.height - 100 + 'px',
+          height: $vuetify.breakpoint.height - 100 + 'px'
         }"
         class="overflow-y-auto mt-0"
         :return-object="true"
@@ -125,7 +125,7 @@ import {
   getsnapshooterDirectories,
   getContent,
   approve,
-  approveAll,
+  approveAll
 } from "../snapshooterService";
 
 export default {
@@ -144,57 +144,57 @@ export default {
       content: null,
       selectedNode: null,
       diffOptions: {
-        renderSideBySide: true,
-      },
+        renderSideBySide: true
+      }
     };
   },
   watch: {
-    withMismatchOnly: function () {
+    withMismatchOnly: function() {
       this.getDirectories();
-    },
+    }
   },
   computed: {
-    isDiff: function () {
+    isDiff: function() {
       if (this.content && this.content.mismatch) {
         return true;
       }
       return false;
     },
     inline: {
-      get: function () {
+      get: function() {
         return !this.diffOptions.renderSideBySide;
       },
       set(value) {
         this.diffOptions.renderSideBySide = !value;
-      },
+      }
     },
-    missmatchCount: function () {
+    missmatchCount: function() {
       let count = 0;
       for (let i = 0; i < this.directories.length; i++) {
         const dir = this.directories[i];
         if (dir.snapshots) {
-          count += dir.snapshots.filter((x) => x.hasMismatch).length;
+          count += dir.snapshots.filter(x => x.hasMismatch).length;
         }
       }
 
       return count;
-    },
+    }
   },
   methods: {
-    onSelect: function (nodes) {
+    onSelect: function(nodes) {
       if (nodes && nodes.length > 0) {
         this.getContent(nodes[0]);
       }
     },
-    onRefresh: function () {
+    onRefresh: function() {
       this.getDirectories();
     },
     async getDirectories() {
       this.loading = true;
       const result = await getsnapshooterDirectories(this.withMismatchOnly);
 
-      this.directories = await result.data.snapshooterDirectories.map((x) => {
-        x.children = x.snapshots.map((c) => {
+      this.directories = await result.data.snapshooterDirectories.map(x => {
+        x.children = x.snapshots.map(c => {
           c.fullName = c.fileName;
 
           return c;
@@ -215,7 +215,7 @@ export default {
       this.selectedNode = node;
       const result = await getContent({
         fileName: node.fileName,
-        missmatchFileName: node.missmatchFileName,
+        missmatchFileName: node.missmatchFileName
       });
 
       this.content = result.data.snapshooterSnapshot;
@@ -230,14 +230,13 @@ export default {
     async approve() {
       const result = await approve({
         fileName: this.selectedNode.fileName,
-        missmatchFileName: this.selectedNode.missmatchFileName,
+        missmatchFileName: this.selectedNode.missmatchFileName
       });
       this.content = result.data.approveSnapshot.Snapshot;
       this.getDirectories();
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>

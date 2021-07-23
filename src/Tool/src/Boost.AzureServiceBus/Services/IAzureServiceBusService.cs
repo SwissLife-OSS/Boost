@@ -12,5 +12,6 @@ namespace Boost.AzureServiceBus.Services
     public interface IAzureServiceBusService
     {
         Task<IReadOnlyList<QueueInfo>> GetQueuesAsync(CancellationToken cancellationToken);
+        Task<IReadOnlyList<TopicInfo>> GetTopicsAsync(CancellationToken cancellationToken);
     }
 }

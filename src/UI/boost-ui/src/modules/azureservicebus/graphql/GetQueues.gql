@@ -1,0 +1,8 @@
+query azureServiceBusQueues {
+  azureServiceBusQueues {
+    name
+    activeMessagesCount
+    status
+    deadletterMessagesCount
+  }
+}

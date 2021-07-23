@@ -2,7 +2,10 @@
   "profiles": {
     "Boost.Tool": {
       "commandName": "Project",
-      "commandLineArgs": "ui"
+      "commandLineArgs": "ui",
+      "environmentVariables": {
+        "SERVICEBUS_CONNECTIONSTRING": "CONNECTION_STRING"
+      }
     }
   }
 }

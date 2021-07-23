@@ -53,5 +53,37 @@ namespace Boost.AzureServiceBus.Services
 
             return queueProperties;
         }
+
+        public async Task<IReadOnlyList<TopicInfo>> GetTopicsAsync(CancellationToken cancellationToken)
+        {
+            var topics = new List<TopicInfo>();
+
+            Azure.AsyncPageable<TopicProperties> queuesPageable =
+                _administrationClient.GetTopicsAsync(cancellationToken);
+
+            IAsyncEnumerator<TopicProperties> enumerator = queuesPageable.GetAsyncEnumerator();
+
+            try
+            {
+                while (await enumerator.MoveNextAsync())
+                {
+                    TopicProperties topic = enumerator.Current;
+                    Azure.Response<TopicRuntimeProperties> runtimePropertiesResponse =
+                        await _administrationClient.GetTopicRuntimePropertiesAsync(
+                            topic.Name,
+                            cancellationToken);
+
+                    TopicRuntimeProperties runtimeProperties = runtimePropertiesResponse.Value;
+
+                    topics.Add(new TopicInfo(topic.Name));
+                }
+            }
+            finally
+            {
+                await enumerator.DisposeAsync();
+            }
+
+            return topics;
+        }
     }
 }

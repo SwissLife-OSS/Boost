@@ -21,5 +21,12 @@ namespace Boost.AzureServiceBus.GraphQL
         {
             return await azureServiceBusService.GetQueuesAsync(cancellationToken);
         }
+
+        public async Task<IEnumerable<TopicInfo>> GetAzureServiceBusTopicsAsync(
+            [Service] IAzureServiceBusService azureServiceBusService,
+            CancellationToken cancellationToken)
+        {
+            return await azureServiceBusService.GetTopicsAsync(cancellationToken);
+        }
     }
 }
