@@ -1,6 +1,8 @@
 using System;
 using System.Reflection;
 using Boost.AzureDevOps;
+using Boost.AzureServiceBus;
+using Boost.AzureServiceBus.Commands;
 using Boost.Commands;
 using Boost.Core.GraphQL;
 using Boost.GitHub;
@@ -31,7 +33,8 @@ namespace Boost.Tool
         typeof(VersionCommand),
         typeof(SwitchRepositoryCommand),
         typeof(LocalProxyCommand),
-        typeof(IndexRepositoriesCommand))]
+        typeof(IndexRepositoriesCommand),
+        typeof(AzureServiceBusCommand))]
     class Program
     {
         static int Main(string[] args)
@@ -45,25 +48,27 @@ namespace Boost.Tool
                     .AddToolServices()
                     .AddSingleton(new AppSettings())
                     .AddSingleton<IWebShellFactory, ConsoleWebShellFactory>()
-                    .AddSingleton<IWebServer>( c =>
-                    {
-                        return new BoostWebServer(
-                            c.GetRequiredService<IConsole>(),
-                            new BoostCommandContext(c, (services) =>
-                            {
-                                services.AddGitHub();
-                                services.AddAzureDevOps();
-                                services.AddSnapshooter();
+                    .AddSingleton<IWebServer>(c =>
+                   {
+                       return new BoostWebServer(
+                           c.GetRequiredService<IConsole>(),
+                           new BoostCommandContext(c, (services) =>
+                           {
+                               services.AddGitHub();
+                               services.AddAzureDevOps();
+                               services.AddSnapshooter();
+                               services.AddAzureServiceBus();
 
-                                services.AddGraphQLServices((gql) =>
-                                {
-                                    gql.AddSnapshooterTypes();
-                                    gql.AddGitHubTypes();
-                                    gql.AddAzureDevOpsTypes();
+                               services.AddGraphQLServices((gql) =>
+                               {
+                                   gql.AddSnapshooterTypes();
+                                   gql.AddGitHubTypes();
+                                   gql.AddAzureDevOpsTypes();
+                                   gql.AddAzureServiceBusTypes();
 
-                                });
-                            }, typeof(Program).Assembly));
-                    })
+                               });
+                           }, typeof(Program).Assembly));
+                   })
                     .BuildServiceProvider())
             {
                 var app = new CommandLineApplication<Program>();

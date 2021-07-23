@@ -1,4 +1,5 @@
 using Boost.AzureDevOps;
+using Boost.AzureServiceBus;
 using Boost.GitHub;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,7 @@ namespace Boost.Tool
             services.AddSnapshooter();
             services.AddAzureDevOps();
             services.AddGitHub();
+            services.AddAzureServiceBus();
             services.AddSingleton<IAuthServerServiceConfigurator, AuthServerServiceConfigurator>();
 
             return services;

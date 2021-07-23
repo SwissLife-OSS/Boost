@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Boost.AzureServiceBus</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.2.1" />
+    <PackageReference Include="ConsoleTables" Version="2.4.2" />
+    <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
+    <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
