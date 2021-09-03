@@ -16,17 +16,15 @@ namespace AzureServiceBus.Tests
         public async Task GetQueuesAsync_CorrectConnectionString_RetrievesAllQueues()
         {
             // Arrange
-            var connectionString = Environment.GetEnvironmentVariable("SERVICEBUS_CONNECTIONSTRING");
+            //var sut = new AzureServiceBusService();
 
-            var sut = new AzureServiceBusService(connectionString!);
+            //// Act
+            //IReadOnlyList<QueueInfo>? items = await sut.GetQueuesAsync(default);
 
-            // Act
-            IReadOnlyList<QueueInfo>? items = await sut.GetQueuesAsync(default);
+            //foreach (QueueInfo item in items)
+            //{
 
-            foreach (QueueInfo item in items)
-            {
-
-            }
+            //}
 
             // Assert
             //queues.MatchSnapshot();

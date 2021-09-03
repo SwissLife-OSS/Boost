@@ -33,7 +33,8 @@ namespace Boost.AzureServiceBus.Commands
             switch (Action)
             {
                 case "list":
-                    IReadOnlyList<QueueInfo> queues = _azureServiceBusService.GetQueuesAsync(default).Result;
+                    IReadOnlyList<QueueInfo> queues =
+                        _azureServiceBusService.GetQueuesAsync("default",default).Result;
 
                     var table = new ConsoleTable("Name", "(Active, Deadletters)", "Status");
 

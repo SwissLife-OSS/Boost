@@ -6,25 +6,31 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus.Administration;
 using Boost.AzureServiceBus.Models;
+using Boost.AzureServiceBus.Settings;
 
 namespace Boost.AzureServiceBus.Services
 {
     public class AzureServiceBusService : IAzureServiceBusService
     {
         private readonly ServiceBusAdministrationClient _administrationClient;
+        private readonly IAzureServiceBusSettingsManager _serviceBusSettingsManager;
 
-        public AzureServiceBusService(string connectionString)
+        public AzureServiceBusService(IAzureServiceBusSettingsManager serviceBusSettingsManager)
         {
-            _administrationClient = new ServiceBusAdministrationClient(connectionString);
+            _serviceBusSettingsManager = serviceBusSettingsManager;
         }
 
         public async Task<IReadOnlyList<QueueInfo>> GetQueuesAsync(
+            string connectionName,
             CancellationToken cancellationToken)
         {
+            ServiceBusAdministrationClient administrationClient =
+                await GetClientAsync(connectionName, cancellationToken);
+
             var queueProperties = new List<QueueInfo>();
 
             Azure.AsyncPageable<QueueProperties> queuesPageable =
-                _administrationClient.GetQueuesAsync(cancellationToken);
+                administrationClient.GetQueuesAsync(cancellationToken);
 
             IAsyncEnumerator<QueueProperties> enumerator = queuesPageable.GetAsyncEnumerator();
 
@@ -34,7 +40,9 @@ namespace Boost.AzureServiceBus.Services
                 {
                     QueueProperties queue = enumerator.Current;
                     Azure.Response<QueueRuntimeProperties> runtimePropertiesResponse =
-                        await _administrationClient.GetQueueRuntimePropertiesAsync(queue.Name, cancellationToken);
+                        await _administrationClient.GetQueueRuntimePropertiesAsync(
+                            queue.Name,
+                            cancellationToken);
 
                     QueueRuntimeProperties runtimeProperties = runtimePropertiesResponse.Value;
 
@@ -54,8 +62,13 @@ namespace Boost.AzureServiceBus.Services
             return queueProperties;
         }
 
-        public async Task<IReadOnlyList<TopicInfo>> GetTopicsAsync(CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<TopicInfo>> GetTopicsAsync(
+            string connectionName,
+            CancellationToken cancellationToken)
         {
+            ServiceBusAdministrationClient administrationClient =
+                await GetClientAsync(connectionName, cancellationToken);
+
             var topics = new List<TopicInfo>();
 
             Azure.AsyncPageable<TopicProperties> queuesPageable =
@@ -84,6 +97,16 @@ namespace Boost.AzureServiceBus.Services
             }
 
             return topics;
+        }
+
+        private async Task<ServiceBusAdministrationClient> GetClientAsync(
+            string connectionName,
+            CancellationToken cancellationToken)
+        {
+            AzureServiceBusConnection serviceBusConnection =
+                await _serviceBusSettingsManager.GetByName(connectionName, cancellationToken);
+
+            return new ServiceBusAdministrationClient(serviceBusConnection.ConnectionString);
         }
     }
 }

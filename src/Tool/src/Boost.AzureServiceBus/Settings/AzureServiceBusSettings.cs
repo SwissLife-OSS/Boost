@@ -2,21 +2,11 @@ using System.Collections.Generic;
 
 namespace Boost.AzureServiceBus.Settings
 {
-    public class ServiceBusSettings
+    public class AzureServiceBusSettings
     {
-        public ServiceBusSettings()
-        {
-            Connections = new List<ServiceBusConnection>();
-        }
+        public List<AzureServiceBusConnection> Connections { get; set; } = new List<AzureServiceBusConnection>();
 
-        public ServiceBusSettings(List<ServiceBusConnection> connections)
-        {
-            Connections = connections;
-        }
-        
-        public List<ServiceBusConnection> Connections { get; }
-
-        public void AddOrReplaceConnection(ServiceBusConnection serviceBusConnection)
+        public void AddOrReplaceConnection(AzureServiceBusConnection serviceBusConnection)
         {
             int index = Connections.FindIndex(
                 p => p.Name.ToLowerInvariant().Equals(

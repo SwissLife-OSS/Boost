@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Boost.AzureServiceBus.GraphQL;
 using Boost.AzureServiceBus.Services;
+using Boost.AzureServiceBus.Settings;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +15,8 @@ namespace Boost.AzureServiceBus
     {
         public static IServiceCollection AddAzureServiceBus(this IServiceCollection services)
         {
-            var connectionString = Environment.GetEnvironmentVariable("SERVICEBUS_CONNECTIONSTRING");
-
-            services.AddSingleton<IAzureServiceBusService>(new AzureServiceBusService(connectionString!));
+            services.AddSingleton<IAzureServiceBusService, AzureServiceBusService>();
+            services.AddSingleton<IAzureServiceBusSettingsManager, AzureServiceBusSettingsManager>();
 
             return services;
         }
@@ -25,7 +25,8 @@ namespace Boost.AzureServiceBus
             this IRequestExecutorBuilder builder)
         {
             builder
-                .AddType<AzureServiceBusQueries>();
+                .AddType<AzureServiceBusQueries>()
+                .AddType<AzureServiceBusMutations>();
 
             return builder;
         }

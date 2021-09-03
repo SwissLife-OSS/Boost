@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Boost.AzureServiceBus.Settings
 {
-    public interface IServiceBusSettingsManager
+    public class AzureServiceBusConnection
     {
-
+        public string Name { get; set; }
+        public string ConnectionString { get; set; }
     }
 }
