@@ -8,7 +8,7 @@ namespace Boost.AzureServiceBus.Settings
 {
     public class AzureServiceBusConnection
     {
-        public string Name { get; set; }
-        public string ConnectionString { get; set; }
+        public string Name { get; set; } = default!;
+        public string ConnectionString { get; set; } = default!;
     }
 }

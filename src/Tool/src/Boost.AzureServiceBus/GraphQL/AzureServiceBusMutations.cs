@@ -16,14 +16,23 @@ namespace Boost.AzureServiceBus.GraphQL
     [ExtendObjectType(Name = RootTypes.Mutation)]
     public class AzureServiceBusMutations
     {
-        public async Task<SaveAzureServiceBusConnectionPayload> SaveAzureServiceBusConnectionAsync(
+        public async Task<AzureServiceBusPayload> SaveAzureServiceBusConnectionAsync(
             AzureServiceBusConnection input,
             [Service] IAzureServiceBusSettingsManager settingsManager,
             CancellationToken cancellationToken)
         {
             //TODO: validate
-            await settingsManager.SaveAsync(input, cancellationToken);
-            return new SaveAzureServiceBusConnectionPayload(true);
+            await settingsManager.SaveConnectionAsync(input, cancellationToken);
+            return new AzureServiceBusPayload(true);
+        }
+
+        public async Task<AzureServiceBusPayload> DeleteAzureServiceBusConnectionAsync(
+            string connectionName,
+            [Service] IAzureServiceBusSettingsManager settingsManager,
+            CancellationToken cancellationToken)
+        {
+            await settingsManager.DeleteConnectionByNameAsync(connectionName, cancellationToken);
+            return new AzureServiceBusPayload(true);
         }
     }
 }

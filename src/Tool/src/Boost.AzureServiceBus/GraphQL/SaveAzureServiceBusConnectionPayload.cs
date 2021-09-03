@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Boost.AzureServiceBus.GraphQL
 {
-    public class SaveAzureServiceBusConnectionPayload
+    public class AzureServiceBusPayload
     {
-        public SaveAzureServiceBusConnectionPayload(bool success, string? message=null)
+        public AzureServiceBusPayload(bool success, string? message=null)
         {
             Success = success;
             Message = message;

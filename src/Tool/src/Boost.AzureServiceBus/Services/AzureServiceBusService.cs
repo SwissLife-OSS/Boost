@@ -103,7 +103,7 @@ namespace Boost.AzureServiceBus.Services
             CancellationToken cancellationToken)
         {
             AzureServiceBusConnection serviceBusConnection =
-                await _serviceBusSettingsManager.GetByName(connectionName, cancellationToken);
+                await _serviceBusSettingsManager.GetConnectionByName(connectionName, cancellationToken);
 
             return new ServiceBusAdministrationClient(serviceBusConnection.ConnectionString);
         }

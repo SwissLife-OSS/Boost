@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,12 +5,16 @@ namespace Boost.AzureServiceBus.Settings
 {
     public interface IAzureServiceBusSettingsManager
     {
-        Task<AzureServiceBusConnection> GetByName(
+        Task<AzureServiceBusConnection> GetConnectionByName(
             string connectionName,
             CancellationToken cancellationToken);
 
-        Task SaveAsync(
+        Task SaveConnectionAsync(
             AzureServiceBusConnection serviceBusConnection,
+            CancellationToken cancellationToken);
+
+        Task DeleteConnectionByNameAsync(
+            string connectionName,
             CancellationToken cancellationToken);
 
         Task<AzureServiceBusSettings> GetSettingsAsync(CancellationToken cancellationToken);

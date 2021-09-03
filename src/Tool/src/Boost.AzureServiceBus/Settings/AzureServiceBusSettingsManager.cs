@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
-using Boost.Infrastructure;
 
 namespace Boost.AzureServiceBus.Settings
 {
@@ -21,7 +17,7 @@ namespace Boost.AzureServiceBus.Settings
             _settingsStore = settingsStore;
         }
 
-        public async Task<AzureServiceBusConnection> GetByName(
+        public async Task<AzureServiceBusConnection> GetConnectionByName(
             string connectionName,
             CancellationToken cancellationToken)
         {
@@ -31,7 +27,20 @@ namespace Boost.AzureServiceBus.Settings
                 .First(p => p.Name.ToLowerInvariant().Equals(connectionName.ToLowerInvariant()));
         }
 
-        public async Task SaveAsync(
+        public async Task DeleteConnectionByNameAsync(
+            string connectionName,
+            CancellationToken cancellationToken)
+        {
+            AzureServiceBusSettings settings = await GetSettingsAsync(cancellationToken);
+            settings.RemoveConnection(connectionName);
+
+            await _settingsStore.SaveProtectedAsync(
+                settings,
+                AzureServiceBusSettingsFileName,
+                cancellationToken: cancellationToken);
+        }
+
+        public async Task SaveConnectionAsync(
             AzureServiceBusConnection serviceBusConnection,
             CancellationToken cancellationToken)
         {
@@ -52,7 +61,7 @@ namespace Boost.AzureServiceBus.Settings
                     AzureServiceBusSettingsFileName,
                     cancellationToken: cancellationToken);
 
-            if(settings == null)
+            if (settings == null)
             {
                 settings = new AzureServiceBusSettings();
             }

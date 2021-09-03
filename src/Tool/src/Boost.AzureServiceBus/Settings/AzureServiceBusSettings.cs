@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Boost.AzureServiceBus.Settings
 {
@@ -6,7 +8,7 @@ namespace Boost.AzureServiceBus.Settings
     {
         public List<AzureServiceBusConnection> Connections { get; set; } = new List<AzureServiceBusConnection>();
 
-        public void AddOrReplaceConnection(AzureServiceBusConnection serviceBusConnection)
+        internal void AddOrReplaceConnection(AzureServiceBusConnection serviceBusConnection)
         {
             int index = Connections.FindIndex(
                 p => p.Name.ToLowerInvariant().Equals(
@@ -19,6 +21,18 @@ namespace Boost.AzureServiceBus.Settings
             else
             {
                 Connections[index] = serviceBusConnection;
+            }
+        }
+
+        internal void RemoveConnection(string connectionName)
+        {
+            AzureServiceBusConnection? connection = Connections.FirstOrDefault(p => p.Name
+                .ToLowerInvariant()
+                .Equals(connectionName.ToLowerInvariant()));
+
+            if (connection != null)
+            {
+                Connections.Remove(connection);
             }
         }
     }
