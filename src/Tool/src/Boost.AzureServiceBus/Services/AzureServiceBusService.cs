@@ -12,7 +12,6 @@ namespace Boost.AzureServiceBus.Services
 {
     public class AzureServiceBusService : IAzureServiceBusService
     {
-        private readonly ServiceBusAdministrationClient _administrationClient;
         private readonly IAzureServiceBusSettingsManager _serviceBusSettingsManager;
 
         public AzureServiceBusService(IAzureServiceBusSettingsManager serviceBusSettingsManager)
@@ -40,7 +39,7 @@ namespace Boost.AzureServiceBus.Services
                 {
                     QueueProperties queue = enumerator.Current;
                     Azure.Response<QueueRuntimeProperties> runtimePropertiesResponse =
-                        await _administrationClient.GetQueueRuntimePropertiesAsync(
+                        await administrationClient.GetQueueRuntimePropertiesAsync(
                             queue.Name,
                             cancellationToken);
 
@@ -72,7 +71,7 @@ namespace Boost.AzureServiceBus.Services
             var topics = new List<TopicInfo>();
 
             Azure.AsyncPageable<TopicProperties> queuesPageable =
-                _administrationClient.GetTopicsAsync(cancellationToken);
+                administrationClient.GetTopicsAsync(cancellationToken);
 
             IAsyncEnumerator<TopicProperties> enumerator = queuesPageable.GetAsyncEnumerator();
 
@@ -82,7 +81,7 @@ namespace Boost.AzureServiceBus.Services
                 {
                     TopicProperties topic = enumerator.Current;
                     Azure.Response<TopicRuntimeProperties> runtimePropertiesResponse =
-                        await _administrationClient.GetTopicRuntimePropertiesAsync(
+                        await administrationClient.GetTopicRuntimePropertiesAsync(
                             topic.Name,
                             cancellationToken);
 
