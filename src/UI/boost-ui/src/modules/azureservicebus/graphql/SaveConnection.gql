@@ -1,0 +1,8 @@
+mutation saveAzureServiceBusConnection(
+  $input: AzureServiceBusConnectionInput!
+) {
+  saveAzureServiceBusConnection(input: $input) {
+    success
+    message
+  }
+}

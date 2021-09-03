@@ -1,5 +1,5 @@
-query azureServiceBusTopics {
-  azureServiceBusTopics {
+query azureServiceBusTopics($connectionName: String!) {
+  azureServiceBusTopics(connectionName: $connectionName) {
     name
   }
 }

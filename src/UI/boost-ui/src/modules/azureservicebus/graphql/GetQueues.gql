@@ -1,5 +1,5 @@
-query azureServiceBusQueues {
-  azureServiceBusQueues {
+query azureServiceBusQueues($connectionName: String!) {
+  azureServiceBusQueues(connectionName: $connectionName) {
     name
     activeMessagesCount
     status

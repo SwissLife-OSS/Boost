@@ -1,29 +1,31 @@
-
 import Vue from "vue";
 import VueRouter from "vue-router";
-import SnapshooterPage from "./modules/snapshooter/components/SnapshooterPage"
-import AzureServiceBusPage from "./modules/azureservicebus/components/AzureServiceBusPage"
-import InfoPage from "./core/components/Info/InfoPage"
-import SettingsPage from "./core/components/Settings/SettingsPage"
-import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
-import SecuritySettingsPage from "./core/components/Settings/SecuritySettingsPage"
-import ConfigureAzureDevOpsPage from "./core/components/Settings/ConfigureAzureDevOpsPage"
-import ConfigureGitHubPage from "./core/components/Settings/ConfigureGitHubPage"
-import WorkspacePage from "./core/components/Workspace/WorkspacePage"
-import RepositoriesPage from "./core/components/Git/RepositoriesPage"
-import GitRemoteRepoPage from "./core/components/Git/GitRemoteRepoPage"
-import LocalRepositoriesPage from "./core/components/Git/LocalRepositoriesPage"
+
 import GitLocalRepoPage from "./core/components/Git/GitLocalRepoPage"
 import GitPage from "./core/components/Git/GitPage"
+import GitRemoteRepoPage from "./core/components/Git/GitRemoteRepoPage"
 import IndexLocalPage from "./core/components/Git/IndexLocalPage"
-import UtilsPage from "./core/components/Utils/UtilsPage"
+import LocalRepositoriesPage from "./core/components/Git/LocalRepositoriesPage"
+import RepositoriesPage from "./core/components/Git/RepositoriesPage"
+import InfoPage from "./core/components/Info/InfoPage"
+import AuthorizePage from "./core/components/Security/AuthorizePage"
+import SecurityPage from "./core/components/Security/SecurityPage"
+import TokenRequestPage from "./core/components/Security/TokenRequestPage"
+import TokensPage from "./core/components/Security/TokensPage"
+import ConfigureAzureDevOpsPage from "./core/components/Settings/ConfigureAzureDevOpsPage"
+import ConfigureGitHubPage from "./core/components/Settings/ConfigureGitHubPage"
+import GeneralSettingsPage from "./core/components/Settings/GeneralSettingsPage"
+import SecuritySettingsPage from "./core/components/Settings/SecuritySettingsPage"
+import SettingsPage from "./core/components/Settings/SettingsPage"
+import Base64ToFilePage from "./core/components/Utils/Base64ToFilePage"
 import EncodingPage from "./core/components/Utils/EncodingPage"
 import SecurityUtilsPage from "./core/components/Utils/SecurityUtilsPage"
-import Base64ToFilePage from "./core/components/Utils/Base64ToFilePage"
-import SecurityPage from "./core/components/Security/SecurityPage"
-import TokensPage from "./core/components/Security/TokensPage"
-import TokenRequestPage from "./core/components/Security/TokenRequestPage"
-import AuthorizePage from "./core/components/Security/AuthorizePage"
+import UtilsPage from "./core/components/Utils/UtilsPage"
+import WorkspacePage from "./core/components/Workspace/WorkspacePage"
+import AddConnectionCard from "./modules/azureservicebus/components/AddConnectionCard"
+import AzureServiceBusPage from "./modules/azureservicebus/components/AzureServiceBusPage"
+import ViewAzureServiceBus from "./modules/azureservicebus/components/ViewAzureServiceBus"
+import SnapshooterPage from "./modules/snapshooter/components/SnapshooterPage"
 
 // Avoid Redundant route exception
 const originalPush = VueRouter.prototype.push;
@@ -180,8 +182,19 @@ const routes = [
   {
     path: "/azureservicebus",
     name: "AzureServiceBus",
-    component: AzureServiceBusPage
+    component: AzureServiceBusPage,
   },
+  {
+    path: "/azureservicebus/view/:connectionName",
+    name: "AzureServiceBus.View",
+    component: ViewAzureServiceBus,
+    props: true
+  },
+  {
+    path: "/azureservicebus/add",
+    name: "AzureServiceBus.Add",
+    component: AddConnectionCard
+  }
 ];
 
 const router = new VueRouter({

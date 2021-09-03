@@ -1,0 +1,8 @@
+query azureServiceBusSettings {
+  azureServiceBusSettings {
+    connections {
+      name
+      connectionString
+    }
+  }
+}

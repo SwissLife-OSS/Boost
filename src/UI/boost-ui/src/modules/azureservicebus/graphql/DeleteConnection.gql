@@ -1,0 +1,6 @@
+mutation deleteAzureServiceBusConnection($connectionName: String!) {
+  deleteAzureServiceBusConnection(connectionName: $connectionName) {
+    success
+    message
+  }
+}
