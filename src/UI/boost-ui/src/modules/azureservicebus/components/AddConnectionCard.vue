@@ -67,17 +67,14 @@ export default {
         return;
       }
 
-      const result = saveConnection(
+      const result = await saveConnection(
         this.config.name,
         this.config.connectionString
       );
-
+      console.log(result);
       if (result.data.saveAzureServiceBusConnection.success) {
         this.$router.push({
-          name: `AzureServiceBus.View`,
-          params: {
-            connectionName: this.config.name
-          }
+          name: `AzureServiceBus`
         });
       }
     }
