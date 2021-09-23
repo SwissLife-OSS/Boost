@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="1">
     <v-toolbar color="grey lighten-2" elevation="0" height="36">
-      <v-toolbar-title> Connections list </v-toolbar-title>
+      <v-toolbar-title> Azure Service Bus Connections list </v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-card-text>
