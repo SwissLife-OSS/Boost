@@ -2,6 +2,6 @@
   <PropertyGroup>
     <AspNetCoreVersion>6.0.0</AspNetCoreVersion>
     <HotChocolateVersion>11.3.8</HotChocolateVersion>
-    <AzureDevOpsVersion>16.167.0-preview</AzureDevOpsVersion>
+    <AzureDevOpsVersion>19.210.0-preview</AzureDevOpsVersion>
   </PropertyGroup>
 </Project>
