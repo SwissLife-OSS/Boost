@@ -1,11 +1,7 @@
 {
   "profiles": {
     "Boost.Tool": {
-      "commandName": "Project",
-      "commandLineArgs": "qa",
-      "environmentVariables": {
-        "BOOST_DEBUG_WORKDIR": "C:\\Code\\github\\swisslife-oss\\Boost"
-      }
+      "commandName": "Project"
     }
   }
 }
