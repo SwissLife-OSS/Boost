@@ -11,6 +11,7 @@ using Boost.Pipelines;
 using Boost.Security;
 using Boost.Settings;
 using Boost.Utils;
+using Boost.Web.Proxy;
 using Boost.Workspace;
 using HotChocolate.Execution.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +52,7 @@ namespace Boost
             services.AddSingleton<IAuthTokenStoreReader, UserDataAuthTokenStoreReader>();
             services.AddSingleton<IVersionChecker, VersionChecker>();
             services.AddSingleton<IAppNavigationService, AppNavigationService>();
+            services.AddSingleton<ILocalProxyServer, LocalProxyServer>();
 
             services.AddUserDataProtection();
 
