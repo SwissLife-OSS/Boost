@@ -100,7 +100,8 @@ namespace Boost.Workspace
                 case "Execute":
                     IWebShell shell = _webShellFactory.CreateShell(GetShellByFile(file));
 
-                    return await shell.ExecuteAsync(new ShellCommand($".{Path.DirectorySeparatorChar}{file.Name}")
+                    return await shell.ExecuteAsync(
+                        new ShellCommand($".{Path.DirectorySeparatorChar}{file.Name}")
                     {
                         WorkDirectory = file.Directory!.FullName
                     });
@@ -148,7 +149,7 @@ namespace Boost.Workspace
                     Type = QuickActionTypes.OpenDirectoryInCode,
                     Title = directory,
                     Value = directory,
-                    Description = "Open directory"
+                    Description = "Open directory in vscode"
                 });
                 actions.Add(new QuickAction
                 {
@@ -164,6 +165,7 @@ namespace Boost.Workspace
                     Value = directory,
                     Description = "Open in Terminal"
                 });
+
                 actions.AddRange(GetVisualStudioSolutions(directory));
                 actions.AddRange(GetJavascriptProjects(directory));
             }
@@ -187,7 +189,7 @@ namespace Boost.Workspace
                 {
                     Type = QuickActionTypes.OpenVisualStudioSolution,
                     Title = file.Name,
-                    Description = file.Directory?.Name,
+                    Description = $"Open solution '{file.Name}'",
                     Value = file.FullName
                 };
             }
@@ -215,7 +217,8 @@ namespace Boost.Workspace
                     {
                         Type = QuickActionTypes.OpenDirectoryInCode,
                         Title = directoryName,
-                        Description = $"Open js project in Code",
+                        Description = $"Open js project in Code " +
+                        $"'{directoryName.Split(Path.DirectorySeparatorChar).Last()}'",
                         Value = directoryName,
                         Tags = new[] { "js" }
                     };
