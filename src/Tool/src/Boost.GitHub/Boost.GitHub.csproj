@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Boost.GitHub</RootNamespace>
     <PackageId>Boost.Tool.GitHub</PackageId>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Octokit" Version="0.50.0" />
-    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="5.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="Octokit" Version="3.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="6.0.11" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
     <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
   </ItemGroup>

@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Boost.AzureDevOps</RootNamespace>
     <PackageId>Boost.Tool.AzureDevOps</PackageId>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="$(AzureDevOpsVersion)" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="$(AzureDevOpsVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="$(AzureDevOpsVersion)" />
