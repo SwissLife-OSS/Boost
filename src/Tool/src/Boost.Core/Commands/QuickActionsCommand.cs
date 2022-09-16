@@ -22,7 +22,6 @@ namespace Boost.Commands
             var utils = new WorkrootCommandUtils(app, console);
 
             await utils.ShowQuickActions(_applicationContext.WorkingDirectory.FullName);
-
         }
     }
 }
