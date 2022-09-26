@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Boost.Settings;
 
 namespace Boost.Git
 {
@@ -13,7 +11,13 @@ namespace Boost.Git
             Guid serviceId,
             string id,
             CancellationToken cancellationToken);
-        Task<GitRemoteRepository?> GetByRemoteReferenceAsync(Guid serviceId, IGitRemoteReference reference, string name, CancellationToken cancellationToken);
+
+        Task<GitRemoteRepository?> GetByRemoteReferenceAsync(
+            Guid serviceId,
+            IGitRemoteReference reference,
+            string name,
+            CancellationToken cancellationToken);
+
         Task<byte[]?> GetFileContentAsync(
             Guid serviceId,
             string id,

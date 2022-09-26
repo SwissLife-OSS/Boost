@@ -24,6 +24,11 @@ namespace Boost.Shell
             _session = new();
         }
 
+        public void WriteLine(string value)
+        {
+            _messageHandler?.Invoke(new ShellMessage(_session.Next(), "info", value));
+        }
+
         public async Task<int> ExecuteAsync(ShellCommand command)
         {
             Command? cmd = Cli.Wrap(_shell)

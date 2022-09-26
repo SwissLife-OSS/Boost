@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Boost.Workspace
 {
@@ -18,18 +21,10 @@ namespace Boost.Workspace
         {
             switch (Type)
             {
-                case QuickActionTypes.OpenVisualStudioSolution:
-                    return $"Open {Value}";
-                case QuickActionTypes.OpenDirectoryInExplorer:
-                    return "Open in explorer";
-                case QuickActionTypes.OpenDirectoryInCode:
-                    return "Open in Code";
-                case QuickActionTypes.OpenDirectoryInTerminal:
-                    return "Open in Terminal";
                 case QuickActionTypes.RunSuperBoost:
                     return $"SuperBoost: {Title}";
                 default:
-                    return Title;
+                    return Description;
             }
         }
     }

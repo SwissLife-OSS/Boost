@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Boost.Tool": {
-      "commandName": "Project",
-      "commandLineArgs": "lp https://c4c-sidecar-blueprint.a.portals.swisslife.ch"
+      "commandName": "Project"
     }
   }
 }
