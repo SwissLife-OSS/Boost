@@ -29,5 +29,6 @@ namespace Boost.AzureDevOps
             string id,
             string path,
             CancellationToken cancellationToken);
+        Task<GitRepository> GetByNameAsync(Guid serviceId, string name, CancellationToken cancellationToken);
     }
 }

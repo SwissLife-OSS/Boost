@@ -7,6 +7,7 @@ using Boost.Pipelines;
 using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
 
 namespace Boost.AzureDevOps
@@ -33,6 +34,7 @@ namespace Boost.AzureDevOps
                 cancellationToken);
 
             BuildHttpClient client = ClientFactory.CreateClient<BuildHttpClient>(serviceId);
+            ReleaseHttpClient releaseClient = ClientFactory.CreateClient<ReleaseHttpClient>(serviceId);
 
             IPagedList<BuildDefinition> pipelines = await client
                 .GetFullDefinitionsAsync2(
@@ -40,6 +42,8 @@ namespace Boost.AzureDevOps
                     repositoryType: "TfsGit",
                     repositoryId: repositoryId.ToString(),
                     cancellationToken: cancellationToken);
+
+
 
             return pipelines.ToList();
         }
