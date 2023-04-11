@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Azure.Core;
 using Boost.Core.Settings;
 using Boost.Security;
 using Microsoft.AspNetCore.Authentication;
@@ -126,11 +127,12 @@ namespace Boost.Web.Authentication
                 model.RequestId = Guid.Parse(name.Split("-").Last());
             }
 
-            var accessToken = ticket.Properties.Items[".Token.access_token"]!;
-            if (ticket.Properties.Items.ContainsKey(".Token.expires_at"))
+            if (ticket.Properties.Items.ContainsKey(".Token.expires_at") &&
+                ticket.Properties.Items.ContainsKey(".Token.access_token"))
             {
                 DateTimeOffset? expires = GetExpiresAt(ticket);
 
+                var accessToken = ticket.Properties.Items[".Token.access_token"]!;
                 model.Tokens.Add(new TokenInfo(TokenType.Access, accessToken)
                 {
                     ExpiresAt = expires

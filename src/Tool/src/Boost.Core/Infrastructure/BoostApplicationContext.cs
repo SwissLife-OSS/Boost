@@ -5,13 +5,13 @@ using System.Reflection;
 
 namespace Boost.Infrastructure
 {
-    public class BoostApplicationContext : IBoostApplicationContext  
+    public class BoostApplicationContext : IBoostApplicationContext
     {
         public DirectoryInfo WorkingDirectory
             => GetWorkingDirectory();
 
         public string? Version =>
-             Assembly.GetExecutingAssembly()
+             Assembly.GetEntryAssembly()
              .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
              .InformationalVersion;
 

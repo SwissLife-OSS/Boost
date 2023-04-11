@@ -146,7 +146,7 @@ export default {
     responseTypes: function () {
       return [
         { name: "Authorization Code", type: "code" },
-        { name: "Implicit", type: "id_token" },
+        { name: "Implicit", type: "id_token token" },
         { name: "Hybrid", type: "code id_token" },
       ];
     },
