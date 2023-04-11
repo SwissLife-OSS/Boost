@@ -29,7 +29,7 @@ namespace Boost.Security
                 new StartWebServerOptions(
                 Guid.NewGuid(), request.Port)
                 {
-                    Title = $"{request.Authority} ({request.ClienId})",
+                    Title = $"{request.Authority} ({request.ClientId})",
                     SetupAction = (services) =>
                     {
                         services.AddSingleton(request);

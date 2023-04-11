@@ -54,7 +54,7 @@
             </v-col>
           </v-row>
           <v-row dense>
-            <v-col md="4">
+            <v-col md="2">
               <v-text-field
                 type="number"
                 label="Port"
@@ -62,9 +62,18 @@
               ></v-text-field>
             </v-col>
             <v-col md="4">
+              <v-select
+                label="Flow"
+                :items="responseTypes"
+                :item-text="'name'"
+                :item-value="'type'"
+                v-model="request.responseType"
+              ></v-select>
+            </v-col>
+            <v-col md="2">
               <v-switch label="Pkce" v-model="request.usePkce"></v-switch>
             </v-col>
-            <v-col md="4">
+            <v-col md="2">
               <v-switch
                 label="Save Tokens"
                 v-model="request.saveTokens"
@@ -113,6 +122,7 @@ export default {
       request: {
         authority: null,
         clientId: null,
+        responseType: "code",
         secret: null,
         usePkce: true,
         scopes: ["openid", "profile"],
@@ -133,6 +143,13 @@ export default {
     identityServers: function () {
       return this.$store.state.app.userSettings.tokenGenerator.identityServers;
     },
+    responseTypes: function () {
+      return [
+        { name: "Authorization Code", type: "code" },
+        { name: "Implicit", type: "id_token" },
+        { name: "Hybrid", type: "code id_token" },
+      ];
+    },
   },
   methods: {
     async onClickAuthorize() {
@@ -146,6 +163,7 @@ export default {
       this.save.tags = request.tags;
       this.request.authority = request.data.authority;
       this.request.clientId = request.data.clientId;
+      this.request.responseType = request.data.responseType;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
       this.request.port = request.data.port;
@@ -161,5 +179,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

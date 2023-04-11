@@ -5,7 +5,8 @@ namespace Boost.GraphQL
     public record AuthorizeRequestInput(
         string Authority,
         string ClientId,
-        string Secret,
+        string ResponseType,
+        string? Secret,
         IEnumerable<string> Scopes,
         bool UsePkce,
         bool SaveTokens)

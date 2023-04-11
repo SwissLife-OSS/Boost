@@ -165,7 +165,8 @@ namespace Boost.Web.Authentication
             }
 
             DateTimeOffset? expires = null;
-            if (DateTime.TryParse(ticket.Properties.Items[".Token.expires_at"], out DateTime parsed))
+            if (ticket.Properties.Items.TryGetValue(".Token.expires_at", out var expiresAt) &&
+                DateTime.TryParse(expiresAt, out DateTime parsed))
             {
                 expires = parsed;
             }
