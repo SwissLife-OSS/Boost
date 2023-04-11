@@ -1,4 +1,4 @@
-query getIdentityRequest($id: Uuid!) {
+query getIdentityRequest($id: UUID!) {
   identityRequest(id: $id) {
     id
     name
@@ -18,7 +18,7 @@ query getIdentityRequest($id: Uuid!) {
      parameters{
        name
        value
-     } 
+     }
     }
   }
 }

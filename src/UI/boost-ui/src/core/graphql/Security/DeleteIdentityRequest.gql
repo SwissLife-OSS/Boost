@@ -1,3 +1,3 @@
-mutation deleteIdentityRequest($id: Uuid!) {
+mutation deleteIdentityRequest($id: UUID!) {
   deleteIdentityRequest(id: $id)
 }
