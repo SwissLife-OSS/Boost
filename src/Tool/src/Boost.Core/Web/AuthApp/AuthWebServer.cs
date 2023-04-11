@@ -13,6 +13,8 @@ using Boost.Web.Authentication;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -29,13 +31,15 @@ namespace Boost.AuthApp
             StartWebServerOptions serverOptions,
             CancellationToken cancellationToken)
         {
-            var url = $"http://localhost:{serverOptions.Port}";
+            var startUrl = serverOptions.Port is null
+                ? "http://*:0"
+                : $"http://localhost:{serverOptions.Port}";
 
             IHost _host = Host.CreateDefaultBuilder()
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls(url);
+                    webBuilder.UseUrls(startUrl);
                     webBuilder.UseStartup<AuthStartup>();
                 })
                 .ConfigureServices((ctx, services) =>
@@ -74,6 +78,7 @@ namespace Boost.AuthApp
                           options.ClientSecret = authData.Secret;
                           options.ClientId = authData.ClientId;
                           options.ResponseType = string.Join(" ", authData.ResponseTypes);
+                          options.UsePkce = authData.UsePkce;
 
                           options.Scope.Clear();
                           foreach (string scope in authData.Scopes)
@@ -116,14 +121,20 @@ namespace Boost.AuthApp
 
             await _host.StartAsync(cancellationToken);
 
-            RunningWebServerInfo server = new RunningWebServerInfo(serverOptions.Id, url)
+            var server = _host.Services.GetRequiredService<IServer>();
+            var serverAddressesFeature = server.Features.Get<IServerAddressesFeature>()!;
+            var port = new Uri(serverAddressesFeature.Addresses.Single()).Port;
+
+            RunningWebServerInfo serverInfo = new RunningWebServerInfo(
+                serverOptions.Id,
+                $"http://localhost:{port}")
             {
                 Title = serverOptions.Title
             };
 
-            _hosts.Add(server, _host);
+            _hosts.Add(serverInfo, _host);
 
-            return server;
+            return serverInfo;
         }
 
         public IEnumerable<RunningWebServerInfo> GetRunningServers()

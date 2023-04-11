@@ -41,7 +41,7 @@ namespace Boost.GraphQL
             CancellationToken cancellationToken)
         {
             RunningWebServerInfo? server = await authWebServer.StartAsync(
-                new StartWebServerOptions(Guid.NewGuid(), input.Port.GetValueOrDefault(3010)),
+                new StartWebServerOptions(Guid.NewGuid(), input.Port),
                 cancellationToken);
 
             return server.Id.ToString();

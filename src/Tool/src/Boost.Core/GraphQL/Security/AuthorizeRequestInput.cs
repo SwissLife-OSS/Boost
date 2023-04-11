@@ -11,7 +11,7 @@ namespace Boost.GraphQL
         bool UsePkce,
         bool SaveTokens)
     {
-        public int Port { get; init; }
+        public int? Port { get; init; }
 
         public string? RequestId { get; init; }
     }

@@ -20,7 +20,7 @@ namespace Boost.Security
         IEnumerable<string> Scopes,
         bool UsePkce)
     {
-        public int Port { get; init; } = 3010;
+        public int? Port { get; init; }
 
         public bool SaveTokens { get; init; }
 
