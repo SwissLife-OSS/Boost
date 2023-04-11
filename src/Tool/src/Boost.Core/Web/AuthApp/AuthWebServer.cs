@@ -72,7 +72,8 @@ namespace Boost.AuthApp
                       {
                           options.Authority = authData.Authority;
                           options.ClientSecret = authData.Secret;
-                          options.ClientId = authData.ClienId;
+                          options.ClientId = authData.ClientId;
+                          options.ResponseType = authData.ResponseType;
 
                           options.Scope.Clear();
                           foreach (string scope in authData.Scopes)
@@ -99,13 +100,12 @@ namespace Boost.AuthApp
                     .AddFile()
                     .AddOpenIdConnect("oidc", options =>
                     {
-                        options.ResponseType = "code";
                         options.SaveTokens = true;
                         options.GetClaimsFromUserInfoEndpoint = false;
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             NameClaimType = JwtClaimTypes.Name,
-                            RoleClaimType = JwtClaimTypes.Role, 
+                            RoleClaimType = JwtClaimTypes.Role,
                         };
                     });
 
