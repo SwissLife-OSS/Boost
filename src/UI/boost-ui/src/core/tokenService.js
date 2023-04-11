@@ -114,5 +114,3 @@ export const deleteToken = async (id) => {
         variables: { id }
     });
 };
-
-

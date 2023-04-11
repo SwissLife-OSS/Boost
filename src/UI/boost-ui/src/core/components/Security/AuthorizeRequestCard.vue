@@ -35,7 +35,7 @@
           <v-row dense>
             <v-col md="12">
               <v-text-field
-                label="Secret"
+                label="Secret (optional)"
                 v-model="request.secret"
               ></v-text-field>
             </v-col>
@@ -77,7 +77,7 @@
             <v-col md="2">
               <v-text-field
                 type="number"
-                label="Port"
+                label="Port (optional)"
                 v-model.number="request.port"
               ></v-text-field>
             </v-col>
@@ -128,7 +128,7 @@ export default {
         secret: null,
         usePkce: true,
         scopes: ["openid", "profile"],
-        port: 3010,
+        port: null,
         saveTokens: false,
         requestId: null,
       },
@@ -153,7 +153,7 @@ export default {
     async onClickAuthorize() {
       const result = await startAuthorize(this.request);
       this.$emit("started", result.data.startAuthorizationRequest.server);
-      this.request.port++;
+      this.request.port = null;
     },
     onSelectRequest: function (request) {
       this.tab = 0;

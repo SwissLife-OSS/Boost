@@ -5,9 +5,11 @@
         @started="onServerStarted"
       ></authorize-request-card
     ></v-col>
-    <v-col md="5"
-      ><auth-servers-list :servers="servers" @stop="onStop" :loading="loading"></auth-servers-list
-    ></v-col>
+    <v-col md="5">
+      <v-card elevation="1" :loading="loading">
+        <auth-servers-list :servers="servers" @stop="onStop"></auth-servers-list>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 
@@ -23,7 +25,7 @@ export default {
   data() {
     return {
       loading: false,
-      servers: [],
+      servers: []
     };
   },
   methods: {
