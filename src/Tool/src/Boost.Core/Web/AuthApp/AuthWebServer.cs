@@ -73,7 +73,7 @@ namespace Boost.AuthApp
                           options.Authority = authData.Authority;
                           options.ClientSecret = authData.Secret;
                           options.ClientId = authData.ClientId;
-                          options.ResponseType = authData.ResponseType;
+                          options.ResponseType = string.Join(" ", authData.ResponseTypes);
 
                           options.Scope.Clear();
                           foreach (string scope in authData.Scopes)

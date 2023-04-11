@@ -15,7 +15,7 @@ namespace Boost.Security
     public record AuthorizeRequestData(
         string Authority,
         string ClientId,
-        string ResponseType,
+        IEnumerable<string> ResponseTypes,
         string? Secret,
         IEnumerable<string> Scopes,
         bool UsePkce)

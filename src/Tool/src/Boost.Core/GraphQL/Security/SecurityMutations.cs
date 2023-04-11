@@ -18,7 +18,7 @@ namespace Boost.GraphQL
             var request = new AuthorizeRequestData(
                 input.Authority,
                 input.ClientId,
-                input.ResponseType,
+                input.ResponseTypes,
                 input.Secret,
                 input.Scopes,
                 input.UsePkce)
