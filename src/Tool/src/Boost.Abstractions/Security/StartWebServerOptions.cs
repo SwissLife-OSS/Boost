@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.Security
 {
-    public record StartWebServerOptions(Guid Id, int Port)
+    public record StartWebServerOptions(Guid Id, int? Port)
     {
         public string? Title { get; init; }
 

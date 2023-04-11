@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h4>Running auth servers</h4>
+    <v-toolbar light color="grey lighten-2" elevation="0" height="42">
+      <v-toolbar-title>Servers</v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
     <v-list
       two-line
       dense

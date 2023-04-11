@@ -35,7 +35,7 @@
           <v-row dense>
             <v-col md="12">
               <v-text-field
-                label="Secret"
+                label="Secret (optional)"
                 v-model="request.secret"
               ></v-text-field>
             </v-col>
@@ -54,21 +54,16 @@
             </v-col>
           </v-row>
           <v-row dense>
-            <v-col md="2">
-              <v-text-field
-                type="number"
-                label="Port"
-                v-model.number="request.port"
-              ></v-text-field>
-            </v-col>
-            <v-col md="4">
-              <v-select
-                label="Flow"
+            <v-col md="6">
+              <v-combobox
+                label="Response Type"
+                v-model="request.responseTypes"
+                chips
+                multiple
+                clearable
+                deletable-chips
                 :items="responseTypes"
-                :item-text="'name'"
-                :item-value="'type'"
-                v-model="request.responseType"
-              ></v-select>
+              ></v-combobox>
             </v-col>
             <v-col md="2">
               <v-switch label="Pkce" v-model="request.usePkce"></v-switch>
@@ -78,6 +73,13 @@
                 label="Save Tokens"
                 v-model="request.saveTokens"
               ></v-switch>
+            </v-col>
+            <v-col md="2">
+              <v-text-field
+                type="number"
+                label="Port (optional)"
+                v-model.number="request.port"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-tab-item>
@@ -122,11 +124,11 @@ export default {
       request: {
         authority: null,
         clientId: null,
-        responseType: "code",
+        responseTypes: ["code"],
         secret: null,
         usePkce: true,
         scopes: ["openid", "profile"],
-        port: 3010,
+        port: null,
         saveTokens: false,
         requestId: null,
       },
@@ -144,17 +146,14 @@ export default {
       return this.$store.state.app.userSettings.tokenGenerator.identityServers;
     },
     responseTypes: function () {
-      return [
-        { name: "Authorization Code", type: "code" },
-        { name: "Implicit", type: "id_token token" },
-        { name: "Hybrid", type: "code id_token" },
-      ];
+      return ["code", "id_token", "token"];
     },
   },
   methods: {
     async onClickAuthorize() {
       const result = await startAuthorize(this.request);
       this.$emit("started", result.data.startAuthorizationRequest.server);
+      this.request.port = null;
     },
     onSelectRequest: function (request) {
       this.tab = 0;
@@ -163,7 +162,7 @@ export default {
       this.save.tags = request.tags;
       this.request.authority = request.data.authority;
       this.request.clientId = request.data.clientId;
-      this.request.responseType = request.data.responseType;
+      this.request.responseTypes = request.data.responseTypes;
       this.request.secret = request.data.secret;
       this.request.scopes = request.data.scopes;
       this.request.port = request.data.port;

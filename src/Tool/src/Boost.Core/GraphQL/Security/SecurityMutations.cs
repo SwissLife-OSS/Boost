@@ -18,7 +18,7 @@ namespace Boost.GraphQL
             var request = new AuthorizeRequestData(
                 input.Authority,
                 input.ClientId,
-                input.ResponseType,
+                input.ResponseTypes,
                 input.Secret,
                 input.Scopes,
                 input.UsePkce)
@@ -41,7 +41,7 @@ namespace Boost.GraphQL
             CancellationToken cancellationToken)
         {
             RunningWebServerInfo? server = await authWebServer.StartAsync(
-                new StartWebServerOptions(Guid.NewGuid(), input.Port.GetValueOrDefault(3010)),
+                new StartWebServerOptions(Guid.NewGuid(), input.Port),
                 cancellationToken);
 
             return server.Id.ToString();
