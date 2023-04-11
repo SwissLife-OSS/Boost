@@ -2,6 +2,7 @@ import apollo from "../apollo";
 
 import QUERY_TOKEN_ANALYZE from "./graphql/Security/AnalyzeToken.gql";
 import QUERY_USERINFO_GET from "./graphql/Security/GetUserInfoClaims.gql";
+import QUERY_RUNNING_AUTH_SERVERS from  "./graphql/Security/GetRunningAuthServers.gql";
 import MUTATION_AUTHORIZE_START from "./graphql/Security/StartAuthorize.gql";
 import MUTATION_AUTHSERVER_STOP from "./graphql/Security/StopAuthServer.gql";
 import MUTATION_TOKEN_REQUEST from "./graphql/Security/RequestToken.gql";
@@ -28,6 +29,12 @@ export const getUserInfo = async (token) => {
     return await apollo.query({
         query: QUERY_USERINFO_GET,
         variables: { token }
+    });
+};
+
+export const getRunningAuthServers = async () => {
+    return await apollo.query({
+        query: QUERY_RUNNING_AUTH_SERVERS
     });
 };
 
