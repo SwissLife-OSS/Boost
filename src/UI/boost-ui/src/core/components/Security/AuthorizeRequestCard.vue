@@ -56,7 +56,7 @@
           <v-row dense>
             <v-col md="6">
               <v-combobox
-                label="Response"
+                label="Response Type"
                 v-model="request.responseTypes"
                 chips
                 multiple
