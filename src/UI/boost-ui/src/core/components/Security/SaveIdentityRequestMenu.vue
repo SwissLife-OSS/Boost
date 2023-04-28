@@ -94,14 +94,23 @@ export default {
         id: this.request.id,
         type: this.request.type,
         tags: this.request.tags,
-        data: Object.assign(this.data, {
+        data: {
+          authority: this.data.authority,
+          clientId: this.data.clientId,
+          secret: this.data.secret,
+          grantType: this.data.grantType,
+          scopes: this.data.scopes,
+          port: this.data.port,
+          usePkce: this.data.usePkce,
+          saveTokens: this.data.saveTokens,
+          responseTypes: this.data.responseTypes,
           parameters: this.parameters.map((x) => {
             return {
               name: x.name,
               value: x.value,
             };
-          }),
-        }),
+          })
+        },
       };
 
       this.menu = false;
