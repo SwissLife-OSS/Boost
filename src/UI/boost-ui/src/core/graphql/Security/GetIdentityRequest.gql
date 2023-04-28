@@ -15,6 +15,7 @@ query getIdentityRequest($id: UUID!) {
       scopes
       usePkce
       saveTokens
+      responseTypes
      parameters{
        name
        value

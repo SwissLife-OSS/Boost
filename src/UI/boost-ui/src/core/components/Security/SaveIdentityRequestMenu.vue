@@ -103,6 +103,7 @@ export default {
           port: this.data.port,
           usePkce: this.data.usePkce,
           saveTokens: this.data.saveTokens,
+          responseTypes: this.data.responseTypes,
           parameters: this.parameters.map((x) => {
             return {
               name: x.name,

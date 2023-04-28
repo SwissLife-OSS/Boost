@@ -73,6 +73,8 @@ namespace Boost.Security
         public bool SaveTokens { get; set; }
 
         public IEnumerable<TokenRequestParameter>? Parameters { get; set; }
+
+        public IEnumerable<string>? ResponseTypes { get; set; }
     }
 
     public enum IdentityRequestType
