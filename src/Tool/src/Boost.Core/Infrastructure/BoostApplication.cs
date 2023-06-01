@@ -1,11 +1,10 @@
-﻿namespace Boost.Infrastructure
+﻿namespace Boost.Infrastructure;
+
+public class BoostApplication
 {
-    public class BoostApplication
-    {
-        public string WorkingDirectory { get; set; } = default!;
+    public string WorkingDirectory { get; set; } = default!;
 
-        public bool ConfigurationRequired { get; set; }
+    public bool ConfigurationRequired { get; set; }
 
-        public string Version { get; set; } = default!;
-    }
+    public string Version { get; set; } = default!;
 }

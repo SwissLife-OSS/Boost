@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Boost.Security
+namespace Boost.Security;
+
+public interface IAuthenticationSessionService
 {
-    public interface IAuthenticationSessionService
-    {
-        Task<AuthenticationSessionInfo> GetSessionInfoAsync(CancellationToken cancellationToken);
-    }
+    Task<AuthenticationSessionInfo> GetSessionInfoAsync(CancellationToken cancellationToken);
 }

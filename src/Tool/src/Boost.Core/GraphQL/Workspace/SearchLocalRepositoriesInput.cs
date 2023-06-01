@@ -1,4 +1,3 @@
-﻿namespace Boost.Core.GraphQL
-{
-    public record SearchLocalRepositoriesInput(string? Term);
-}
+﻿namespace Boost.Core.GraphQL;
+
+public record SearchLocalRepositoriesInput(string? Term);

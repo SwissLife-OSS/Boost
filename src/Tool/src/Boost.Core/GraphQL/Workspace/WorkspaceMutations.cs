@@ -5,73 +5,72 @@ using HotChocolate;
 using HotChocolate.Types;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Boost.GraphQL
+namespace Boost.GraphQL;
+
+[ExtendObjectType(RootTypes.Mutation)]
+public class WorkspaceMutations
 {
-    [ExtendObjectType(RootTypes.Mutation)]
-    public class WorkspaceMutations
+    public Task<int> OpenInVSCode(
+        [Service] IWorkspaceService workspaceService,
+        OpenInVSCodeInput input)
     {
-        public Task<int> OpenInVSCode(
-            [Service] IWorkspaceService workspaceService,
-            OpenInVSCodeInput input)
+        if (input.File is { })
         {
-            if (input.File is { })
-            {
-                return workspaceService.OpenFileInCode(input.File);
-            }
-            else
-            {
-                return workspaceService.OpenInCode(input.Directory);
-            }
+            return workspaceService.OpenFileInCode(input.File);
         }
-
-        public Task<int> OpenFile(
-            [Service] IWorkspaceService workspaceService,
-            string fileName)
+        else
         {
-            return workspaceService.OpenFile(fileName);
+            return workspaceService.OpenInCode(input.Directory);
         }
+    }
 
-        public Task<int> OpenInExplorer(
-            [Service] IWorkspaceService workspaceService,
-            string directory)
-        {
-            return workspaceService.OpenInExplorer(directory);
-        }
+    public Task<int> OpenFile(
+        [Service] IWorkspaceService workspaceService,
+        string fileName)
+    {
+        return workspaceService.OpenFile(fileName);
+    }
 
-        public Task<int> OpenInTerminal(
-            [Service] IWorkspaceService workspaceService,
-            string directory)
-        {
-            return workspaceService.OpenInTerminal(directory);
-        }
+    public Task<int> OpenInExplorer(
+        [Service] IWorkspaceService workspaceService,
+        string directory)
+    {
+        return workspaceService.OpenInExplorer(directory);
+    }
 
-        public Task<int> RunSuperBoostAsync(
-            [Service] IWorkspaceService workspaceService,
-            RunSuperBoostInput input)
-        {
-            return workspaceService.RunSuperBoostAsync(input.Name, input.Directory);
-        }
+    public Task<int> OpenInTerminal(
+        [Service] IWorkspaceService workspaceService,
+        string directory)
+    {
+        return workspaceService.OpenInTerminal(directory);
+    }
 
-        public Task<int> ExecuteFileAction(
-            [Service] IWorkspaceService workspaceService,
-            ExecuteFileActionInput input)
-        {
-            return workspaceService.ExecuteFileActionAsync(input.File, input.Action);
-        }
+    public Task<int> RunSuperBoostAsync(
+        [Service] IWorkspaceService workspaceService,
+        RunSuperBoostInput input)
+    {
+        return workspaceService.RunSuperBoostAsync(input.Name, input.Directory);
+    }
 
-        public async Task<CreateFileFromBase64Payload> CreateFileFromBase64Async(
-            [Service] IWorkspaceService workspaceService,
-            CreateFileFromBase64Input input,
-            CancellationToken cancellationToken
-            )
-        {
-            WorkspaceFile file = await workspaceService.CreateFileFromBase64Async(
-                input.Value,
-                input.FileType,
-                cancellationToken);
+    public Task<int> ExecuteFileAction(
+        [Service] IWorkspaceService workspaceService,
+        ExecuteFileActionInput input)
+    {
+        return workspaceService.ExecuteFileActionAsync(input.File, input.Action);
+    }
 
-            return new CreateFileFromBase64Payload(file);
-        }
+    public async Task<CreateFileFromBase64Payload> CreateFileFromBase64Async(
+        [Service] IWorkspaceService workspaceService,
+        CreateFileFromBase64Input input,
+        CancellationToken cancellationToken
+        )
+    {
+        WorkspaceFile file = await workspaceService.CreateFileFromBase64Async(
+            input.Value,
+            input.FileType,
+            cancellationToken);
+
+        return new CreateFileFromBase64Payload(file);
     }
 }
 

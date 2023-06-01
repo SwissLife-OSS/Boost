@@ -3,10 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Versioning;
 
-namespace Boost.Nuget
+namespace Boost.Nuget;
+
+public interface INugetService
 {
-    public interface INugetService
-    {
-        Task<NugetPackageInfo?> GetNugetPackageInfoAsync(string packageId, CancellationToken cancellationToken);
-    }
+    Task<NugetPackageInfo?> GetNugetPackageInfoAsync(string packageId, CancellationToken cancellationToken);
 }

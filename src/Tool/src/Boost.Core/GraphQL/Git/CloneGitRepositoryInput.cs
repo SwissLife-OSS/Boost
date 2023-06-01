@@ -1,4 +1,3 @@
-﻿namespace Boost.Core.GraphQL
-{
-    public record CloneGitRepositoryInput(string Url, string Directory);
-}
+﻿namespace Boost.Core.GraphQL;
+
+public record CloneGitRepositoryInput(string Url, string Directory);

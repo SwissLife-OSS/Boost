@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Boost.AzureDevOps
+namespace Boost.AzureDevOps;
+
+public static class AzureDevOpsConstants
 {
-    public static class AzureDevOpsConstants
-    {
-        internal static readonly string ServiceTypeName = "AzureDevOps";
-    }
+    internal static readonly string ServiceTypeName = "AzureDevOps";
 }

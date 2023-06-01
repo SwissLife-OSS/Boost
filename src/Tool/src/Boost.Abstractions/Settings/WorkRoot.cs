@@ -1,11 +1,10 @@
-namespace Boost.Settings
+namespace Boost.Settings;
+
+public class WorkRoot
 {
-    public class WorkRoot
-    {
-        public string Name { get; set; } = default!;
+    public string Name { get; set; } = default!;
 
-        public string Path { get; set; } = default!;
+    public string Path { get; set; } = default!;
 
-        public bool IsDefault { get; set; } = default!;
-    }
+    public bool IsDefault { get; set; } = default!;
 }

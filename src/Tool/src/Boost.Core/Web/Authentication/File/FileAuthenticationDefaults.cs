@@ -1,7 +1,6 @@
-﻿namespace Boost.Web.Authentication
+﻿namespace Boost.Web.Authentication;
+
+public static class FileAuthenticationDefaults
 {
-    public static class FileAuthenticationDefaults
-    {
-        public const string AuthenticationScheme = "File";
-    }
+    public const string AuthenticationScheme = "File";
 }

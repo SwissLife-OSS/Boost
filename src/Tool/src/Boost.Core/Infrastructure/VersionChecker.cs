@@ -6,62 +6,61 @@ using System.Threading.Tasks;
 using Boost.Nuget;
 using Semver;
 
-namespace Boost.Infrastructure
+namespace Boost.Infrastructure;
+
+public class VersionChecker : IVersionChecker
 {
-    public class VersionChecker : IVersionChecker
+    private readonly INugetService _nugetService;
+    private readonly AppSettings _appSettings;
+    private readonly IBoostApplicationContext _boostApplicationContext;
+
+    public VersionChecker(
+        INugetService nugetService,
+        AppSettings appSettings,
+        IBoostApplicationContext boostApplicationContext)
     {
-        private readonly INugetService _nugetService;
-        private readonly AppSettings _appSettings;
-        private readonly IBoostApplicationContext _boostApplicationContext;
+        _nugetService = nugetService;
+        _appSettings = appSettings;
+        _boostApplicationContext = boostApplicationContext;
+    }
 
-        public VersionChecker(
-            INugetService nugetService,
-            AppSettings appSettings,
-            IBoostApplicationContext boostApplicationContext)
+    public async Task<BoostVersionInfo> GetVersionInfo(CancellationToken cancellationToken)
+    {
+        NugetPackageInfo? version = await _nugetService
+            .GetNugetPackageInfoAsync(_appSettings.PackageId, cancellationToken);
+
+        var versionInfo = new BoostVersionInfo
         {
-            _nugetService = nugetService;
-            _appSettings = appSettings;
-            _boostApplicationContext = boostApplicationContext;
-        }
+            Installed = _boostApplicationContext.Version,
+            PackageId = _appSettings.PackageId
+        };
 
-        public async Task<BoostVersionInfo> GetVersionInfo(CancellationToken cancellationToken)
+        if (version is { })
         {
-            NugetPackageInfo? version = await _nugetService
-                .GetNugetPackageInfoAsync(_appSettings.PackageId, cancellationToken);
+            versionInfo.Latest = version.LatestStable;
+            versionInfo.PreRelease = version.LatestPreRelease;
 
-            var versionInfo = new BoostVersionInfo
+            if (versionInfo.PreRelease is { } &&
+                versionInfo.Latest is { } &&
+                versionInfo.Latest.ToSemVersion() > versionInfo.PreRelease.ToSemVersion())
             {
-                Installed = _boostApplicationContext.Version,
-                PackageId = _appSettings.PackageId
-            };
-
-            if (version is { })
-            {
-                versionInfo.Latest = version.LatestStable;
-                versionInfo.PreRelease = version.LatestPreRelease;
-
-                if (versionInfo.PreRelease is { } &&
-                    versionInfo.Latest is { } &&
-                    versionInfo.Latest.ToSemVersion() > versionInfo.PreRelease.ToSemVersion())
-                {
-                    versionInfo.PreRelease = null;
-                }
-
-                var installed = SemVersion.Parse(versionInfo.Installed);
-
-                if (versionInfo.Latest is { })
-                {
-                    versionInfo.NewerAvailable = SemVersion.Parse(versionInfo.Latest.Version) > installed;
-                }
-
-                if (versionInfo.PreRelease is { })
-                {
-                    versionInfo.NewerPreReleaseAvailable = SemVersion.Parse(versionInfo.PreRelease.Version) > installed;
-                }
+                versionInfo.PreRelease = null;
             }
 
-            return versionInfo;
+            var installed = SemVersion.Parse(versionInfo.Installed);
+
+            if (versionInfo.Latest is { })
+            {
+                versionInfo.NewerAvailable = SemVersion.Parse(versionInfo.Latest.Version) > installed;
+            }
+
+            if (versionInfo.PreRelease is { })
+            {
+                versionInfo.NewerPreReleaseAvailable = SemVersion.Parse(versionInfo.PreRelease.Version) > installed;
+            }
         }
 
+        return versionInfo;
     }
+
 }

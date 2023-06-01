@@ -1,39 +1,38 @@
 using System.Runtime.InteropServices;
 using Boost.Settings;
 
-namespace Boost
+namespace Boost;
+
+public class DefaultShellService : IDefaultShellService
 {
-    public class DefaultShellService : IDefaultShellService
+    private readonly IUserSettingsManager _userSettingService;
+
+    public DefaultShellService(IUserSettingsManager userSettingService)
     {
-        private readonly IUserSettingsManager _userSettingService;
+        _userSettingService = userSettingService;
+    }
 
-        public DefaultShellService(IUserSettingsManager userSettingService)
+    public string GetDefault()
+    {
+        UserSettings settings = _userSettingService.GetAsync(default)
+            .GetAwaiter()
+            .GetResult();
+
+        return settings?.DefaultShell ?? GetOSDefault();
+    }
+
+    internal static string GetOSDefault()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            _userSettingService = userSettingService;
+            return "bash";
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            return "zsh";
         }
 
-        public string GetDefault()
-        {
-            UserSettings settings = _userSettingService.GetAsync(default)
-                .GetAwaiter()
-                .GetResult();
-
-            return settings?.DefaultShell ?? GetOSDefault();
-        }
-
-        internal static string GetOSDefault()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return "bash";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return "zsh";
-            }
-
-            return "pwsh";
-        }
+        return "pwsh";
     }
 }
 

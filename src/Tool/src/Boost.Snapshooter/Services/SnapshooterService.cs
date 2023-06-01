@@ -5,156 +5,155 @@ using System.Linq;
 using Boost.Infrastructure;
 using Newtonsoft.Json;
 
-namespace Boost.Snapshooter
+namespace Boost.Snapshooter;
+
+public class SnapshooterService : ISnapshooterService
 {
-    public class SnapshooterService : ISnapshooterService
+    private readonly IBoostApplicationContext _boostApplicationContext;
+
+    public SnapshooterService(IBoostApplicationContext boostApplicationContext)
     {
-        private readonly IBoostApplicationContext _boostApplicationContext;
+        _boostApplicationContext = boostApplicationContext;
+    }
 
-        public SnapshooterService(IBoostApplicationContext boostApplicationContext)
+    public IEnumerable<SnapshotInfo> GetSnapshots(bool withMismatchOnly)
+    {
+        List<SnapshotInfo> snapshots = new();
+        List<FileInfo> mismatches = new();
+
+        foreach (FileInfo? ss in _boostApplicationContext.WorkingDirectory
+            .GetFiles("*.snap", SearchOption.AllDirectories))
         {
-            _boostApplicationContext = boostApplicationContext;
-        }
-
-        public IEnumerable<SnapshotInfo> GetSnapshots(bool withMismatchOnly)
-        {
-            List<SnapshotInfo> snapshots = new();
-            List<FileInfo> mismatches = new();
-
-            foreach (FileInfo? ss in _boostApplicationContext.WorkingDirectory
-                .GetFiles("*.snap", SearchOption.AllDirectories))
+            if (ss.FullName.Contains("node_modules"))
             {
-                if (ss.FullName.Contains("node_modules"))
+                continue;
+            }
+
+            if (ss.Directory.Name.Contains("__snapshots__"))
+            {
+                snapshots.Add(new SnapshotInfo
                 {
-                    continue;
-                }
-
-                if (ss.Directory.Name.Contains("__snapshots__"))
-                {
-                    snapshots.Add(new SnapshotInfo
-                    {
-                        Name = ss.Name,
-                        FileName = ss.FullName,
-                        Directory = ss.Directory.FullName
-                    });
-                }
-                else if (ss.Directory.Name.Contains("__mismatch__"))
-                {
-                    mismatches.Add(ss);
-                }
+                    Name = ss.Name,
+                    FileName = ss.FullName,
+                    Directory = ss.Directory.FullName
+                });
             }
-
-            foreach (FileInfo? mm in mismatches)
+            else if (ss.Directory.Name.Contains("__mismatch__"))
             {
-                SnapshotInfo? refSs = snapshots
-                    .FirstOrDefault(x => x.Name == mm.Name);
-
-                if (refSs is { })
-                {
-                    refSs.MissmatchFileName = mm.FullName;
-                    refSs.HasMismatch = true;
-                }
+                mismatches.Add(ss);
             }
-
-            if (withMismatchOnly)
-            {
-                snapshots = snapshots.Where(x => x.HasMismatch).ToList();
-            }
-
-            return snapshots;
         }
 
-        public IEnumerable<SnapshotDirectory> GetDirectories(bool withMismatchOnly)
+        foreach (FileInfo? mm in mismatches)
         {
-            IEnumerable<SnapshotInfo>? snapshots = GetSnapshots(withMismatchOnly);
+            SnapshotInfo? refSs = snapshots
+                .FirstOrDefault(x => x.Name == mm.Name);
 
-            foreach (IGrouping<string, SnapshotInfo>? group in
-                snapshots.GroupBy(x => x.Directory))
+            if (refSs is { })
             {
-                yield return new SnapshotDirectory(
-                    GetDirectoryName(group.Key), group.Key,
-                    group.ToList());
+                refSs.MissmatchFileName = mm.FullName;
+                refSs.HasMismatch = true;
             }
         }
 
-        public SnapshotContent GetSnapshot(string fileName, string? missmatchFilename)
+        if (withMismatchOnly)
         {
-            string? missMatchContent = null;
-            if (!string.IsNullOrEmpty(missmatchFilename))
-            {
-                missMatchContent = GetJson(missmatchFilename);
-            }
-
-            return new SnapshotContent(
-                Path.GetFileName(fileName),
-                GetJson(fileName))
-            {
-                Mismatch = missMatchContent
-            };
+            snapshots = snapshots.Where(x => x.HasMismatch).ToList();
         }
 
-        public SnapshotContent ApproveSnapshot(string fileName, string? missmatchFilename)
+        return snapshots;
+    }
+
+    public IEnumerable<SnapshotDirectory> GetDirectories(bool withMismatchOnly)
+    {
+        IEnumerable<SnapshotInfo>? snapshots = GetSnapshots(withMismatchOnly);
+
+        foreach (IGrouping<string, SnapshotInfo>? group in
+            snapshots.GroupBy(x => x.Directory))
         {
-            var file = new FileInfo(missmatchFilename);
-
-            if (file.Exists)
-            {
-                File.Move(missmatchFilename, fileName, overwrite: true);
-
-                if (!file.Directory.EnumerateFiles().Any())
-                {
-                    Directory.Delete(file.Directory.FullName);
-                }
-            }
-
-            return GetSnapshot(fileName, missmatchFilename: null);
+            yield return new SnapshotDirectory(
+                GetDirectoryName(group.Key), group.Key,
+                group.ToList());
         }
+    }
 
-        public int ApproveAllMismatches()
+    public SnapshotContent GetSnapshot(string fileName, string? missmatchFilename)
+    {
+        string? missMatchContent = null;
+        if (!string.IsNullOrEmpty(missmatchFilename))
         {
-            IEnumerable<SnapshotInfo>? snaps = GetSnapshots(true);
-
-            foreach (SnapshotInfo? snap in snaps)
-            {
-                var file = new FileInfo(snap.MissmatchFileName!);
-
-                File.Move(
-                    snap.MissmatchFileName!,
-                    snap.FileName,
-                    overwrite: true);
-
-                if (!file.Directory.EnumerateFiles().Any())
-                {
-                    Directory.Delete(file.Directory.FullName);
-                }
-            }
-
-            return snaps.Count();
+            missMatchContent = GetJson(missmatchFilename);
         }
 
-        private string GetJson(string fileName)
+        return new SnapshotContent(
+            Path.GetFileName(fileName),
+            GetJson(fileName))
         {
-            var json = File.ReadAllText(fileName);
+            Mismatch = missMatchContent
+        };
+    }
 
-            try
-            {
-                dynamic parsedJson = JsonConvert.DeserializeObject(json);
+    public SnapshotContent ApproveSnapshot(string fileName, string? missmatchFilename)
+    {
+        var file = new FileInfo(missmatchFilename);
 
-                return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-            }
-            catch
-            {
-                return json;
-            }
-        }
-
-        private string GetDirectoryName(string directory)
+        if (file.Exists)
         {
-            var pars = directory.Split(
-                Path.DirectorySeparatorChar,
-                StringSplitOptions.RemoveEmptyEntries);
+            File.Move(missmatchFilename, fileName, overwrite: true);
 
-            return pars[pars.Length - 2];
+            if (!file.Directory.EnumerateFiles().Any())
+            {
+                Directory.Delete(file.Directory.FullName);
+            }
         }
+
+        return GetSnapshot(fileName, missmatchFilename: null);
+    }
+
+    public int ApproveAllMismatches()
+    {
+        IEnumerable<SnapshotInfo>? snaps = GetSnapshots(true);
+
+        foreach (SnapshotInfo? snap in snaps)
+        {
+            var file = new FileInfo(snap.MissmatchFileName!);
+
+            File.Move(
+                snap.MissmatchFileName!,
+                snap.FileName,
+                overwrite: true);
+
+            if (!file.Directory.EnumerateFiles().Any())
+            {
+                Directory.Delete(file.Directory.FullName);
+            }
+        }
+
+        return snaps.Count();
+    }
+
+    private string GetJson(string fileName)
+    {
+        var json = File.ReadAllText(fileName);
+
+        try
+        {
+            dynamic parsedJson = JsonConvert.DeserializeObject(json);
+
+            return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+        }
+        catch
+        {
+            return json;
+        }
+    }
+
+    private string GetDirectoryName(string directory)
+    {
+        var pars = directory.Split(
+            Path.DirectorySeparatorChar,
+            StringSplitOptions.RemoveEmptyEntries);
+
+        return pars[pars.Length - 2];
     }
 }

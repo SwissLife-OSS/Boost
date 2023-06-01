@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Boost.Infrastructure
+namespace Boost.Infrastructure;
+
+public interface IVersionChecker
 {
-    public interface IVersionChecker
-    {
-        Task<BoostVersionInfo> GetVersionInfo(CancellationToken cancellationToken);
-    }
+    Task<BoostVersionInfo> GetVersionInfo(CancellationToken cancellationToken);
 }

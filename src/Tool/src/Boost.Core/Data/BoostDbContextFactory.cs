@@ -3,32 +3,31 @@ using Boost.Core.Settings;
 using ICSharpCode.Decompiler.TypeSystem;
 using LiteDB;
 
-namespace Boost.Data
+namespace Boost.Data;
+
+public class BoostDbContextFactory : IBoostDbContextFactory
 {
-    public class BoostDbContextFactory : IBoostDbContextFactory
-    {
-        IBoostDbContext? _dbContext = null;
+    IBoostDbContext? _dbContext = null;
 
-        public IBoostDbContext Open(DbOpenMode mode)
+    public IBoostDbContext Open(DbOpenMode mode)
+    {
+        string path = Path.Combine(SettingsStore.GetUserDirectory(), "boost.db");
+        bool readOnly = (mode == DbOpenMode.ReadOnly) ? true : false;
+
+        readOnly = false;
+
+        if (_dbContext is null)
         {
-            string path = Path.Combine(SettingsStore.GetUserDirectory(), "boost.db");
-            bool readOnly = (mode == DbOpenMode.ReadOnly) ? true : false;
-
-            readOnly = false;
-
-            if (_dbContext is null)
-            {
-                _dbContext = new BoostDbContext(
-                    new LiteDatabase($"Filename={path};ReadOnly={readOnly.ToString().ToLower()}"));
-            }
-
-            return _dbContext;
+            _dbContext = new BoostDbContext(
+                new LiteDatabase($"Filename={path};ReadOnly={readOnly.ToString().ToLower()}"));
         }
-    }
 
-    public enum DbOpenMode
-    {
-        ReadOnly,
-        ReadWrite
+        return _dbContext;
     }
+}
+
+public enum DbOpenMode
+{
+    ReadOnly,
+    ReadWrite
 }

@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Boost
+namespace Boost;
+
+public class ConsoleHub : Hub
 {
-    public class ConsoleHub : Hub
+    public override Task OnConnectedAsync()
     {
-        public override Task OnConnectedAsync()
-        {
-            return base.OnConnectedAsync();
-        }
+        return base.OnConnectedAsync();
     }
 }

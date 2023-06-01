@@ -6,41 +6,40 @@ using Boost.Navigation;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Boost.Core.GraphQL
+namespace Boost.Core.GraphQL;
+
+[ExtendObjectType(RootTypes.Query)]
+public class BoostQueries
 {
-    [ExtendObjectType(RootTypes.Query)]
-    public class BoostQueries
+    private readonly IBoostApplicationContext _boostApplicationContext;
+
+    public BoostQueries(IBoostApplicationContext boostApplicationContext)
     {
-        private readonly IBoostApplicationContext _boostApplicationContext;
+        _boostApplicationContext = boostApplicationContext;
+    }
 
-        public BoostQueries(IBoostApplicationContext boostApplicationContext)
+    public BoostApplication GetAppliation()
+    {
+        var app = new BoostApplication
         {
-            _boostApplicationContext = boostApplicationContext;
-        }
+            WorkingDirectory = _boostApplicationContext.WorkingDirectory.FullName,
+            Version = _boostApplicationContext.Version,
+            ConfigurationRequired = true,
+        };
 
-        public BoostApplication GetAppliation()
-        {
-            var app = new BoostApplication
-            {
-                WorkingDirectory = _boostApplicationContext.WorkingDirectory.FullName,
-                Version = _boostApplicationContext.Version,
-                ConfigurationRequired = true,
-            };
+        return app;
+    }
 
-            return app;
-        }
+    public Task<BoostVersionInfo> GetVersionAsync(
+        [Service] IVersionChecker versionChecker,
+        CancellationToken cancellationToken)
+    {
+        return versionChecker.GetVersionInfo(cancellationToken);
+    }
 
-        public Task<BoostVersionInfo> GetVersionAsync(
-            [Service] IVersionChecker versionChecker,
-            CancellationToken cancellationToken)
-        {
-            return versionChecker.GetVersionInfo(cancellationToken);
-        }
-
-        public AppNavigation GetAppNavigation(
-            [Service] IAppNavigationService appNavigationService)
-        {
-            return appNavigationService.GetNavigation();
-        }
+    public AppNavigation GetAppNavigation(
+        [Service] IAppNavigationService appNavigationService)
+    {
+        return appNavigationService.GetNavigation();
     }
 }

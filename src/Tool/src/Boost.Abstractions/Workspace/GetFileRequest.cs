@@ -1,7 +1,6 @@
-﻿namespace Boost.Workspace
+﻿namespace Boost.Workspace;
+
+public record GetFileRequest(string FileName)
 {
-    public record GetFileRequest(string FileName)
-    {
-        public string? Converter { get; init; }
-    }
+    public string? Converter { get; init; }
 }

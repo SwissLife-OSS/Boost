@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Boost.Git
+namespace Boost.Git;
+
+public interface IGitRemoteReference
 {
-    public interface IGitRemoteReference
-    {
-        string Url { get; }
-    }
+    string Url { get; }
 }

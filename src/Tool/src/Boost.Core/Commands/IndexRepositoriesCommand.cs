@@ -9,37 +9,36 @@ using Boost.Settings;
 using Boost.Workspace;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Boost.Commands
+namespace Boost.Commands;
+
+[Command(
+    Name = "index",
+    FullName = "Index Repositories",
+    Description = "Index Repositories"), HelpOption]
+public class IndexRepositoriesCommand : CommandBase
 {
-    [Command(
-        Name = "index",
-        FullName = "Index Repositories",
-        Description = "Index Repositories"), HelpOption]
-    public class IndexRepositoriesCommand : CommandBase
+    private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
+
+    public IndexRepositoriesCommand(
+        ILocalRepositoryIndexer localRepositoryIndexer)
     {
-        private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
+        _localRepositoryIndexer = localRepositoryIndexer;
+    }
 
-        public IndexRepositoriesCommand(
-            ILocalRepositoryIndexer localRepositoryIndexer)
+    public async Task OnExecute(CommandLineApplication app, IConsole console)
+    {
+        var utils = new WorkrootCommandUtils(app, console);
+
+        IEnumerable<WorkRoot> workroots = await utils.GetWorkRootsAsync(CommandAborded);
+
+        foreach (WorkRoot wr in workroots)
         {
-            _localRepositoryIndexer = localRepositoryIndexer;
+            await _localRepositoryIndexer.IndexWorkRootAsync(
+                wr,
+                onProgress: (msg) => console.WriteLine(msg),
+                CommandAborded);
         }
 
-        public async Task OnExecute(CommandLineApplication app, IConsole console)
-        {
-            var utils = new WorkrootCommandUtils(app, console);
-
-            IEnumerable<WorkRoot> workroots = await utils.GetWorkRootsAsync(CommandAborded);
-
-            foreach (WorkRoot wr in workroots)
-            {
-                await _localRepositoryIndexer.IndexWorkRootAsync(
-                    wr,
-                    onProgress: (msg) => console.WriteLine(msg),
-                    CommandAborded);
-            }
-
-            console.WriteLine("Repo indexing completed", ConsoleColor.Green);
-        }
+        console.WriteLine("Repo indexing completed", ConsoleColor.Green);
     }
 }

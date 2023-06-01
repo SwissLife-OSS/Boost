@@ -1,4 +1,3 @@
-namespace Boost.GraphQL
-{
-    public record StartAuthServerInput(string Id, int? Port);
-}
+namespace Boost.GraphQL;
+
+public record StartAuthServerInput(string Id, int? Port);

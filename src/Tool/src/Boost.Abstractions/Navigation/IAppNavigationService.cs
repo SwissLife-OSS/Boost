@@ -1,7 +1,6 @@
-﻿namespace Boost.Navigation
+﻿namespace Boost.Navigation;
+
+public interface IAppNavigationService
 {
-    public interface IAppNavigationService
-    {
-        AppNavigation GetNavigation();
-    }
+    AppNavigation GetNavigation();
 }

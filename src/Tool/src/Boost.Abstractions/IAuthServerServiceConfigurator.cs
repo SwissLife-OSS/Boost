@@ -1,9 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Boost
+namespace Boost;
+
+public interface IAuthServerServiceConfigurator
 {
-    public interface IAuthServerServiceConfigurator
-    {
-        IServiceCollection Configure(IServiceCollection services);
-    }
+    IServiceCollection Configure(IServiceCollection services);
 }

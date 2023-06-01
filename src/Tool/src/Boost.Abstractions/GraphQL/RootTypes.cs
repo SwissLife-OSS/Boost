@@ -1,8 +1,7 @@
-namespace Boost.GraphQL
+namespace Boost.GraphQL;
+
+public static class RootTypes
 {
-    public static class RootTypes
-    {
-        public const string Query = "Query";
-        public const string Mutation = "Mutation";
-    }
+    public const string Query = "Query";
+    public const string Mutation = "Mutation";
 }

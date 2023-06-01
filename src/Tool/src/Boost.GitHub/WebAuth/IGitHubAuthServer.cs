@@ -2,10 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Boost.GitHub
+namespace Boost.GitHub;
+
+public interface IGitHubAuthServer
 {
-    public interface IGitHubAuthServer
-    {
-        Task StartAsync(int port, Guid id, Action<IServiceCollection> configure);
-    }
+    Task StartAsync(int port, Guid id, Action<IServiceCollection> configure);
 }

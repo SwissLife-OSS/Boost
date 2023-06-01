@@ -1,7 +1,6 @@
-namespace Boost.Nuget
+namespace Boost.Nuget;
+
+public record PackageVersion(string Name, string Version)
 {
-    public record PackageVersion(string Name, string Version)
-    {
-        public string? Reference { get; init; }
-    }
+    public string? Reference { get; init; }
 }

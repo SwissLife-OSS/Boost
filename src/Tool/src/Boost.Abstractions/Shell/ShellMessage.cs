@@ -1,35 +1,34 @@
 using System;
 using System.Collections.Generic;
 
-namespace Boost
+namespace Boost;
+
+public record ShellMessage(MessageSession Session, string Type, string? Message)
 {
-    public record ShellMessage(MessageSession Session, string Type, string? Message)
+    public IEnumerable<string> Tags { get; init; } = new List<string>();
+}
+
+public class MessageSession
+{
+    public MessageSession()
     {
-        public IEnumerable<string> Tags { get; init; } = new List<string>();
+        Id = Guid.NewGuid();
     }
 
-    public class MessageSession
+    private MessageSession(Guid id, int number)
     {
-        public MessageSession()
-        {
-            Id = Guid.NewGuid();
-        }
+        Id = id;
+        Number = number;
+    }
 
-        private MessageSession(Guid id, int number)
-        {
-            Id = id;
-            Number = number;
-        }
+    public Guid Id { get; }
 
-        public Guid Id { get; }
+    public int Number { get; private set; }
 
-        public int Number { get; private set; }
+    public MessageSession Next()
+    {
+        Number++;
 
-        public MessageSession Next()
-        {
-            Number++;
-
-            return new MessageSession(Id, Number);
-        }
+        return new MessageSession(Id, Number);
     }
 }

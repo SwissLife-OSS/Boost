@@ -1,10 +1,9 @@
 using System;
 
-namespace Boost
+namespace Boost;
+
+public interface IWebShellFactory
 {
-    public interface IWebShellFactory
-    {
-        IWebShell CreateShell(string shell);
-        IWebShell CreateShell();
-    }
+    IWebShell CreateShell(string shell);
+    IWebShell CreateShell();
 }

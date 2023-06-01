@@ -1,7 +1,6 @@
-namespace Boost.Security
+namespace Boost.Security;
+
+public interface ITokenAnalyzer
 {
-    public interface ITokenAnalyzer
-    {
-        TokenModel? Analyze(string token);
-    }
+    TokenModel? Analyze(string token);
 }

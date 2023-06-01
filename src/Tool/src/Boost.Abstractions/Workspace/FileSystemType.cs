@@ -1,8 +1,7 @@
-namespace Boost.Workspace
+namespace Boost.Workspace;
+
+public enum FileSystemType
 {
-    public enum FileSystemType
-    {
-        File,
-        Directory
-    }
+    File,
+    Directory
 }

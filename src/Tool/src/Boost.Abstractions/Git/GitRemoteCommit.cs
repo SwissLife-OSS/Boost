@@ -1,13 +1,12 @@
 using System;
 
-namespace Boost.Git
+namespace Boost.Git;
+
+public record GitRemoteCommit(
+    string Id,
+    string Message,
+    DateTime CreatedAt,
+    string? Author)
 {
-    public record GitRemoteCommit(
-        string Id,
-        string Message,
-        DateTime CreatedAt,
-        string? Author)
-    {
-        public string? WebUrl { get; init; }
-    }
+    public string? WebUrl { get; init; }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace Boost.Settings
-{
-    public class CustomGrantSettings
-    {
-        public string Name { get; set; } = default!;
+namespace Boost.Settings;
 
-        public IList<CustomGrantParameter> Parameters { get; set; }
-            = new List<CustomGrantParameter>();
-    }
+public class CustomGrantSettings
+{
+    public string Name { get; set; } = default!;
+
+    public IList<CustomGrantParameter> Parameters { get; set; }
+        = new List<CustomGrantParameter>();
 }

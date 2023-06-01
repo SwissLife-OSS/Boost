@@ -1,7 +1,6 @@
-﻿namespace Boost.Git
+﻿namespace Boost.Git;
+
+public interface IGitRemoteClientFactory
 {
-    public interface IGitRemoteClientFactory
-    {
-        IGitRemoteClient Create(string serviceType);
-    }
+    IGitRemoteClient Create(string serviceType);
 }

@@ -10,45 +10,44 @@ using Boost.Settings;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Boost.Core.GraphQL
+namespace Boost.Core.GraphQL;
+
+[ExtendObjectType(RootTypes.Query)]
+public class SettingsQueries
 {
-    [ExtendObjectType(RootTypes.Query)]
-    public class SettingsQueries
+    public Task<UserSettings> GetUserSettingsAsync(
+        [Service] IUserSettingsManager settingsManager,
+        CancellationToken cancellationToken)
     {
-        public Task<UserSettings> GetUserSettingsAsync(
-            [Service] IUserSettingsManager settingsManager,
-            CancellationToken cancellationToken)
-        {
-            return settingsManager.GetAsync(cancellationToken);
-        }
+        return settingsManager.GetAsync(cancellationToken);
+    }
 
-        public async Task<IEnumerable<ConnectedService>> GetConnectedServices(
-            [Service] IConnectedServiceManager serviceManager,
-            CancellationToken cancellationToken)
-        {
-            IEnumerable<IConnectedService> services = await serviceManager.GetServicesAsync(
-                cancellationToken);
+    public async Task<IEnumerable<ConnectedService>> GetConnectedServices(
+        [Service] IConnectedServiceManager serviceManager,
+        CancellationToken cancellationToken)
+    {
+        IEnumerable<IConnectedService> services = await serviceManager.GetServicesAsync(
+            cancellationToken);
 
-            return services.Select(x => new ConnectedService
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Type = x.Type,
-            });
-        }
-
-        public Task<ConnectedService?> GetConnectedServiceAsync(
-            Guid id,
-            [Service] IConnectedServiceManager serviceManager,
-            CancellationToken cancellationToken)
+        return services.Select(x => new ConnectedService
         {
-            return serviceManager.GetServiceAsync(id, cancellationToken);
-        }
+            Id = x.Id,
+            Name = x.Name,
+            Type = x.Type,
+        });
+    }
 
-        public IEnumerable<ConnectedServiceType> GetConnectedServiceTypes(
-            [Service] IConnectedServiceManager serviceManager)
-        {
-            return serviceManager.GetServiceTypes();
-        }
+    public Task<ConnectedService?> GetConnectedServiceAsync(
+        Guid id,
+        [Service] IConnectedServiceManager serviceManager,
+        CancellationToken cancellationToken)
+    {
+        return serviceManager.GetServiceAsync(id, cancellationToken);
+    }
+
+    public IEnumerable<ConnectedServiceType> GetConnectedServiceTypes(
+        [Service] IConnectedServiceManager serviceManager)
+    {
+        return serviceManager.GetServiceTypes();
     }
 }
