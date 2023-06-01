@@ -336,7 +336,7 @@ ASALocalRun/
 .sonarqube/
 
 testoutput/
-
+.DS_Store
 .vscode/
 .vs/
 .drop/
