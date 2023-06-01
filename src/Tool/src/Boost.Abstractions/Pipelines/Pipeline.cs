@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Boost.Pipelines
 {
@@ -17,7 +14,10 @@ namespace Boost.Pipelines
         public string? WebUrl { get; set; }
 
         public IList<PipelineProperty> Properties { get; set; } = new List<PipelineProperty>();
+
+        public IReadOnlyList<Pipeline> Children { get; set; } = new List<Pipeline>();
     }
+
 
     public record PipelineProperty(string Name, string Value);
 

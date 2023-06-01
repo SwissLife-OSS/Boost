@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using Boost.GraphQL;
 using HotChocolate;
 using HotChocolate.Execution.Configuration;
+using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boost.Core.GraphQL
@@ -16,6 +17,7 @@ namespace Boost.Core.GraphQL
                 .ModifyRequestOptions(m => m.IncludeExceptionDetails = true)
                 .AddQueryType(d => d.Name(RootTypes.Query))
                 .AddMutationType(d => d.Name(RootTypes.Mutation))
+                .ConfigureSchema( x => x.AddType(new UuidType("Uuid", defaultFormat: 'N')))
                 .AddBoostTypes();
 
             configure?.Invoke(builder);

@@ -32,7 +32,7 @@ namespace Boost
                 return "zsh";
             }
 
-            return "powershell";
+            return "pwsh";
         }
     }
 }

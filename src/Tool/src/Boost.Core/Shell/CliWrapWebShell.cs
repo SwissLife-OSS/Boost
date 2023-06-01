@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
 using CliWrap;
@@ -11,24 +12,26 @@ namespace Boost.Shell
     {
         private readonly string _shell;
         private readonly Action<ShellMessage> _messageHandler;
+        private readonly IToolManager _toolManager;
         private readonly IBoostApplicationContext _boostApplicationContext;
         private readonly MessageSession _session;
 
         public CliWrapWebShell(
             string shell,
             Action<ShellMessage> messageHandler,
+            IToolManager toolManager,
             IBoostApplicationContext boostApplicationContext)
         {
             _shell = shell;
             _messageHandler = messageHandler;
+            _toolManager = toolManager;
             _boostApplicationContext = boostApplicationContext;
             _session = new();
         }
 
         public async Task<int> ExecuteShellAsync(string arguments, string? workingDirectory)
         {
-            //Get Path
-            string shellPath = "/bin/" + _shell;
+            var shellPath = await _toolManager.GetToolPathAsync(_shell, CancellationToken.None);
 
             Command? cmd = Cli.Wrap(shellPath)
                 .WithArguments("-c " + arguments)

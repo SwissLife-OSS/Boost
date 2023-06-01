@@ -10,6 +10,7 @@ using Boost.Nuget;
 using Boost.Pipelines;
 using Boost.Security;
 using Boost.Settings;
+using Boost.Shell;
 using Boost.Utils;
 using Boost.Web.Proxy;
 using Boost.Workspace;
@@ -29,6 +30,7 @@ namespace Boost
             services.AddSingleton<IBoostApplicationContext, BoostApplicationContext>();
             services.AddSingleton<ISettingsStore, SettingsStore>();
             services.AddSingleton<IUserSettingsManager, UserSettingsManager>();
+            services.AddSingleton<IToolManager, ToolManager>();
             services.AddSingleton<IConnectedServiceManager, ConnectedServiceManager>();
             services.AddSingleton<IGitRemoteSearchService, GitRemoteSearchService>();
             services.AddSingleton<IGitRemoteClientFactory, GitRemoteClientFactory>();
