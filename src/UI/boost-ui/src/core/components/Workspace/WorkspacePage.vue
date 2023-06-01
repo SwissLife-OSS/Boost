@@ -27,14 +27,7 @@
     <v-col md="9" v-if="editor.visible === false">
       <div>
         <v-row class="mx-2 mt-1">
-          <v-col md="3">
-            <v-select
-              label="Shell"
-              v-model="console.shell"
-              :items="console.shells"
-            ></v-select>
-          </v-col>
-          <v-col md="9"
+          <v-col md="12"
             ><v-text-field
               label="Command"
               v-model="console.command"
@@ -115,8 +108,6 @@ export default {
     files: [],
     console: {
       command: "",
-      shell: "cmd",
-      shells: ["cmd", "powershell", "pwsh"],
     },
     converter: "ORIGINAL",
     editor: {
@@ -167,7 +158,6 @@ export default {
     onExec: function () {
       this.executeCommand({
         command: this.console.command,
-        shell: this.console.shell,
       });
     },
     onClickClear: function () {
@@ -213,4 +203,3 @@ export default {
   },
 };
 </script>
-

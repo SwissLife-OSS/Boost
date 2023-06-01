@@ -10,16 +10,19 @@ namespace Boost
     {
         private readonly IHubContext<ConsoleHub> _hubContext;
         private readonly IDefaultShellService _defaultShellService;
+        private readonly IToolManager _toolManager;
         private readonly IBoostApplicationContext _applicationContext;
-        private Action<ShellMessage> _messageHandler;
+        private readonly Action<ShellMessage> _messageHandler;
 
         public WebShellFactory(
             IHubContext<ConsoleHub> hubContext,
             IDefaultShellService defaultShellService,
+            IToolManager toolManager,
             IBoostApplicationContext applicationContext)
         {
             _hubContext = hubContext;
             _defaultShellService = defaultShellService;
+            _toolManager = toolManager;
             _applicationContext = applicationContext;
             _messageHandler = (msg) =>
             {
@@ -29,7 +32,7 @@ namespace Boost
 
         public IWebShell CreateShell(string shell)
         {
-            return new CliWrapWebShell(shell, _messageHandler, _applicationContext);
+            return new CliWrapWebShell(shell, _messageHandler, _toolManager, _applicationContext);
         }
 
         public IWebShell CreateShell()
@@ -37,6 +40,7 @@ namespace Boost
             return new CliWrapWebShell(
                 _defaultShellService.GetDefault(),
                 _messageHandler,
+                _toolManager,
                 _applicationContext);
         }
     }

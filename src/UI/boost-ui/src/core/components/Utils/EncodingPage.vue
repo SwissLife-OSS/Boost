@@ -21,12 +21,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.v-text-field input {
-  font-family: consolas !important;
-}
-.v-textarea textarea {
-  font-family: consolas !important;
-}
-</style>

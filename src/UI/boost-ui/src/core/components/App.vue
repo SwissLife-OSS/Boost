@@ -168,6 +168,10 @@ export default {
 </script>
 
 <style scoped>
+html {
+  font-family: Lucida Console, Lucida Sans Typewriter, monaco,
+    Bitstream Vera Sans Mono, monospace;
+}
 .nav {
   background-color: rgba(0, 0, 0, 0.753) !important;
 }
@@ -200,9 +204,6 @@ export default {
 }
 
 .console {
-  font-family: Lucida Console, Lucida Sans Typewriter, monaco,
-    Bitstream Vera Sans Mono, monospace;
-
   font-size: 12px;
   height: 95%;
   color: rgba(233, 236, 236, 0.788) !important;
@@ -224,7 +225,6 @@ export default {
   text-overflow: ellipsis;
   color: #fff;
   margin-bottom: -4px;
-  font-family: Lucida Console;
   font-size: 14px;
 }
 </style>

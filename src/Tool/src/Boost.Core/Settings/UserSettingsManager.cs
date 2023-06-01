@@ -35,6 +35,13 @@ namespace Boost.Settings
 
             settings.WorkRoots = workRoots.ToList();
 
+            await SaveAsync(settings, cancellationToken);
+        }
+
+        public async Task SaveAsync(
+            UserSettings settings,
+            CancellationToken cancellationToken)
+        {
             await _settingsStore.SaveAsync(
                 settings,
                 SettingsFileName,
