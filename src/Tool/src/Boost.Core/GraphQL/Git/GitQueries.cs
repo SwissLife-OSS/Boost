@@ -10,7 +10,7 @@ using HotChocolate.Types;
 namespace Boost.Core.GraphQL
 {
     [ExtendObjectType(RootTypes.Query)]
-    public class GitQueries
+    public partial class GitQueries
     {
         public async Task<IEnumerable<GitRemoteRepository>> SearchRepositoriesAsync(
             [Service] IGitRemoteSearchService searchService,

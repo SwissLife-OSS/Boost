@@ -104,5 +104,10 @@ namespace Boost
                 Tags = new[] { "error" }
             });
         }
+
+        public void WriteLine(string value)
+        {
+            _messageHandler?.Invoke(new ShellMessage(_session.Next(), "info", value));
+        }
     }
 }

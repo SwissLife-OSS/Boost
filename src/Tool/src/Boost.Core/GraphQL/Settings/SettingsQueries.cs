@@ -26,7 +26,8 @@ namespace Boost.Core.GraphQL
             [Service] IConnectedServiceManager serviceManager,
             CancellationToken cancellationToken)
         {
-            IEnumerable<IConnectedService> services = await serviceManager.GetServicesAsync(cancellationToken);
+            IEnumerable<IConnectedService> services = await serviceManager.GetServicesAsync(
+                cancellationToken);
 
             return services.Select(x => new ConnectedService
             {
@@ -36,16 +37,12 @@ namespace Boost.Core.GraphQL
             });
         }
 
-        public async Task<ConnectedService?> GetConnectedServiceAsync(
+        public Task<ConnectedService?> GetConnectedServiceAsync(
             Guid id,
             [Service] IConnectedServiceManager serviceManager,
             CancellationToken cancellationToken)
         {
-            ConnectedService? service = await serviceManager.GetServiceAsync(
-                id,
-                cancellationToken);
-
-            return service;
+            return serviceManager.GetServiceAsync(id, cancellationToken);
         }
 
         public IEnumerable<ConnectedServiceType> GetConnectedServiceTypes(

@@ -53,6 +53,22 @@ namespace Boost.AzureDevOps
                     cancellationToken);
         }
 
+        public async Task<GitRepository> GetByNameAsync(
+            Guid serviceId,
+            string name,
+            CancellationToken cancellationToken)
+        {
+            await ClientFactory.ConnectAsync(
+                serviceId,
+                cancellationToken);
+
+            GitHttpClient client = ClientFactory.CreateClient<GitHttpClient>(serviceId);
+
+            return await client.GetRepositoryAsync(
+                    repositoryId: name,
+                    cancellationToken);
+        }
+
         public async Task<byte[]?> GetFileContentAsync(
             Guid serviceId,
             string id,
