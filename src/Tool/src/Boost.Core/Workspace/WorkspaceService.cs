@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -101,10 +102,9 @@ namespace Boost.Workspace
                     IWebShell shell = _webShellFactory.CreateShell(GetShellByFile(file));
 
                     return await shell.ExecuteAsync(
-                        new ShellCommand($".{Path.DirectorySeparatorChar}{file.Name}")
-                    {
-                        WorkDirectory = file.Directory!.FullName
-                    });
+                        $".{Path.DirectorySeparatorChar}{file.Name}",
+                        null,
+                        file.Directory!.Name);
                 case "Open":
                     ProcessHelpers.Open(file.FullName);
                     break;
@@ -229,56 +229,48 @@ namespace Boost.Workspace
         public Task<int> OpenInCode(string directory)
         {
             IWebShell shell = _webShellFactory.CreateShell();
-            var cmd = new ShellCommand("code")
-            {
-                Arguments = ".",
-                WorkDirectory = directory
-            };
 
-            return shell.ExecuteAsync(cmd);
+            return shell.ExecuteAsync("code", ".", directory);
         }
 
         public Task<int> OpenFileInCode(string fileName)
         {
             IWebShell shell = _webShellFactory.CreateShell();
-            var cmd = new ShellCommand("code")
-            {
-                Arguments = fileName,
-            };
 
-            return shell.ExecuteAsync(cmd);
+            return shell.ExecuteAsync("code", fileName, null);
         }
 
         public Task<int> OpenFile(string fileName)
         {
             IWebShell shell = _webShellFactory.CreateShell();
-            var cmd = new ShellCommand(fileName);
 
-            return shell.ExecuteAsync(cmd);
+            return shell.ExecuteAsync(fileName, null, null);
         }
 
         public Task<int> OpenInExplorer(string directory)
         {
             IWebShell shell = _webShellFactory.CreateShell();
-            var cmd = new ShellCommand("ii")
-            {
-                Arguments = ".",
-                WorkDirectory = directory
-            };
 
-            return shell.ExecuteAsync(cmd);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return shell.ExecuteAsync("ii", ".", directory);
+            }
+            else
+            {
+                return shell.ExecuteAsync("open", ".", directory);
+            }
         }
 
-        public Task<int> OpenInTerminal(string directory)
+        public async Task<int> OpenInTerminal(string directory)
         {
             IWebShell shell = _webShellFactory.CreateShell();
-            var cmd = new ShellCommand("wt.exe")
-            {
-                Arguments = $"-w 0 nt -d {directory}",
-                WorkDirectory = directory
-            };
 
-            return shell.ExecuteAsync(cmd);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return await shell.ExecuteAsync("wt.exe", $"-w 0 nt -d {directory}", directory);
+            }
+
+            return 0;
         }
 
         public async Task<int> RunSuperBoostAsync(string name, string directory)

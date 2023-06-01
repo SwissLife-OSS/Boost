@@ -20,11 +20,9 @@ namespace Boost.Core.GraphQL
         {
             IWebShell shell = webShellFactory.CreateShell();
 
-            var result = await shell.ExecuteAsync(new ShellCommand("git")
-            {
-                Arguments = $"clone {input.Url}",
-                WorkDirectory = input.Directory
-            });
+            var result = await shell.ExecuteGitAsync(
+                new[] { "clone", input.Url },
+                input.Directory);
 
             var gitPath = input.Url.Split('/').Last().Replace(".git", "");
             var dir = System.IO.Path.Combine(input.Directory, gitPath);

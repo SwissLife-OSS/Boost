@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Boost.Infrastructure;
 using CliWrap;
@@ -24,23 +25,49 @@ namespace Boost.Shell
             _session = new();
         }
 
-        public async Task<int> ExecuteAsync(ShellCommand command)
+        public async Task<int> ExecuteShellAsync(string arguments, string? workingDirectory)
         {
-            Command? cmd = Cli.Wrap(_shell)
-                .WithArguments("/c " + command.Command + " " + command.Arguments)
-                .WithWorkingDirectory(command.WorkDirectory ?? _boostApplicationContext.WorkingDirectory.FullName);
+            //Get Path
+            string shellPath = "/bin/" + _shell;
 
+            Command? cmd = Cli.Wrap(shellPath)
+                .WithArguments("-c " + arguments)
+                .WithWorkingDirectory(workingDirectory ?? _boostApplicationContext.WorkingDirectory.FullName);
+
+            return await ExecuteAsync(cmd);
+        }
+
+        public async Task<int> ExecuteGitAsync(IEnumerable<string> arguments, string directory)
+        {
+            Command? cmd = Cli.Wrap("git")
+                .WithArguments(arguments)
+                .WithWorkingDirectory(directory);
+
+            return await ExecuteAsync(cmd);
+        }
+
+        public async Task<int> ExecuteAsync(string targetFilename, string arguments, string? workingDirectory)
+        {
+            Command? cmd = Cli.Wrap(targetFilename)
+                .WithArguments(arguments)
+                .WithWorkingDirectory(workingDirectory ?? _boostApplicationContext.WorkingDirectory.FullName);
+
+            return await ExecuteAsync(cmd);
+        }
+
+        private async Task<int> ExecuteAsync(Command cmd)
+        {
             var exitCode = 0;
 
             await foreach (CommandEvent? cmdEvent in cmd.ListenAsync())
             {
                 switch (cmdEvent)
                 {
-                    case StartedCommandEvent started:
+                    case StartedCommandEvent:
                         _messageHandler?.Invoke(new ShellMessage(
                             _session.Next(),
                             "cmd",
-                            $"{_shell}> {command.Command} {command.Arguments}")
+                            $"{_shell}> {cmd.Arguments}")
                         {
                             Tags = new[] { "command" }
                         });
@@ -74,21 +101,6 @@ namespace Boost.Shell
             }
 
             return exitCode;
-        }
-
-        public async Task<int> ExecuteAsync(params ShellCommand[] commands)
-        {
-            foreach (ShellCommand cmd in commands)
-            {
-                int result = await ExecuteAsync(cmd);
-
-                if (result != 0)
-                {
-                    return result;
-                }
-            }
-
-            return 0;
         }
     }
 }

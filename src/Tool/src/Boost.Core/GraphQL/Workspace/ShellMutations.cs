@@ -11,13 +11,9 @@ namespace Boost.GraphQL
             [Service] IWebShellFactory webShellFactory,
             ExecuteCommandInput input)
         {
-            IWebShell shell = webShellFactory.CreateShell(input.Shell ?? "cmd");
+            IWebShell shell = webShellFactory.CreateShell();
 
-            return shell.ExecuteAsync(new ShellCommand(input.Command)
-            {
-                Arguments = input.Arguments,
-                WorkDirectory = input.WorkDirectory
-            });
+            return shell.ExecuteShellAsync(input.Command, input.WorkDirectory);
         }
     }
 }

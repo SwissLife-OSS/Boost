@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Boost.Infrastructure;
+using Boost;
 
 namespace Boost.Settings
 {
@@ -8,6 +8,8 @@ namespace Boost.Settings
         public string DefaultShell { get; set; } = default!;
 
         public IList<WorkRoot> WorkRoots { get; set; } = new List<WorkRoot>();
+
+        public IList<ToolInfo> Tools { get; set; } = new List<ToolInfo>();
 
         public TokenGeneratorSettings TokenGenerator { get; set; }
             = new TokenGeneratorSettings();
