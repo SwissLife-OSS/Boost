@@ -1,27 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Boost.GitHub</RootNamespace>
-    <PackageId>Boost.Tool.GitHub</PackageId>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Boost.GitHub</RootNamespace>
+        <PackageId>Boost.Tool.GitHub</PackageId>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Octokit" Version="3.0.0" />
-    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="6.0.11" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
-    <PackageReference Include="Serilog" Version="2.12.0" />
-    <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
-    <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Octokit"/>
+        <PackageReference Include="AspNet.Security.OAuth.GitHub"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+        <PackageReference Include="Serilog"/>
+        <PackageReference Include="HotChocolate.Types"/>
+        <PackageReference Include="HotChocolate.Execution"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj"/>
+    </ItemGroup>
 
 </Project>

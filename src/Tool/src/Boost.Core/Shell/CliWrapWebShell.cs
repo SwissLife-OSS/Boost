@@ -49,6 +49,21 @@ public class CliWrapWebShell : IWebShell
         return await ExecuteAsync(cmd);
     }
 
+    public async Task<int> ExecuteGitManyAsync(IEnumerable<string> commands, string directory)
+    {
+        var result = 0;
+
+        foreach (var command in commands)
+        {
+            result = await ExecuteGitAsync(new[] { command }, directory);
+
+            if (result > 0)
+                return result;
+        }
+
+        return result;
+    }
+
     public async Task<int> ExecuteAsync(string targetFilename, string arguments, string? workingDirectory)
     {
         Command? cmd = Cli.Wrap(targetFilename)
@@ -70,10 +85,7 @@ public class CliWrapWebShell : IWebShell
                     _messageHandler?.Invoke(new ShellMessage(
                         _session.Next(),
                         "cmd",
-                        $"{_shell}> {cmd.Arguments}")
-                    {
-                        Tags = new[] { "command" }
-                    });
+                        $"{_shell}> {cmd.Arguments}") { Tags = new[] { "command" } });
                     break;
                 case StandardOutputCommandEvent stdOut:
                     _messageHandler?.Invoke(new ShellMessage(_session.Next(), "info", stdOut.Text)
@@ -90,15 +102,12 @@ public class CliWrapWebShell : IWebShell
                 case ExitedCommandEvent exited:
                     exitCode = exited.ExitCode;
                     _messageHandler?.Invoke(new ShellMessage(
-                         _session.Next(),
+                        _session.Next(),
                         "end",
-                        (exitCode == 0) ?
-                        "Command completed successfully" :
-                        $"Command completed with errors (ExitCode: {exitCode})"
-                        )
-                    {
-                        Tags = new string[] { (exitCode == 0) ? "success" : "error" }
-                    });
+                        (exitCode == 0)
+                            ? "Command completed successfully"
+                            : $"Command completed with errors (ExitCode: {exitCode})"
+                    ) { Tags = new string[] { (exitCode == 0) ? "success" : "error" } });
                     break;
             }
         }

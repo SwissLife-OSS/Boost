@@ -2,7 +2,6 @@
   <PropertyGroup>
     <PropsAbove>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</PropsAbove>
   </PropertyGroup>
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Versions.props', '$(MSBuildThisFileDirectory)'))" />
   <Import Project="$(PropsAbove)" Condition="Exists($(PropsAbove))" />
 
   <PropertyGroup>
