@@ -1,9 +1,8 @@
-﻿namespace Boost.Workspace
-{
-    public class SuperBoostAction
-    {
-        public string Type { get; set; } = default!;
+﻿namespace Boost.Workspace;
 
-        public string? Value { get; set; }
-    }
+public class SuperBoostAction
+{
+    public string Type { get; set; } = default!;
+
+    public string? Value { get; set; }
 }

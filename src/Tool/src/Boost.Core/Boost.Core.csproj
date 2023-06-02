@@ -1,42 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <AssemblyName>Boost.Core</AssemblyName>
-    <RootNamespace>Boost</RootNamespace>
-    <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
-    <PackageId>Boost.Tool.Core</PackageId>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <AssemblyName>Boost.Core</AssemblyName>
+        <RootNamespace>Boost</RootNamespace>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+        <PackageId>Boost.Tool.Core</PackageId>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CliWrap" Version="3.6.3" />
-    <PackageReference Include="ICSharpCode.Decompiler" Version="6.2.1.6137" />
-    <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
-    <PackageReference Include="LiteDB" Version="5.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="$(AspNetCoreVersion)" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="$(AspNetCoreVersion)" />
-    <PackageReference Include="IdentityModel" Version="5.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="$(AspNetCoreVersion)" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NuGet.Configuration" Version="6.3.0" />
-    <PackageReference Include="semver" Version="2.2.0" />
-    <PackageReference Include="Azure.Identity" Version="1.3.0" />
-    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.3.0" />
-    <PackageReference Include="Serilog" Version="2.12.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="$(HotChocolateVersion)" />
-    <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0-preview.11.21223.5" />
+    <ItemGroup>
+        <PackageReference Include="CliWrap"/>
+        <PackageReference Include="ICSharpCode.Decompiler"/>
+        <PackageReference Include="LibGit2Sharp"/>
+        <PackageReference Include="LiteDB" Version="5.0.16"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect"/>
+        <PackageReference Include="IdentityModel"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded"/>
+        <PackageReference Include="Newtonsoft.Json"/>
+        <PackageReference Include="NuGet.Configuration"/>
+        <PackageReference Include="semver"/>
+        <PackageReference Include="Azure.Identity"/>
+        <PackageReference Include="Azure.Security.KeyVault.Secrets"/>
+        <PackageReference Include="Serilog"/>
+        <PackageReference Include="Serilog.AspNetCore"/>
+        <PackageReference Include="HotChocolate.AspNetCore"/>
+        <PackageReference Include="Yarp.ReverseProxy"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="UI/**"/>
+    </ItemGroup>
 
-
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="UI/**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj"/>
+    </ItemGroup>
 </Project>

@@ -1,7 +1,6 @@
-﻿namespace Boost.Snapshooter
+﻿namespace Boost.Snapshooter;
+
+public record SnapshotContent(string Name, string Snapshot)
 {
-    public record SnapshotContent(string Name, string Snapshot)
-    {
-        public string? Mismatch { get; init; }
-    }
+    public string? Mismatch { get; init; }
 }

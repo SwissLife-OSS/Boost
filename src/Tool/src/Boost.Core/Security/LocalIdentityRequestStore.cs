@@ -6,118 +6,117 @@ using System.Threading.Tasks;
 using Boost.Data;
 using Boost.Infrastructure;
 
-namespace Boost.Security
+namespace Boost.Security;
+
+public class LocalIdentityRequestStore : IIdentityRequestStore
 {
-    public class LocalIdentityRequestStore : IIdentityRequestStore
+    private readonly IBoostDbContextFactory _dbContextFactory;
+    private readonly IUserDataProtector _userDataProtector;
+
+    public LocalIdentityRequestStore(
+        IBoostDbContextFactory dbContextFactory,
+        IUserDataProtector userDataProtector)
     {
-        private readonly IBoostDbContextFactory _dbContextFactory;
-        private readonly IUserDataProtector _userDataProtector;
+        _dbContextFactory = dbContextFactory;
+        _userDataProtector = userDataProtector;
+    }
 
-        public LocalIdentityRequestStore(
-            IBoostDbContextFactory dbContextFactory,
-            IUserDataProtector userDataProtector)
+    public Task<IdentityRequestItem> SaveAsync(
+        SaveIdentityRequestInput request,
+        CancellationToken cancellationToken)
+    {
+        IdentityRequestItem toSave = new IdentityRequestItem();
+
+        using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+
+        if (request.Id.HasValue)
         {
-            _dbContextFactory = dbContextFactory;
-            _userDataProtector = userDataProtector;
+            IdentityRequestItem? existing = dbContext.IdentityRequest
+                .FindById(request.Id.Value);
+
+            if (existing is { })
+            {
+                toSave = existing;
+            }
+        }
+        else
+        {
+            toSave.Id = Guid.NewGuid();
+            toSave.CreatedAt = DateTime.UtcNow;
         }
 
-        public Task<IdentityRequestItem> SaveAsync(
-            SaveIdentityRequestInput request,
-            CancellationToken cancellationToken)
+        toSave.ModifiedAt = DateTime.UtcNow;
+        toSave.Name = request.Name;
+        toSave.Tags = request.Tags.ToList();
+        toSave.Type = request.Type;
+        toSave.Data = request.Data;
+
+        if (toSave.Data.Secret is { })
         {
-            IdentityRequestItem toSave = new IdentityRequestItem();
-
-            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
-
-            if (request.Id.HasValue)
+            toSave.Data.Secret = _userDataProtector.Protect(toSave.Data.Secret);
+        }
+        if (toSave.Data.Parameters is { })
+        {
+            foreach (TokenRequestParameter param in toSave.Data.Parameters)
             {
-                IdentityRequestItem? existing = dbContext.IdentityRequest
-                    .FindById(request.Id.Value);
-
-                if (existing is { })
-                {
-                    toSave = existing;
-                }
+                param.Value = _userDataProtector.Protect(param.Value!);
             }
-            else
-            {
-                toSave.Id = Guid.NewGuid();
-                toSave.CreatedAt = DateTime.UtcNow;
-            }
-
-            toSave.ModifiedAt = DateTime.UtcNow;
-            toSave.Name = request.Name;
-            toSave.Tags = request.Tags.ToList();
-            toSave.Type = request.Type;
-            toSave.Data = request.Data;
-
-            if (toSave.Data.Secret is { })
-            {
-                toSave.Data.Secret = _userDataProtector.Protect(toSave.Data.Secret);
-            }
-            if (toSave.Data.Parameters is { })
-            {
-                foreach (TokenRequestParameter param in toSave.Data.Parameters)
-                {
-                    param.Value = _userDataProtector.Protect(param.Value!);
-                }
-            }
-
-            dbContext.IdentityRequest.Upsert(toSave);
-
-            return Task.FromResult(toSave);
         }
 
-        public Task<IdentityRequestItem> GetByIdAsync(
-            Guid id,
-            CancellationToken cancellationToken)
+        dbContext.IdentityRequest.Upsert(toSave);
+
+        return Task.FromResult(toSave);
+    }
+
+    public Task<IdentityRequestItem> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
+
+        IdentityRequestItem request = dbContext.IdentityRequest
+             .FindById(id);
+
+        if (request.Data?.Secret is { })
         {
-            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
-
-            IdentityRequestItem request = dbContext.IdentityRequest
-                 .FindById(id);
-
-            if (request.Data?.Secret is { })
+            request.Data.Secret = _userDataProtector.UnProtect(request.Data.Secret);
+        }
+        if (request.Data?.Parameters is { })
+        {
+            foreach (TokenRequestParameter param in request.Data.Parameters)
             {
-                request.Data.Secret = _userDataProtector.UnProtect(request.Data.Secret);
+                param.Value = _userDataProtector.UnProtect(param.Value!);
             }
-            if (request.Data?.Parameters is { })
-            {
-                foreach (TokenRequestParameter param in request.Data.Parameters)
-                {
-                    param.Value = _userDataProtector.UnProtect(param.Value!);
-                }
-            }
-
-            return Task.FromResult(request);
         }
 
-        public Task<IEnumerable<IdentityRequestItem>> SearchAsync(
-            SearchIdentityRequest searchRequest,
-            CancellationToken cancellationToken)
+        return Task.FromResult(request);
+    }
+
+    public Task<IEnumerable<IdentityRequestItem>> SearchAsync(
+        SearchIdentityRequest searchRequest,
+        CancellationToken cancellationToken)
+    {
+        using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
+
+        IEnumerable<IdentityRequestItem> requests = dbContext.IdentityRequest
+            .Find(x => x.Type == searchRequest.Type)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToList();
+
+        if (searchRequest.Tag is { })
         {
-            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadOnly);
-
-            IEnumerable<IdentityRequestItem> requests = dbContext.IdentityRequest
-                .Find(x => x.Type == searchRequest.Type)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToList();
-
-            if (searchRequest.Tag is { })
-            {
-                requests = requests.Where(x => x.Tags.Contains(searchRequest.Tag));
-            }
-
-            return Task.FromResult(requests);
+            requests = requests.Where(x => x.Tags.Contains(searchRequest.Tag));
         }
 
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
-        {
-            using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
+        return Task.FromResult(requests);
+    }
 
-            dbContext.IdentityRequest.Delete(id);
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        using IBoostDbContext dbContext = _dbContextFactory.Open(DbOpenMode.ReadWrite);
 
-            return Task.CompletedTask;
-        }
+        dbContext.IdentityRequest.Delete(id);
+
+        return Task.CompletedTask;
     }
 }

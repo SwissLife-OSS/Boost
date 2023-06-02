@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Semver;
 
-namespace Boost.Nuget
+namespace Boost.Nuget;
+
+public static class NugetPackageExtensions
 {
-    public static class NugetPackageExtensions
+    public static SemVersion ToSemVersion(this NugetPackageVersionInfo versionInfo)
     {
-        public static SemVersion ToSemVersion(this NugetPackageVersionInfo versionInfo)
-        {
-            return SemVersion.Parse(versionInfo.Version);
-        }
+        return SemVersion.Parse(versionInfo.Version);
     }
 }

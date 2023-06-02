@@ -1,7 +1,6 @@
-﻿namespace Boost
+﻿namespace Boost;
+
+public interface IDefaultShellService
 {
-    public interface IDefaultShellService
-    {
-        string GetDefault();
-    }
+    string GetDefault();
 }

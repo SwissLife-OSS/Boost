@@ -10,133 +10,132 @@ using Boost.Settings;
 using CliWrap;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Boost.Commands
+namespace Boost.Commands;
+
+[Command(
+    Name = "cr",
+    FullName = "Clone Repository",
+    Description = "Clone Repository"), HelpOption]
+public class CloneRepositoryCommand : CommandBase
 {
-    [Command(
-        Name = "cr",
-        FullName = "Clone Repository",
-        Description = "Clone Repository"), HelpOption]
-    public class CloneRepositoryCommand : CommandBase
+    private readonly IGitRemoteSearchService _searchService;
+    private readonly IConnectedServiceManager _serviceManager;
+    private readonly IUserSettingsManager _settingsManager;
+    private readonly IDefaultShellService _shellService;
+    private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
+    private WorkrootCommandUtils _wsUtils;
+
+    public CloneRepositoryCommand(
+        IGitRemoteSearchService searchService,
+        IConnectedServiceManager serviceManager,
+        IUserSettingsManager settingsManager,
+        IDefaultShellService defaultShellService,
+        ILocalRepositoryIndexer localRepositoryIndexer)
     {
-        private readonly IGitRemoteSearchService _searchService;
-        private readonly IConnectedServiceManager _serviceManager;
-        private readonly IUserSettingsManager _settingsManager;
-        private readonly IDefaultShellService _shellService;
-        private readonly ILocalRepositoryIndexer _localRepositoryIndexer;
-        private WorkrootCommandUtils _wsUtils;
+        _searchService = searchService;
+        _serviceManager = serviceManager;
+        _settingsManager = settingsManager;
+        _shellService = defaultShellService;
+        _localRepositoryIndexer = localRepositoryIndexer;
+    }
 
-        public CloneRepositoryCommand(
-            IGitRemoteSearchService searchService,
-            IConnectedServiceManager serviceManager,
-            IUserSettingsManager settingsManager,
-            IDefaultShellService defaultShellService,
-            ILocalRepositoryIndexer localRepositoryIndexer)
+    [Argument(0, "filter", ShowInHelpText = true)]
+    public string Filter { get; set; } = default!;
+
+    [Option("--source|-s", Description = "Connected service name")]
+    public string? Source { get; set; }
+
+    public async Task OnExecute(CommandLineApplication app, IConsole console)
+    {
+        _wsUtils = new WorkrootCommandUtils(app, console);
+        await _wsUtils.GetWorkRootsAsync(CommandAborded);
+
+        var services = new List<string>();
+        if (Source is { })
         {
-            _searchService = searchService;
-            _serviceManager = serviceManager;
-            _settingsManager = settingsManager;
-            _shellService = defaultShellService;
-            _localRepositoryIndexer = localRepositoryIndexer;
+            services.Add(Source);
         }
 
-        [Argument(0, "filter", ShowInHelpText = true)]
-        public string Filter { get; set; } = default!;
+        GitRemoteRepository[] repos = (await _searchService.SearchAsync(
+            new SearchGitRepositoryRequest(Filter)
+            {
+                Services = services
+            }, CommandAborded))
+            .ToArray();
 
-        [Option("--source|-s", Description = "Connected service name")]
-        public string? Source { get; set; }
-
-        public async Task OnExecute(CommandLineApplication app, IConsole console)
+        if (repos.Length > 1)
         {
-            _wsUtils = new WorkrootCommandUtils(app, console);
-            await _wsUtils.GetWorkRootsAsync(CommandAborded);
+            var index = console.ChooseFromList(repos.Select(x => $"{x.FullName} ({x.Source})"));
 
-            var services = new List<string>();
-            if (Source is { })
-            {
-                services.Add(Source);
-            }
+            await CloneRepositoryAsync(console, repos[index]);
+        }
+        else if (repos.Length == 1)
+        {
+            await CloneRepositoryAsync(console, repos[0]);
+        }
+        else
+        {
+            console.WriteLine($"Not repository found with term: {Filter}", ConsoleColor.Yellow);
+        }
+    }
 
-            GitRemoteRepository[] repos = (await _searchService.SearchAsync(
-                new SearchGitRepositoryRequest(Filter)
-                {
-                    Services = services
-                }, CommandAborded))
-                .ToArray();
+    private async Task CloneRepositoryAsync(IConsole console, GitRemoteRepository repository)
+    {
+        const string cloneCommand = "git clone";
 
-            if (repos.Length > 1)
-            {
-                var index = console.ChooseFromList(repos.Select(x => $"{x.FullName} ({x.Source})"));
+        WorkRoot? workroot = await GetWorkRoot(repository);
 
-                await CloneRepositoryAsync(console, repos[index]);
-            }
-            else if (repos.Length == 1)
-            {
-                await CloneRepositoryAsync(console, repos[0]);
-            }
-            else
-            {
-                console.WriteLine($"Not repository found with term: {Filter}", ConsoleColor.Yellow);
-            }
+        if (workroot is null)
+        {
+            console.WriteLine(
+                "No workroot could be found to clone repository, " +
+                "please configure your workroots in the UI", ConsoleColor.Red);
+
+            return;
         }
 
-        private async Task CloneRepositoryAsync(IConsole console, GitRemoteRepository repository)
+        //Check if repo allready cloned
+        string path = Path.Combine(workroot.Path, repository.Name);
+
+        if (Directory.Exists(path))
         {
-            const string cloneCommand = "git clone";
-
-            WorkRoot? workroot = await GetWorkRoot(repository);
-
-            if (workroot is null)
-            {
-                console.WriteLine(
-                    "No workroot could be found to clone repository, " +
-                    "please configure your workroots in the UI", ConsoleColor.Red);
-
-                return;
-            }
-
-            //Check if repo allready cloned
-            string path = Path.Combine(workroot.Path, repository.Name);
-
-            if (Directory.Exists(path))
-            {
-                console.WriteLine($"Repo allready cloned in: {path}.");
-                console.WriteLine();
-
-                await _wsUtils.ShowQuickActions(path);
-
-                return;
-            }
-
-            var resultValidation = new CommandResultValidation();
-
-            Command cmd = Cli.Wrap(_shellService.GetDefault())
-                .WithArguments("/c " + $"{cloneCommand} {repository.WebUrl}")
-                .WithWorkingDirectory(workroot.Path)
-                .WithValidation(resultValidation)
-                .WithStandardOutputPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)))
-                .WithStandardErrorPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)));
-
-            await cmd.ExecuteAsync();
-
-            console.WriteLine($"Cloned {repository.Name} to {path}");
-            await _localRepositoryIndexer.IndexRepository(workroot, path, CommandAborded);
+            console.WriteLine($"Repo allready cloned in: {path}.");
+            console.WriteLine();
 
             await _wsUtils.ShowQuickActions(path);
+
+            return;
         }
 
-        private async Task<WorkRoot?> GetWorkRoot(GitRemoteRepository repository)
-        {
-            ConnectedService? service = await _serviceManager.GetServiceAsync(
-                repository.ServiceId,
-                CommandAborded);
+        var resultValidation = new CommandResultValidation();
 
-            return await _settingsManager
-                .GetWorkRootAsync(service?.DefaultWorkRoot, CommandAborded);
-        }
+        Command cmd = Cli.Wrap(_shellService.GetDefault())
+            .WithArguments("/c " + $"{cloneCommand} {repository.WebUrl}")
+            .WithWorkingDirectory(workroot.Path)
+            .WithValidation(resultValidation)
+            .WithStandardOutputPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)))
+            .WithStandardErrorPipe(PipeTarget.ToDelegate(message => console.WriteLine(message)));
 
-        private void DataRecevied(object sender, DataReceivedEventArgs e)
-        {
-            Console.WriteLine(e.Data);
-        }
+        await cmd.ExecuteAsync();
+
+        console.WriteLine($"Cloned {repository.Name} to {path}");
+        await _localRepositoryIndexer.IndexRepository(workroot, path, CommandAborded);
+
+        await _wsUtils.ShowQuickActions(path);
+    }
+
+    private async Task<WorkRoot?> GetWorkRoot(GitRemoteRepository repository)
+    {
+        ConnectedService? service = await _serviceManager.GetServiceAsync(
+            repository.ServiceId,
+            CommandAborded);
+
+        return await _settingsManager
+            .GetWorkRootAsync(service?.DefaultWorkRoot, CommandAborded);
+    }
+
+    private void DataRecevied(object sender, DataReceivedEventArgs e)
+    {
+        Console.WriteLine(e.Data);
     }
 }

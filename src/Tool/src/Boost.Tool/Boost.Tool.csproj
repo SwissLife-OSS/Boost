@@ -1,47 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>boo</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
-    <PackageId>Boost.Tool</PackageId>
-    <IsPackable>true</IsPackable>
-    <AssemblyName>Boost.Tool</AssemblyName>
-    <RootNamespace>Boost.Tool</RootNamespace>
-    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>boo</ToolCommandName>
+        <PackageOutputPath>./nupkg</PackageOutputPath>
+        <PackageId>Boost.Tool</PackageId>
+        <IsPackable>true</IsPackable>
+        <AssemblyName>Boost.Tool</AssemblyName>
+        <RootNamespace>Boost.Tool</RootNamespace>
+        <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.9" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.9" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded"/>
+        <PackageReference Include="Serilog.Sinks.Console"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Boost.AzureDevOps\Boost.AzureDevOps.csproj" />
-    <ProjectReference Include="..\Boost.Core\Boost.Core.csproj" />
-    <ProjectReference Include="..\Boost.GitHub\Boost.GitHub.csproj" />
-    <ProjectReference Include="..\Boost.Snapshooter\Boost.Snapshooter.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Boost.AzureDevOps\Boost.AzureDevOps.csproj"/>
+        <ProjectReference Include="..\Boost.Core\Boost.Core.csproj"/>
+        <ProjectReference Include="..\Boost.GitHub\Boost.GitHub.csproj"/>
+        <ProjectReference Include="..\Boost.Snapshooter\Boost.Snapshooter.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="UI/**" />
-    <EmbeddedResource Include="AuthUI/**" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="UI/**"/>
+        <EmbeddedResource Include="AuthUI/**"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="AppNavigation.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="AppNavigation.json"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="AppNavigation.json" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="AppNavigation.json"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UI\" />
-    <Folder Include="AuthUI\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="UI\"/>
+        <Folder Include="AuthUI\"/>
+    </ItemGroup>
 
 </Project>

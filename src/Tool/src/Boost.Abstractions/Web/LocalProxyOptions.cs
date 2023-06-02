@@ -1,9 +1,8 @@
-﻿namespace Boost.Web
-{
-    public class LocalProxyOptions
-    {
-        public int Port { get; set; }
+﻿namespace Boost.Web;
 
-        public string DestinationAddress { get; set; }
-    }
+public class LocalProxyOptions
+{
+    public int Port { get; set; }
+
+    public string DestinationAddress { get; set; }
 }

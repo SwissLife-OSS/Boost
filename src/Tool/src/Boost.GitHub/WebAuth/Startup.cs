@@ -1,27 +1,26 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 
-namespace Boost.GitHub
+namespace Boost.GitHub;
+
+public class Startup
 {
-    public class Startup
+    public void Configure(IApplicationBuilder app)
     {
-        public void Configure(IApplicationBuilder app)
+        app.UseCookiePolicy();
+        app.UseDeveloperExceptionPage();
+
+        app.UseRouting();
+        app.UseAuthentication();
+
+        app.Run(async context =>
         {
-            app.UseCookiePolicy();
-            app.UseDeveloperExceptionPage();
+           await context.ChallengeAsync("GitHub");
+        });
 
-            app.UseRouting();
-            app.UseAuthentication();
-
-            app.Run(async context =>
-            {
-               await context.ChallengeAsync("GitHub");
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
-            });
-        }
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+        });
     }
 }

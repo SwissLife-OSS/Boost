@@ -5,36 +5,35 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using Serilog;
 
-namespace Boost.Workspace
+namespace Boost.Workspace;
+
+public class DllContentTypeHandler : IFileContentTypeHandler
 {
-    public class DllContentTypeHandler : IFileContentTypeHandler
+    public int Order => 200;
+
+    public bool CanHandle(WorkspaceFile file, HandleFileOptions options)
     {
-        public int Order => 200;
+        return file.ContentType.Equals("boost/dll");
+    }
 
-        public bool CanHandle(WorkspaceFile file, HandleFileOptions options)
+    public Task HandleAsync(WorkspaceFile file, HandleFileOptions options, CancellationToken cancellationToken)
+    {
+        try
         {
-            return file.ContentType.Equals("boost/dll");
+            var decompiler = new CSharpDecompiler(
+                file.Path,
+                new DecompilerSettings());
+
+            file.Content = decompiler.DecompileWholeModuleAsString();
+
+            file.Meta.Language = "csharp";
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Could not decompile: {File}", file.Path);
         }
 
-        public Task HandleAsync(WorkspaceFile file, HandleFileOptions options, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var decompiler = new CSharpDecompiler(
-                    file.Path,
-                    new DecompilerSettings());
 
-                file.Content = decompiler.DecompileWholeModuleAsString();
-
-                file.Meta.Language = "csharp";
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "Could not decompile: {File}", file.Path);
-            }
-
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

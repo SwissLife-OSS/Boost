@@ -8,111 +8,110 @@ using Boost.Workspace;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Boost.Core.GraphQL
+namespace Boost.Core.GraphQL;
+
+public class LocalGitRepositoryType : ObjectType<GitLocalRepository>
 {
-    public class LocalGitRepositoryType : ObjectType<GitLocalRepository>
+    protected override void Configure(IObjectTypeDescriptor<GitLocalRepository> descriptor)
     {
-        protected override void Configure(IObjectTypeDescriptor<GitLocalRepository> descriptor)
+        descriptor
+            .Field("service")
+            .ResolveWith<Resolvers>(x => x.GetConnectedServiceAsync(default!, default!, default!));
+
+        descriptor.Field("readme")
+            .ResolveWith<Resolvers>(_ => _.GetReadMeAsync(default!, default!, default!));
+
+        descriptor.Field("remote")
+            .ResolveWith<Resolvers>(_ => _.GetRemoteAsync(default!, default!, default!));
+
+        descriptor.Field("links")
+            .ResolveWith<Resolvers>(_ => _.GetWebLinks(default!, default!));
+
+        descriptor
+            .Field("commits")
+            .Argument("top", a =>
+            {
+                a.DefaultValue(5);
+                a.Type(typeof(int));
+            })
+            .ResolveWith<Resolvers>(x =>
+                x.GetCommits(default!, default!));
+    }
+
+    class Resolvers
+    {
+        public async Task<ConnectedService?> GetConnectedServiceAsync(
+            [Parent] GitLocalRepository repository,
+            [DataLoader] ConnectedServiceByIdDataLoader byIdDataLoader,
+            CancellationToken cancellationToken)
         {
-            descriptor
-                .Field("service")
-                .ResolveWith<Resolvers>(x => x.GetConnectedServiceAsync(default!, default!, default!));
+            if (repository.RemoteServiceId.HasValue)
+            {
+                return await byIdDataLoader.LoadAsync(repository.RemoteServiceId.Value, cancellationToken);
+            }
 
-            descriptor.Field("readme")
-                .ResolveWith<Resolvers>(_ => _.GetReadMeAsync(default!, default!, default!));
-
-            descriptor.Field("remote")
-                .ResolveWith<Resolvers>(_ => _.GetRemoteAsync(default!, default!, default!));
-
-            descriptor.Field("links")
-                .ResolveWith<Resolvers>(_ => _.GetWebLinks(default!, default!));
-
-            descriptor
-                .Field("commits")
-                .Argument("top", a =>
-                {
-                    a.DefaultValue(5);
-                    a.Type(typeof(int));
-                })
-                .ResolveWith<Resolvers>(x =>
-                    x.GetCommits(default!, default!));
+            return null;
         }
 
-        class Resolvers
+        public IEnumerable<GitLocalCommit> GetCommits(
+            [Parent] GitLocalRepository repository,
+            int top)
         {
-            public async Task<ConnectedService?> GetConnectedServiceAsync(
-                [Parent] GitLocalRepository repository,
-                [DataLoader] ConnectedServiceByIdDataLoader byIdDataLoader,
-                CancellationToken cancellationToken)
-            {
-                if (repository.RemoteServiceId.HasValue)
-                {
-                    return await byIdDataLoader.LoadAsync(repository.RemoteServiceId.Value, cancellationToken);
-                }
+            return repository.Commits.Take(top);
+        }
 
-                return null;
+
+        public async Task<string?> GetReadMeAsync(
+            [Parent] GitLocalRepository repository,
+            [Service] IGitLocalRepositoryService gitService,
+            CancellationToken cancellationToken)
+        {
+            byte[]? data = await gitService.GetFileContent(
+                repository.Id,
+                "README.md",
+                cancellationToken);
+
+            if (data is { })
+            {
+                return System.Text.Encoding.UTF8.GetString(data);
             }
 
-            public IEnumerable<GitLocalCommit> GetCommits(
-                [Parent] GitLocalRepository repository,
-                int top)
-            {
-                return repository.Commits.Take(top);
-            }
+            return null;
+        }
 
-
-            public async Task<string?> GetReadMeAsync(
-                [Parent] GitLocalRepository repository,
-                [Service] IGitLocalRepositoryService gitService,
-                CancellationToken cancellationToken)
+        public async Task<GitRemoteRepository?> GetRemoteAsync(
+            [Parent] GitLocalRepository repository,
+            [Service] IGitRemoteService gitService,
+            CancellationToken cancellationToken)
+        {
+            if (repository.RemoteReference is { } && repository.RemoteServiceId is { })
             {
-                byte[]? data = await gitService.GetFileContent(
-                    repository.Id,
-                    "README.md",
+                GitRemoteRepository? remoteRepo = await gitService.GetByRemoteReferenceAsync(
+                    repository.RemoteServiceId.Value,
+                    repository.RemoteReference,
+                    repository.Name,
                     cancellationToken);
 
-                if (data is { })
-                {
-                    return System.Text.Encoding.UTF8.GetString(data);
-                }
-
-                return null;
+                return remoteRepo;
             }
 
-            public async Task<GitRemoteRepository?> GetRemoteAsync(
-                [Parent] GitLocalRepository repository,
-                [Service] IGitRemoteService gitService,
-                CancellationToken cancellationToken)
+            return null;
+        }
+
+        public IEnumerable<WebLink> GetWebLinks(
+            [Parent] GitLocalRepository repository,
+            [Service] IWorkspaceService workspaceService)
+        {
+            var links = new List<WebLink>();
+
+            if (repository.RemoteReference is { } r)
             {
-                if (repository.RemoteReference is { } && repository.RemoteServiceId is { })
-                {
-                    GitRemoteRepository? remoteRepo = await gitService.GetByRemoteReferenceAsync(
-                        repository.RemoteServiceId.Value,
-                        repository.RemoteReference,
-                        repository.Name,
-                        cancellationToken);
-
-                    return remoteRepo;
-                }
-
-                return null;
+                links.Add( new WebLink("Remote repository", r.Url));
             }
 
-            public IEnumerable<WebLink> GetWebLinks(
-                [Parent] GitLocalRepository repository,
-                [Service] IWorkspaceService workspaceService)
-            {
-                var links = new List<WebLink>();
+            IEnumerable<WebLink> wsLinks = workspaceService.GetWebLinks(repository.WorkingDirectory);
 
-                if (repository.RemoteReference is { } r)
-                {
-                    links.Add( new WebLink("Remote repository", r.Url));
-                }
-
-                IEnumerable<WebLink> wsLinks = workspaceService.GetWebLinks(repository.WorkingDirectory);
-
-                return links.Concat(wsLinks);
-            }
+            return links.Concat(wsLinks);
         }
     }
 }

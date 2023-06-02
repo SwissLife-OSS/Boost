@@ -1,15 +1,14 @@
 ﻿using Boost.Workspace;
 
-namespace Boost.GraphQL
-{
-    public class CreateFileFromBase64Payload
-    {
-        public CreateFileFromBase64Payload(WorkspaceFile file)
-        {
-            File = file;
-        }
+namespace Boost.GraphQL;
 
-        public WorkspaceFile File { get; }
+public class CreateFileFromBase64Payload
+{
+    public CreateFileFromBase64Payload(WorkspaceFile file)
+    {
+        File = file;
     }
+
+    public WorkspaceFile File { get; }
 }
 

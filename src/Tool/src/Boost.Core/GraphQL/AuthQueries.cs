@@ -4,16 +4,15 @@ using Boost.Security;
 using HotChocolate;
 using HotChocolate.Types;
 
-namespace Boost.GraphQL
+namespace Boost.GraphQL;
+
+[ExtendObjectType(RootTypes.Query)]
+public class AuthQueries
 {
-    [ExtendObjectType(RootTypes.Query)]
-    public class AuthQueries
+    public Task<AuthenticationSessionInfo> GetAuthenticationSessionAsync(
+        [Service] IAuthenticationSessionService authenticationSession,
+        CancellationToken cancellationToken)
     {
-        public Task<AuthenticationSessionInfo> GetAuthenticationSessionAsync(
-            [Service] IAuthenticationSessionService authenticationSession,
-            CancellationToken cancellationToken)
-        {
-            return authenticationSession.GetSessionInfoAsync(cancellationToken);
-        }
+        return authenticationSession.GetSessionInfoAsync(cancellationToken);
     }
 }

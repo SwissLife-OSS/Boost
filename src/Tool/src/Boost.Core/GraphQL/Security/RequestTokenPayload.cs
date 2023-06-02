@@ -1,14 +1,13 @@
 ﻿using Boost.Security;
 
-namespace Boost.GraphQL
-{
-    public class RequestTokenPayload
-    {
-        public RequestTokenPayload(RequestTokenResult token)
-        {
-            Result = token;
-        }
+namespace Boost.GraphQL;
 
-        public RequestTokenResult Result { get; }
+public class RequestTokenPayload
+{
+    public RequestTokenPayload(RequestTokenResult token)
+    {
+        Result = token;
     }
+
+    public RequestTokenResult Result { get; }
 }

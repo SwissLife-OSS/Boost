@@ -1,7 +1,6 @@
-﻿namespace Boost.GraphQL
+﻿namespace Boost.GraphQL;
+
+public record ExecuteCommandInput(string Command)
 {
-    public record ExecuteCommandInput(string Command)
-    {
-        public string? WorkDirectory { get; init; }
-    }
+    public string? WorkDirectory { get; init; }
 }

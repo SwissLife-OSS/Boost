@@ -8,7 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{7447A197-813E-4A39-B6AA-E1C79463CCF2}"
 	ProjectSection(SolutionItems) = preProject
 		..\Directory.Build.props = ..\Directory.Build.props
-		..\Versions.props = ..\Versions.props
+		..\..\Directory.Packages.props = ..\..\Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{C4666F39-9BB5-4AE6-B43B-CAE805827442}"

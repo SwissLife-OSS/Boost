@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>Boost.Snapshooter</AssemblyName>
-    <RootNamespace>Boost.Snapshooter</RootNamespace>
-    <PackageId>Boost.Tool.Snapshooter</PackageId>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>Boost.Snapshooter</AssemblyName>
+        <RootNamespace>Boost.Snapshooter</RootNamespace>
+        <PackageId>Boost.Tool.Snapshooter</PackageId>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HotChocolate.Types" Version="$(HotChocolateVersion)" />
-    <PackageReference Include="HotChocolate.Execution" Version="$(HotChocolateVersion)" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="HotChocolate.Types"/>
+        <PackageReference Include="HotChocolate.Execution"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Boost.Abstractions\Boost.Abstractions.csproj"/>
+    </ItemGroup>
 
 </Project>

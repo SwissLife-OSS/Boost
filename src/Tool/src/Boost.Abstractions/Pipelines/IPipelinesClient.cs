@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Boost.Pipelines
+namespace Boost.Pipelines;
+
+public interface IPipelinesClient
 {
-    public interface IPipelinesClient
-    {
-        string ConnectedServiceType { get; }
+    string ConnectedServiceType { get; }
 
-        Task<IEnumerable<Pipeline>> GetPipelinesAsync(
-            Guid serviceId,
-            string repositoryId,
-            CancellationToken cancellationToken);
+    Task<IEnumerable<Pipeline>> GetPipelinesAsync(
+        Guid serviceId,
+        string repositoryId,
+        CancellationToken cancellationToken);
 
-        Task<IEnumerable<PipelineRun>> GetRunsAsync(
-            Pipeline pipeline,
-            int top,
-            CancellationToken cancellationToken);
-    }
+    Task<IEnumerable<PipelineRun>> GetRunsAsync(
+        Pipeline pipeline,
+        int top,
+        CancellationToken cancellationToken);
+}
 
-    public interface IRepositoryIdentity
-    {
-        string Id { get; }
-    }
+public interface IRepositoryIdentity
+{
+    string Id { get; }
 }

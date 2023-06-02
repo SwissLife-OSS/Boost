@@ -3,33 +3,32 @@ using Boost.Git;
 using Boost.Security;
 using LiteDB;
 
-namespace Boost.Data
+namespace Boost.Data;
+
+public class BoostDbContext : IBoostDbContext, IDisposable
 {
-    public class BoostDbContext : IBoostDbContext, IDisposable
+    private readonly LiteDatabase _db;
+
+    public BoostDbContext(LiteDatabase db)
     {
-        private readonly LiteDatabase _db;
+        _db = db;
+    }
 
-        public BoostDbContext(LiteDatabase db)
+    public ILiteCollection<GitRepositoryIndex> GitRepos
+        => _db.GetCollection<GitRepositoryIndex>("GitRepos");
+
+    public ILiteCollection<IdentityRequestItem> IdentityRequest
+         => _db.GetCollection<IdentityRequestItem>("IdentityRequests");
+
+    public void Dispose()
+    {
+        try
         {
-            _db = db;
+            //_db.Dispose();
         }
-
-        public ILiteCollection<GitRepositoryIndex> GitRepos
-            => _db.GetCollection<GitRepositoryIndex>("GitRepos");
-
-        public ILiteCollection<IdentityRequestItem> IdentityRequest
-             => _db.GetCollection<IdentityRequestItem>("IdentityRequests");
-
-        public void Dispose()
+        catch
         {
-            try
-            {
-                //_db.Dispose();
-            }
-            catch
-            {
 
-            }
         }
     }
 }

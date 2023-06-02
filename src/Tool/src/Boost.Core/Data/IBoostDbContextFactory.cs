@@ -1,7 +1,6 @@
-namespace Boost.Data
+namespace Boost.Data;
+
+public interface IBoostDbContextFactory
 {
-    public interface IBoostDbContextFactory
-    {
-        IBoostDbContext Open(DbOpenMode mode);
-    }
+    IBoostDbContext Open(DbOpenMode mode);
 }

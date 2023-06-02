@@ -2,29 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Boost.Git
+namespace Boost.Git;
+
+public class GitRemoteClientFactory : IGitRemoteClientFactory
 {
-    public class GitRemoteClientFactory : IGitRemoteClientFactory
+    private readonly IEnumerable<IGitRemoteClient> _remoteClients;
+
+    public GitRemoteClientFactory(IEnumerable<IGitRemoteClient> remoteClients)
     {
-        private readonly IEnumerable<IGitRemoteClient> _remoteClients;
+        _remoteClients = remoteClients;
+    }
 
-        public GitRemoteClientFactory(IEnumerable<IGitRemoteClient> remoteClients)
+    public IGitRemoteClient Create(string serviceType)
+    {
+        IGitRemoteClient? client = _remoteClients
+            .SingleOrDefault(x => x.ConnectedServiceType == serviceType);
+
+        if ( client is null)
         {
-            _remoteClients = remoteClients;
+            throw new ApplicationException(
+                $"No client registred for service type: {serviceType}");
         }
 
-        public IGitRemoteClient Create(string serviceType)
-        {
-            IGitRemoteClient? client = _remoteClients
-                .SingleOrDefault(x => x.ConnectedServiceType == serviceType);
-
-            if ( client is null)
-            {
-                throw new ApplicationException(
-                    $"No client registred for service type: {serviceType}");
-            }
-
-            return client;
-        }
+        return client;
     }
 }

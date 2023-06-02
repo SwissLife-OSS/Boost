@@ -2,12 +2,11 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Boost.Infrastructure
+namespace Boost.Infrastructure;
+
+public interface IBoostCommandContext
 {
-    public interface IBoostCommandContext
-    {
-        Action<IServiceCollection>? ConfigureWeb { get; }
-        IServiceProvider? Services { get; }
-        Assembly ToolAssembly { get; }
-    }
+    Action<IServiceCollection>? ConfigureWeb { get; }
+    IServiceProvider? Services { get; }
+    Assembly ToolAssembly { get; }
 }

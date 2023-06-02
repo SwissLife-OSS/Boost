@@ -1,9 +1,8 @@
 using System.Threading;
 
-namespace Boost.AzureDevOps
+namespace Boost.AzureDevOps;
+
+public interface IAzureDevOpsPersonalAccessTokenResolver
 {
-    public interface IAzureDevOpsPersonalAccessTokenResolver
-    {
-        public string GetTokenAsync(CancellationToken cancellationToken);
-    }
+    public string GetTokenAsync(CancellationToken cancellationToken);
 }

@@ -2,29 +2,28 @@ using Boost.AzureDevOps;
 using Boost.GitHub;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Boost.Tool
+namespace Boost.Tool;
+
+public static class ToolServiceCollectionExtensions
 {
-    public static class ToolServiceCollectionExtensions
+    public static IServiceCollection AddToolServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddToolServices(this IServiceCollection services)
-        {
-            services.AddBoost();
-            services.AddSnapshooter();
-            services.AddAzureDevOps();
-            services.AddGitHub();
-            services.AddSingleton<IAuthServerServiceConfigurator, AuthServerServiceConfigurator>();
+        services.AddBoost();
+        services.AddSnapshooter();
+        services.AddAzureDevOps();
+        services.AddGitHub();
+        services.AddSingleton<IAuthServerServiceConfigurator, AuthServerServiceConfigurator>();
 
-            return services;
-        }
+        return services;
     }
+}
 
-    public class AuthServerServiceConfigurator : IAuthServerServiceConfigurator
+public class AuthServerServiceConfigurator : IAuthServerServiceConfigurator
+{
+    public IServiceCollection Configure(IServiceCollection services)
     {
-        public IServiceCollection Configure(IServiceCollection services)
-        {
-            services.AddBoost();
+        services.AddBoost();
 
-            return services;
-        }
+        return services;
     }
 }

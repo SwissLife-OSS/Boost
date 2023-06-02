@@ -2,11 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Boost.Web.Proxy
+namespace Boost.Web.Proxy;
+
+public interface ILocalProxyServer : IDisposable
 {
-    public interface ILocalProxyServer : IDisposable
-    {
-        Task<string> StartAsync(LocalProxyOptions options, CancellationToken cancellationToken);
-        Task StopAsync();
-    }
+    Task<string> StartAsync(LocalProxyOptions options, CancellationToken cancellationToken);
+    Task StopAsync();
 }

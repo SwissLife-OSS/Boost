@@ -7,69 +7,68 @@ using Boost.Settings;
 using Boost.Workspace;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace Boost.Commands
+namespace Boost.Commands;
+
+[Command(
+    Name = "sr",
+    FullName = "Switch repository",
+    Description = "Switches Git repository"), HelpOption]
+public class SwitchRepositoryCommand : CommandBase
 {
-    [Command(
-        Name = "sr",
-        FullName = "Switch repository",
-        Description = "Switches Git repository"), HelpOption]
-    public class SwitchRepositoryCommand : CommandBase
+    private readonly IGitLocalRepositoryService _localRepositoryService;
+    private readonly IWorkspaceService _workspaceService;
+
+    public SwitchRepositoryCommand(
+        IGitLocalRepositoryService localRepositoryService,
+        IWorkspaceService workspaceService)
     {
-        private readonly IGitLocalRepositoryService _localRepositoryService;
-        private readonly IWorkspaceService _workspaceService;
+        _localRepositoryService = localRepositoryService;
+        _workspaceService = workspaceService;
+    }
 
-        public SwitchRepositoryCommand(
-            IGitLocalRepositoryService localRepositoryService,
-            IWorkspaceService workspaceService)
+    [Argument(0, "SearchText", ShowInHelpText = true)]
+    public string SearchText { get; set; } = default!;
+
+    public async Task OnExecute(CommandLineApplication app, IConsole console)
+    {
+        var utils = new WorkrootCommandUtils(app, console);
+        IEnumerable<WorkRoot> workroots = await utils.GetWorkRootsAsync(CommandAborded);
+
+        console.Write("Searching....");
+
+        GitLocalRepository[] repos = _localRepositoryService
+            .Search(SearchText)
+            .ToArray();
+
+        console.ClearLine();
+
+        if (repos.Count() == 0)
         {
-            _localRepositoryService = localRepositoryService;
-            _workspaceService = workspaceService;
-        }
+            console.WriteLine($"\nNo repo found with search term: {SearchText}.");
+            console.WriteLine($"Make sure you have configured your workroots correctly " +
+                              $"and you did index your workroots." +
+                              $"\nRun `boo index` to start indexing all your work roots." +
+                              $"\n\nSearched workroots: " +
+                              $"\n-------------------");
 
-        [Argument(0, "SearchText", ShowInHelpText = true)]
-        public string SearchText { get; set; } = default!;
-
-        public async Task OnExecute(CommandLineApplication app, IConsole console)
-        {
-            var utils = new WorkrootCommandUtils(app, console);
-            IEnumerable<WorkRoot> workroots = await utils.GetWorkRootsAsync(CommandAborded);
-
-            console.Write("Searching....");
-
-            GitLocalRepository[] repos = _localRepositoryService
-                .Search(SearchText)
-                .ToArray();
-
-            console.ClearLine();
-
-            if (repos.Count() == 0)
+            foreach (Settings.WorkRoot wr in workroots)
             {
-                console.WriteLine($"\nNo repo found with search term: {SearchText}.");
-                console.WriteLine($"Make sure you have configured your workroots correctly " +
-                                  $"and you did index your workroots." +
-                                  $"\nRun `boo index` to start indexing all your work roots." +
-                                  $"\n\nSearched workroots: " +
-                                  $"\n-------------------");
-
-                foreach (Settings.WorkRoot wr in workroots)
-                {
-                    console.WriteLine($"{wr.Path} | {wr.Name}");
-                }
-
-                return;
+                console.WriteLine($"{wr.Path} | {wr.Name}");
             }
 
-            int index = 0;
-
-            if (repos.Count() > 1)
-            {
-                index = console.ChooseFromList(
-                    repos.Select(x => $"{x.Name} ({x.WorkRoot})"));
-            }
-
-            GitLocalRepository? repo = repos[index];
-
-            await utils.ShowQuickActions(repo.WorkingDirectory);
+            return;
         }
+
+        int index = 0;
+
+        if (repos.Count() > 1)
+        {
+            index = console.ChooseFromList(
+                repos.Select(x => $"{x.Name} ({x.WorkRoot})"));
+        }
+
+        GitLocalRepository? repo = repos[index];
+
+        await utils.ShowQuickActions(repo.WorkingDirectory);
     }
 }

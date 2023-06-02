@@ -4,69 +4,68 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
-namespace Boost.Security
+namespace Boost.Security;
+
+public class AuthenticationSessionService : IAuthenticationSessionService
 {
-    public class AuthenticationSessionService : IAuthenticationSessionService
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ITokenAnalyzer _tokenAnalyzer;
+    private readonly IIdentityService _identityService;
+
+    public AuthenticationSessionService(
+        IHttpContextAccessor httpContextAccessor,
+        ITokenAnalyzer tokenAnalyzer,
+        IIdentityService identityService)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ITokenAnalyzer _tokenAnalyzer;
-        private readonly IIdentityService _identityService;
+        _httpContextAccessor = httpContextAccessor;
+        _tokenAnalyzer = tokenAnalyzer;
+        _identityService = identityService;
+    }
 
-        public AuthenticationSessionService(
-            IHttpContextAccessor httpContextAccessor,
-            ITokenAnalyzer tokenAnalyzer,
-            IIdentityService identityService)
+    public async Task<AuthenticationSessionInfo> GetSessionInfoAsync(
+        CancellationToken cancellationToken)
+    {
+        AuthenticateResult? authResult = await _httpContextAccessor.HttpContext?
+            .AuthenticateAsync()!;
+
+        var session = new AuthenticationSessionInfo()
         {
-            _httpContextAccessor = httpContextAccessor;
-            _tokenAnalyzer = tokenAnalyzer;
-            _identityService = identityService;
-        }
+            IsAuthenticated = authResult?.Principal?.Identity?.IsAuthenticated is true
+        };
 
-        public async Task<AuthenticationSessionInfo> GetSessionInfoAsync(
-            CancellationToken cancellationToken)
+        if (session.IsAuthenticated)
         {
-            AuthenticateResult? authResult = await _httpContextAccessor.HttpContext?
-                .AuthenticateAsync()!;
+            session.Properties = authResult?.Properties?.Items;
 
-            var session = new AuthenticationSessionInfo()
+            var accessToken = GetToken(session.Properties, "access");
+            var idToken = GetToken(session.Properties, "id");
+            session.RefreshToken = GetToken(session.Properties, "refresh");
+
+            if (accessToken is { })
             {
-                IsAuthenticated = authResult?.Principal?.Identity?.IsAuthenticated is true
-            };
+                session.AccessToken = _tokenAnalyzer.Analyze(accessToken);
 
-            if (session.IsAuthenticated)
-            {
-                session.Properties = authResult?.Properties?.Items;
+                session.UserInfo = await _identityService.GetUserInfoAsync(
+                    accessToken,
+                    cancellationToken);
 
-                var accessToken = GetToken(session.Properties, "access");
-                var idToken = GetToken(session.Properties, "id");
-                session.RefreshToken = GetToken(session.Properties, "refresh");
-
-                if (accessToken is { })
-                {
-                    session.AccessToken = _tokenAnalyzer.Analyze(accessToken);
-
-                    session.UserInfo = await _identityService.GetUserInfoAsync(
-                        accessToken,
-                        cancellationToken);
-
-                }
-                if (idToken is { })
-                {
-                    session.IdToken = _tokenAnalyzer.Analyze(idToken);
-                }
             }
-
-            return session;
-        }
-
-        private string? GetToken(IDictionary<string, string?>? data, string name)
-        {
-            if (data is { } && data.ContainsKey($".Token.{name}_token"))
+            if (idToken is { })
             {
-                return data[$".Token.{name}_token"];
+                session.IdToken = _tokenAnalyzer.Analyze(idToken);
             }
-
-            return null;
         }
+
+        return session;
+    }
+
+    private string? GetToken(IDictionary<string, string?>? data, string name)
+    {
+        if (data is { } && data.ContainsKey($".Token.{name}_token"))
+        {
+            return data[$".Token.{name}_token"];
+        }
+
+        return null;
     }
 }

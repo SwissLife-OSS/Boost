@@ -1,15 +1,14 @@
 ﻿using Boost.Security;
 
-namespace Boost.GraphQL
+namespace Boost.GraphQL;
+
+public class RefreshStoredTokenPayload
 {
-    public class RefreshStoredTokenPayload
+
+    public RefreshStoredTokenPayload(TokenStoreHeader header)
     {
-
-        public RefreshStoredTokenPayload(TokenStoreHeader header)
-        {
-            Header = header;
-        }
-
-        public TokenStoreHeader Header { get; }
+        Header = header;
     }
+
+    public TokenStoreHeader Header { get; }
 }

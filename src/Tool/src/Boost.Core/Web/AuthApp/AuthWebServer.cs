@@ -20,136 +20,135 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
-namespace Boost.AuthApp
+namespace Boost.AuthApp;
+
+public class AuthWebServer : IAuthWebServer
 {
-    public class AuthWebServer : IAuthWebServer
+    Dictionary<RunningWebServerInfo, IHost> _hosts
+        = new Dictionary<RunningWebServerInfo, IHost>();
+
+    public async Task<RunningWebServerInfo> StartAsync(
+        StartWebServerOptions serverOptions,
+        CancellationToken cancellationToken)
     {
-        Dictionary<RunningWebServerInfo, IHost> _hosts
-            = new Dictionary<RunningWebServerInfo, IHost>();
+        var startUrl = serverOptions.Port is null
+            ? "http://*:0"
+            : $"http://localhost:{serverOptions.Port}";
 
-        public async Task<RunningWebServerInfo> StartAsync(
-            StartWebServerOptions serverOptions,
-            CancellationToken cancellationToken)
-        {
-            var startUrl = serverOptions.Port is null
-                ? "http://*:0"
-                : $"http://localhost:{serverOptions.Port}";
+        IHost _host = Host.CreateDefaultBuilder()
+            .UseSerilog()
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseUrls(startUrl);
+                webBuilder.UseStartup<AuthStartup>();
+            })
+            .ConfigureServices((ctx, services) =>
+            {
+                JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+                serverOptions.SetupAction?.Invoke(services);
 
-            IHost _host = Host.CreateDefaultBuilder()
-                .UseSerilog()
-                .ConfigureWebHostDefaults(webBuilder =>
+                services.AddControllers();
+
+                services.AddGraphQLServer()
+                      .AddQueryType(d => d.Name(RootTypes.Query))
+                      .AddType<AuthQueries>();
+
+                services.AddSingleton<
+                    IAuthenticationSessionService,
+                    AuthenticationSessionService>();
+                services.AddSingleton<ITokenAnalyzer, TokenAnalyzer>();
+                services.AddSingleton<IIdentityService, IdentityService>();
+                services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
+                services.AddSingleton<ISettingsStore, SettingsStore>();
+
+                services.AddSingleton<ICertificateManager, CertificateManager>();
+                services.AddUserDataProtection();
+                services.AddSingleton(c =>
                 {
-                    webBuilder.UseUrls(startUrl);
-                    webBuilder.UseStartup<AuthStartup>();
-                })
-                .ConfigureServices((ctx, services) =>
-                {
-                    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-                    serverOptions.SetupAction?.Invoke(services);
+                    return c.GetRequiredService<IBoostCommandContext>()
+                        .Services.GetRequiredService<IUserDataProtector>();
+                });
 
-                    services.AddControllers();
+                services.AddHttpContextAccessor();
+                services.AddSameSiteOptions();
+                services.AddOptions<OpenIdConnectOptions>("oidc")
+                  .Configure<AuthorizeRequestData>((options, authData) =>
+                  {
+                      options.Authority = authData.Authority;
+                      options.ClientSecret = authData.Secret;
+                      options.ClientId = authData.ClientId;
+                      options.ResponseType = string.Join(" ", authData.ResponseTypes);
+                      options.UsePkce = authData.UsePkce;
 
-                    services.AddGraphQLServer()
-                          .AddQueryType(d => d.Name(RootTypes.Query))
-                          .AddType<AuthQueries>();
-
-                    services.AddSingleton<
-                        IAuthenticationSessionService,
-                        AuthenticationSessionService>();
-                    services.AddSingleton<ITokenAnalyzer, TokenAnalyzer>();
-                    services.AddSingleton<IIdentityService, IdentityService>();
-                    services.AddSingleton<IAuthTokenStore, UserDataAuthTokenStore>();
-                    services.AddSingleton<ISettingsStore, SettingsStore>();
-
-                    services.AddSingleton<ICertificateManager, CertificateManager>();
-                    services.AddUserDataProtection();
-                    services.AddSingleton(c =>
-                    {
-                        return c.GetRequiredService<IBoostCommandContext>()
-                            .Services.GetRequiredService<IUserDataProtector>();
-                    });
-
-                    services.AddHttpContextAccessor();
-                    services.AddSameSiteOptions();
-                    services.AddOptions<OpenIdConnectOptions>("oidc")
-                      .Configure<AuthorizeRequestData>((options, authData) =>
+                      options.Scope.Clear();
+                      foreach (string scope in authData.Scopes)
                       {
-                          options.Authority = authData.Authority;
-                          options.ClientSecret = authData.Secret;
-                          options.ClientId = authData.ClientId;
-                          options.ResponseType = string.Join(" ", authData.ResponseTypes);
-                          options.UsePkce = authData.UsePkce;
+                          options.Scope.Add(scope);
+                      }
+                  });
 
-                          options.Scope.Clear();
-                          foreach (string scope in authData.Scopes)
-                          {
-                              options.Scope.Add(scope);
-                          }
-                      });
-
-                    services.AddOptions<FileAuthenticationOptions>(
-                        FileAuthenticationDefaults.AuthenticationScheme)
-                        .Configure<AuthorizeRequestData>((options, authData) =>
-                        {
-                            options.SaveTokens = authData.SaveTokens;
-                            options.Filename = (authData.RequestId != null) ?
-                                $"R-{authData.RequestId}" :
-                                $"S-{serverOptions.Id.ToString("N").Substring(0, 8)}";
-                        });
-
-                    services.AddAuthentication(options =>
+                services.AddOptions<FileAuthenticationOptions>(
+                    FileAuthenticationDefaults.AuthenticationScheme)
+                    .Configure<AuthorizeRequestData>((options, authData) =>
                     {
-                        options.DefaultScheme = FileAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = "oidc";
-                    })
-                    .AddFile()
-                    .AddOpenIdConnect("oidc", options =>
-                    {
-                        options.SaveTokens = true;
-                        options.GetClaimsFromUserInfoEndpoint = false;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            NameClaimType = JwtClaimTypes.Name,
-                            RoleClaimType = JwtClaimTypes.Role,
-                        };
+                        options.SaveTokens = authData.SaveTokens;
+                        options.Filename = (authData.RequestId != null) ?
+                            $"R-{authData.RequestId}" :
+                            $"S-{serverOptions.Id.ToString("N").Substring(0, 8)}";
                     });
 
-                    services.AddHttpClient();
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = FileAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = "oidc";
                 })
+                .AddFile()
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = JwtClaimTypes.Name,
+                        RoleClaimType = JwtClaimTypes.Role,
+                    };
+                });
 
-                .Build();
+                services.AddHttpClient();
+            })
 
-            await _host.StartAsync(cancellationToken);
+            .Build();
 
-            var server = _host.Services.GetRequiredService<IServer>();
-            var serverAddressesFeature = server.Features.Get<IServerAddressesFeature>()!;
-            var port = new Uri(serverAddressesFeature.Addresses.Single()).Port;
+        await _host.StartAsync(cancellationToken);
 
-            RunningWebServerInfo serverInfo = new RunningWebServerInfo(
-                serverOptions.Id,
-                $"http://localhost:{port}")
-            {
-                Title = serverOptions.Title
-            };
+        IServer server = _host.Services.GetRequiredService<IServer>();
+        IServerAddressesFeature serverAddressesFeature = server.Features.Get<IServerAddressesFeature>()!;
+        var port = new Uri(serverAddressesFeature.Addresses.Single()).Port;
 
-            _hosts.Add(serverInfo, _host);
-
-            return serverInfo;
-        }
-
-        public IEnumerable<RunningWebServerInfo> GetRunningServers()
+        RunningWebServerInfo serverInfo = new RunningWebServerInfo(
+            serverOptions.Id,
+            $"http://localhost:{port}")
         {
-            return _hosts.Keys;
-        }
+            Title = serverOptions.Title
+        };
 
-        public async Task StopAsync(Guid id, CancellationToken cancellationToken)
+        _hosts.Add(serverInfo, _host);
+
+        return serverInfo;
+    }
+
+    public IEnumerable<RunningWebServerInfo> GetRunningServers()
+    {
+        return _hosts.Keys;
+    }
+
+    public async Task StopAsync(Guid id, CancellationToken cancellationToken)
+    {
+        RunningWebServerInfo? key = _hosts.Keys.SingleOrDefault(x => x.Id == id);
+
+        if (key is { })
         {
-            RunningWebServerInfo? key = _hosts.Keys.SingleOrDefault(x => x.Id == id);
-
-            if (key is { })
-            {
-                await _hosts[key].StopAsync(cancellationToken);
-            }
+            await _hosts[key].StopAsync(cancellationToken);
         }
     }
 }

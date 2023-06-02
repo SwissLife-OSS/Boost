@@ -1,13 +1,12 @@
-namespace Boost.Utils
-{
-    public interface ISecurityUtils
-    {
-        string? CreateHash(string value, HashAlg alg);
-    }
+namespace Boost.Utils;
 
-    public enum HashAlg
-    {
-        Sha256,
-        Sha512
-    }
+public interface ISecurityUtils
+{
+    string? CreateHash(string value, HashAlg alg);
+}
+
+public enum HashAlg
+{
+    Sha256,
+    Sha512
 }
