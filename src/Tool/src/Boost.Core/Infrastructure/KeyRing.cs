@@ -1,7 +1,6 @@
 using System.IO;
 using System.Text.Json;
 using Boost.Core.Settings;
-using Boost.Settings;
 
 namespace Boost.Infrastructure;
 

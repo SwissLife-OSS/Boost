@@ -1,7 +1,5 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Versioning;
 
 namespace Boost.Nuget;
 

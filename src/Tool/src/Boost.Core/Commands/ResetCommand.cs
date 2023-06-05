@@ -1,4 +1,3 @@
-using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Boost.Commands;

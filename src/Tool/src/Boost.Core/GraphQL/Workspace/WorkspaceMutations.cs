@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Boost.Workspace;
 using HotChocolate;
 using HotChocolate.Types;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Boost.GraphQL;
 

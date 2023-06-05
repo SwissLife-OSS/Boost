@@ -1,6 +1,5 @@
 using System;
 using Boost.GraphQL;
-using HotChocolate;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;

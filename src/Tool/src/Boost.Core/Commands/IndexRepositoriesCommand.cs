@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Boost.Core.Settings;
 using Boost.Git;
 using Boost.Settings;
-using Boost.Workspace;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace Boost.Commands;
