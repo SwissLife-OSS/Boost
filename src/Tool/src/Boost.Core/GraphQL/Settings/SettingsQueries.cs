@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
 using Boost.GraphQL;
-using Boost.Security;
 using Boost.Settings;
 using HotChocolate;
 using HotChocolate.Types;

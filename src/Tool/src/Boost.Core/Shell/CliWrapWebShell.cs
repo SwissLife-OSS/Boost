@@ -49,13 +49,13 @@ public class CliWrapWebShell : IWebShell
         return await ExecuteAsync(cmd);
     }
 
-    public async Task<int> ExecuteGitManyAsync(IEnumerable<string> commands, string directory)
+    public async Task<int> ExecuteGitManyAsync(IEnumerable<string[]> commands, string directory)
     {
         var result = 0;
 
         foreach (var command in commands)
         {
-            result = await ExecuteGitAsync(new[] { command }, directory);
+            result = await ExecuteGitAsync(command, directory);
 
             if (result > 0)
                 return result;
@@ -71,6 +71,21 @@ public class CliWrapWebShell : IWebShell
             .WithWorkingDirectory(workingDirectory ?? _boostApplicationContext.WorkingDirectory.FullName);
 
         return await ExecuteAsync(cmd);
+    }
+
+    public async Task<int> ExecuteManyAsync(string targetFilename, string[] commands, string? workingDirectory)
+    {
+        var result = 0;
+
+        foreach (var command in commands)
+        {
+            result = await ExecuteAsync(targetFilename, command, workingDirectory);
+
+            if (result > 0)
+                return result;
+        }
+
+        return result;
     }
 
     private async Task<int> ExecuteAsync(Command cmd)

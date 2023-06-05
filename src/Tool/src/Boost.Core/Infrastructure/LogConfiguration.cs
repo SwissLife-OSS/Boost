@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Boost.Core.Settings;
 using Serilog;
-using Serilog.Events;
 
 namespace Boost.Infrastructure;
 

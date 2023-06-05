@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-using Boost.GitHub;
 using Boost.GitHub.WebAuth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;

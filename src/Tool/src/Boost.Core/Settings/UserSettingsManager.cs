@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
-using Boost.Infrastructure;
 
 namespace Boost.Settings;
 

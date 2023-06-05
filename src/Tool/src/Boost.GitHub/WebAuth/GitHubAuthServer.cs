@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
 using Boost.GitHub.WebAuth;

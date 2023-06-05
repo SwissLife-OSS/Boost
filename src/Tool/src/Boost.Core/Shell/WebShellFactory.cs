@@ -2,7 +2,6 @@ using System;
 using Boost.Infrastructure;
 using Boost.Shell;
 using Microsoft.AspNetCore.SignalR;
-using NuGet.Protocol;
 
 namespace Boost;
 

@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Boost.Certificates;
 using Boost.Core.Settings;
-using HotChocolate;
 using Serilog;
 
 namespace Boost.Infrastructure;

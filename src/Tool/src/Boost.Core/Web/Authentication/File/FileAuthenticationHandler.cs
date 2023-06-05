@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Azure.Core;
 using Boost.Core.Settings;
 using Boost.Security;
 using Microsoft.AspNetCore.Authentication;

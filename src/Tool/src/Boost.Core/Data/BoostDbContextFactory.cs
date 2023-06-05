@@ -1,6 +1,5 @@
 using System.IO;
 using Boost.Core.Settings;
-using ICSharpCode.Decompiler.TypeSystem;
 using LiteDB;
 
 namespace Boost.Data;
