@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using Yarp.ReverseProxy.Abstractions;
-using Yarp.ReverseProxy.Service;
+using Yarp.ReverseProxy.Configuration;
 
 namespace Boost.Web.Proxy;
 
@@ -11,8 +10,8 @@ public static class InMemoryConfigProviderExtensions
 {
     public static IReverseProxyBuilder LoadFromMemory(
         this IReverseProxyBuilder builder,
-        IReadOnlyList<ProxyRoute> routes,
-        IReadOnlyList<Cluster> clusters)
+        IReadOnlyList<RouteConfig> routes,
+        IReadOnlyList<ClusterConfig> clusters)
     {
         builder.Services.AddSingleton<IProxyConfigProvider>(
             new InMemoryConfigProvider(routes, clusters));
@@ -25,15 +24,15 @@ public class InMemoryConfigProvider : IProxyConfigProvider
     private volatile InMemoryConfig _config;
 
     public InMemoryConfigProvider(
-        IReadOnlyList<ProxyRoute> routes,
-        IReadOnlyList<Cluster> clusters)
+        IReadOnlyList<RouteConfig> routes,
+        IReadOnlyList<ClusterConfig> clusters)
     {
         _config = new InMemoryConfig(routes, clusters);
     }
 
     public IProxyConfig GetConfig() => _config;
 
-    public void Update(IReadOnlyList<ProxyRoute> routes, IReadOnlyList<Cluster> clusters)
+    public void Update(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
     {
         InMemoryConfig oldConfig = _config;
         _config = new InMemoryConfig(routes, clusters);
@@ -42,18 +41,18 @@ public class InMemoryConfigProvider : IProxyConfigProvider
 
     private class InMemoryConfig : IProxyConfig
     {
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cts = new();
 
-        public InMemoryConfig(IReadOnlyList<ProxyRoute> routes, IReadOnlyList<Cluster> clusters)
+        public InMemoryConfig(IReadOnlyList<RouteConfig> routes, IReadOnlyList<ClusterConfig> clusters)
         {
             Routes = routes;
             Clusters = clusters;
             ChangeToken = new CancellationChangeToken(_cts.Token);
         }
 
-        public IReadOnlyList<ProxyRoute> Routes { get; }
+        public IReadOnlyList<RouteConfig> Routes { get; }
 
-        public IReadOnlyList<Cluster> Clusters { get; }
+        public IReadOnlyList<ClusterConfig> Clusters { get; }
 
         public IChangeToken ChangeToken { get; }
 

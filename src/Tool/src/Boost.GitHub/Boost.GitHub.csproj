@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>Boost.GitHub</RootNamespace>
         <PackageId>Boost.Tool.GitHub</PackageId>
         <IsPackable>true</IsPackable>

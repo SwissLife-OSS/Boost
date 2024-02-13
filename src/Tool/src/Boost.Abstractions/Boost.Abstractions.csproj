@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Boost.Abstractions</AssemblyName>
-    <RootNamespace>Boost</RootNamespace>
     <PackageId>Boost.Tool.Abstractions</PackageId>
     <IsPackable>true</IsPackable>
   </PropertyGroup>

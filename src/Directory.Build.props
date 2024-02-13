@@ -5,7 +5,7 @@
   <Import Project="$(PropsAbove)" Condition="Exists($(PropsAbove))" />
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Boost</RootNamespace>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -16,7 +16,7 @@
     <Product>Boost</Product>
     <Authors>Philippe Birbaum</Authors>
     <Company>Swiss Life</Company>
-    <Copyright>Copyright © 2023 Swiss Life</Copyright>
+    <Copyright>Copyright © 2024 Swiss Life</Copyright>
     <PackageProjectUrl>https://github.com/SwissLife-OSS/Boost</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SwissLife-OSS/Boost.git</RepositoryUrl>
     <PackageIconUrl>https://github.com/SwissLife-OSS/Boost/raw/main/images/icon_boost.png</PackageIconUrl>

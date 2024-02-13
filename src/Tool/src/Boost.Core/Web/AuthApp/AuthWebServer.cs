@@ -24,8 +24,7 @@ namespace Boost.AuthApp;
 
 public class AuthWebServer : IAuthWebServer
 {
-    Dictionary<RunningWebServerInfo, IHost> _hosts
-        = new Dictionary<RunningWebServerInfo, IHost>();
+    readonly Dictionary<RunningWebServerInfo, IHost> _hosts = new();
 
     public async Task<RunningWebServerInfo> StartAsync(
         StartWebServerOptions serverOptions,
