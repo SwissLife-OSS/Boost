@@ -48,21 +48,29 @@ public partial class GitMutations
 
         int indexCount = 0;
 
-        foreach (WorkRoot wr in settings.WorkRoots)
+        try
         {
-            var count = await repositoryIndexer.IndexWorkRootAsync(
-                wr,
-                handler,
-                cancellationToken);
-
-            indexCount += count;
-        }
-
-        await hubContext.Clients.All.SendAsync("consoleData",
-            new ShellMessage(session.Next(), "end", $"Scan completed: {indexCount}")
+            foreach (WorkRoot wr in settings.WorkRoots)
             {
-                Tags = new string[] { "success" }
-            });
+                var count = await repositoryIndexer.IndexWorkRootAsync(
+                    wr,
+                    handler,
+                    cancellationToken);
+
+                indexCount += count;
+            }
+
+            await hubContext.Clients.All.SendAsync("consoleData",
+                new ShellMessage(session.Next(), "end", $"Scan completed: {indexCount}")
+                {
+                    Tags = new string[] { "success" }
+                });
+        }
+        catch (Exception ex)
+        {
+            await hubContext.Clients.All.SendAsync("consoleData",
+                new ShellMessage(session.Next(), "error", ex.Message) { Tags = new[] { "error" } });
+        }
 
         return indexCount;
     }
