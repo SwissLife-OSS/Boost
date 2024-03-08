@@ -16,7 +16,6 @@ public static class GraphQLServiceCollectionExtensions
             .ModifyRequestOptions(m => m.IncludeExceptionDetails = true)
             .AddQueryType(d => d.Name(RootTypes.Query))
             .AddMutationType(d => d.Name(RootTypes.Mutation))
-            //.ConfigureSchema( x => x.AddType(new UuidType("Uuid", defaultFormat: 'N')))
             .ConfigureSchema(x => { })
             .AddBoostTypes();
 
