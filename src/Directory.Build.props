@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version Condition="$(Version) == ''">0.3.8</Version>
+    <Version Condition="$(Version) == ''">0.4.0-preview.4</Version>
     <Product>Boost</Product>
     <Authors>Philippe Birbaum</Authors>
     <Company>Swiss Life</Company>

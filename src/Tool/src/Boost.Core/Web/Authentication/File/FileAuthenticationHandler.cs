@@ -38,7 +38,7 @@ public class FileAuthenticationHandler : SignInAuthenticationHandler<FileAuthent
         {
             try
             {
-                byte[] data = await File.ReadAllBytesAsync(path);
+                var data = await File.ReadAllBytesAsync(path);
                 AuthenticationTicket? ticket = _ticketSerializer.Deserialize(data);
 
                 if (ticket is { })
@@ -123,7 +123,7 @@ public class FileAuthenticationHandler : SignInAuthenticationHandler<FileAuthent
 
         if (name.StartsWith("R"))
         {
-            model.RequestId = Guid.Parse(name.Split("-").Last());
+            model.RequestId = Guid.Parse(name.Split("_").Last());
         }
 
         if (ticket.Properties.Items.ContainsKey(".Token.expires_at") &&

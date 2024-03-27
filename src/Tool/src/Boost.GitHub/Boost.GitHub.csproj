@@ -9,7 +9,6 @@
     <ItemGroup>
         <PackageReference Include="Octokit"/>
         <PackageReference Include="AspNet.Security.OAuth.GitHub"/>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
         <PackageReference Include="Serilog"/>
         <PackageReference Include="HotChocolate.Types"/>
         <PackageReference Include="HotChocolate.Execution"/>

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Boost.Core.Settings;
 using Boost.GitHub.WebAuth;
@@ -53,7 +52,6 @@ public class GitHubAuthServer : IGitHubAuthServer
                     });
             }).ConfigureServices((ctx, services) =>
            {
-               JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
                configure(services);
                services.AddControllersWithViews();
                services.AddHttpContextAccessor();

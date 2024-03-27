@@ -11,10 +11,9 @@ public class BoostApplicationContext : IBoostApplicationContext
         => GetWorkingDirectory();
 
     public string? Version =>
-         Assembly.GetEntryAssembly()
-         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-         .InformationalVersion;
-
+        Assembly.GetEntryAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion.Split('+')[0];
     private DirectoryInfo GetWorkingDirectory()
     {
         if (Debugger.IsAttached)

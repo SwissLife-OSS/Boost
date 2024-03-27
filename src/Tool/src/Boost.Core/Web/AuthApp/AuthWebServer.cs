@@ -92,7 +92,7 @@ public class AuthWebServer : IAuthWebServer
                     {
                         options.SaveTokens = authData.SaveTokens;
                         options.Filename = (authData.RequestId != null) ?
-                            $"R-{authData.RequestId}" :
+                            $"R_{authData.RequestId:N}" :
                             $"S-{serverOptions.Id.ToString("N").Substring(0, 8)}";
                     });
 

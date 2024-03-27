@@ -87,9 +87,9 @@ public class UserDataAuthTokenStoreReader : IAuthTokenStoreReader
         TokenStoreModel authData,
         CancellationToken cancellationToken)
     {
-        if (authData.Name.StartsWith("R-"))
+        if (authData.Name.StartsWith("R_"))
         {
-            if (Guid.TryParse(authData.Name.Split("-").Last(), out Guid parsed))
+            if (Guid.TryParse(authData.Name.Split("_").Last(), out Guid parsed))
             {
                 return await _identityRequestStore.GetByIdAsync(parsed, cancellationToken);
             }

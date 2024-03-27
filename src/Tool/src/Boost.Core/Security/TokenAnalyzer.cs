@@ -50,11 +50,10 @@ public class TokenAnalyzer : ITokenAnalyzer
                 ValidTo = jwt.ValidTo.ToLocalTime(),
                 Claims = GetClaims(jwt.Claims)
                     .OrderBy(x => x.Category)
-                    .ThenBy(x => x.Type)
+                    .ThenBy(x => x.Type),
+                ExpiresIn = (int)(jwt.ValidTo - DateTime.UtcNow).TotalMinutes,
+                Subject = jwt.Subject
             };
-
-            model.ExpiresIn = (int)(jwt.ValidTo - DateTime.UtcNow).TotalMinutes;
-            model.Subject = jwt.Subject;
 
             return model;
         }
