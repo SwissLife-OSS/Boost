@@ -158,7 +158,8 @@ public class AzureDevOpsPipelinesClient :
 
     private Pipeline ToPipeline(
         AzureDevOpsConnectedService service,
-        ReleaseDefinitionShallowReference definition)
+        ReleaseDefinitionShallowReference definition,
+        bool isReleaseUsingBuildArtifacts)
     {
         return new Pipeline
         {
@@ -169,7 +170,8 @@ public class AzureDevOpsPipelinesClient :
             WebUrl = definition.Links.GetLink("web"),
             Properties = new List<PipelineProperty>
             {
-                new("ProjectId", definition.ProjectReference.Id.ToString())
+                new("ProjectId", definition.ProjectReference.Id.ToString()),
+                new("IsReleaseUsingBuildArtifacts", isReleaseUsingBuildArtifacts.ToString())
             }
         };
     }
@@ -216,16 +218,59 @@ public class AzureDevOpsPipelinesClient :
 
             if ( definition is { })
             {
+                bool isReleaseUsingBuildArtifacts =
+                    await IsLatestReleaseUsingBuildDefinitionArtifact(serviceId, teamProjectId, buildDefinitionId, definition.Id);
                 definition.ProjectReference = release.ProjectReference;
-                return ToPipeline(ClientFactory.Connections[serviceId].Service, definition);
+
+                return ToPipeline(
+                    ClientFactory.Connections[serviceId].Service,
+                    definition,
+                    isReleaseUsingBuildArtifacts);
             }
         }
 
         return null;
+    }
+      
+    public async Task<bool> IsLatestReleaseUsingBuildDefinitionArtifact(
+        Guid serviceId,
+        Guid teamProjectId,
+        int buildDefinitionId,
+        int ReleaseDefinitionId)
+    {
+        ReleaseHttpClient client = ClientFactory.CreateClient<ReleaseHttpClient>(serviceId);
 
+        ReleaseDefinition ReleaseDefinition =
+            await client.GetReleaseDefinitionAsync(
+                project: teamProjectId,
+                definitionId: ReleaseDefinitionId
+                );
+
+        if (ReleaseDefinition != null)
+        {
+            List<Release> latestReleases =
+                await client.GetReleasesAsync(
+                    project: teamProjectId,
+                    definitionId: ReleaseDefinition.Id,
+                    top: 1);
+            Release? latestRelease = latestReleases.FirstOrDefault();
+
+            if (latestRelease != null)
+            {
+                // Check if the latest release is using artifacts from the target build definition  
+                Artifact? buildDefinitionArtifact =
+                    latestRelease.Artifacts.FirstOrDefault(
+                        a => a.DefinitionReference.ContainsKey("definition") &&
+                        a.DefinitionReference["definition"].Id == buildDefinitionId.ToString());
+
+                return buildDefinitionArtifact != null;
+            }
+        }
+
+        return false;
     }
 
-    public async Task<IEnumerable<Build>> GetRunsAsync(
+public async Task<IEnumerable<Build>> GetRunsAsync(
         Guid serviceId,
         Guid projectId,
         int id,
