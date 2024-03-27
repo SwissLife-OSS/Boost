@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Yarp.ReverseProxy.Abstractions;
+using Yarp.ReverseProxy;
+using Yarp.ReverseProxy.Configuration;
 
 namespace Boost.Web.Proxy;
 
@@ -29,9 +30,9 @@ public class LocalProxyServer : ILocalProxyServer, IDisposable
             })
             .ConfigureServices((ctx, services) =>
             {
-                ProxyRoute[]? routes = new[]
-                {
-                    new ProxyRoute()
+                RouteConfig[] routes =
+                [
+                    new RouteConfig()
                     {
                         RouteId = "route1",
                         ClusterId = "cluster1",
@@ -40,16 +41,16 @@ public class LocalProxyServer : ILocalProxyServer, IDisposable
                             Path = "{**catch-all}"
                         }
                     }
-                };
+                ];
 
-                Cluster[] clusters = new[]
+                ClusterConfig[] clusters = new[]
                 {
-                    new Cluster()
+                    new ClusterConfig()
                     {
-                        Id = "cluster1",
-                        Destinations = new Dictionary<string, Destination>(StringComparer.OrdinalIgnoreCase)
+                        ClusterId = "cluster1",
+                        Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
                         {
-                            { "destination1", new Destination() { Address = options.DestinationAddress} }
+                            { "destination1", new DestinationConfig() { Address =options.DestinationAddress } },
                         }
                     }
                 };

@@ -24,8 +24,7 @@ namespace Boost.AuthApp;
 
 public class AuthWebServer : IAuthWebServer
 {
-    Dictionary<RunningWebServerInfo, IHost> _hosts
-        = new Dictionary<RunningWebServerInfo, IHost>();
+    readonly Dictionary<RunningWebServerInfo, IHost> _hosts = new();
 
     public async Task<RunningWebServerInfo> StartAsync(
         StartWebServerOptions serverOptions,
@@ -93,7 +92,7 @@ public class AuthWebServer : IAuthWebServer
                     {
                         options.SaveTokens = authData.SaveTokens;
                         options.Filename = (authData.RequestId != null) ?
-                            $"R-{authData.RequestId}" :
+                            $"R_{authData.RequestId:N}" :
                             $"S-{serverOptions.Id.ToString("N").Substring(0, 8)}";
                     });
 

@@ -37,7 +37,7 @@ public class GitRemoteRepositoryType : ObjectType<GitRemoteRepository>
     {
         public Task<ConnectedService> GetConnectedServiceAsync(
             [Parent] GitRemoteRepository repository,
-            [DataLoader] ConnectedServiceByIdDataLoader byIdDataLoader,
+            ConnectedServiceByIdDataLoader byIdDataLoader,
             CancellationToken cancellationToken)
         {
             return byIdDataLoader.LoadAsync(repository.ServiceId, cancellationToken);

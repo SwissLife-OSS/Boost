@@ -42,7 +42,7 @@ public class LocalGitRepositoryType : ObjectType<GitLocalRepository>
     {
         public async Task<ConnectedService?> GetConnectedServiceAsync(
             [Parent] GitLocalRepository repository,
-            [DataLoader] ConnectedServiceByIdDataLoader byIdDataLoader,
+            ConnectedServiceByIdDataLoader byIdDataLoader,
             CancellationToken cancellationToken)
         {
             if (repository.RemoteServiceId.HasValue)

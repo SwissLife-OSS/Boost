@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <IsPackable>false</IsPackable>
         <AssemblyName>Boost.Core.Tests</AssemblyName>
         <RootNamespace>Boost.Core.Tests</RootNamespace>
     </PropertyGroup>

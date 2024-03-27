@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>Boost.Snapshooter</AssemblyName>
         <RootNamespace>Boost.Snapshooter</RootNamespace>
         <PackageId>Boost.Tool.Snapshooter</PackageId>

@@ -120,7 +120,7 @@ public class IdentityService : IIdentityService
 
     private async Task SaveTokenAsync(TokenRequestData request, TokenModel? accessToken, CancellationToken cancellationToken)
     {
-        var model = new TokenStoreModel($"R-{request.RequestId:N}", DateTime.UtcNow);
+        var model = new TokenStoreModel($"R_{request.RequestId:N}", DateTime.UtcNow);
         model.RequestId = request.RequestId;
 
         model.Tokens.Add(new TokenInfo(TokenType.Access, accessToken!.Token!)
